@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Matcha / index</title>
+        <meta charset="utf-8">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Matcha</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Accueil <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Vos matchs</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            </div>
+        </div>
+        </nav>
+        <div class="container-fluid">
+            <form method="POST" action="/register.html" id="register">
+                <div class="form-inline">
+                   <div class="form-group"  id="name">
+                    <label for="name">Name</label>
+                    <input name="name" type="text" class="form-control" placeholder="Enter your name">
+                </div>
+                <div class="form-group" id="surname">
+                    <label for="surname">Surname</label>
+                    <input name="surname" type="text" class="form-control" placeholder="Enter your surname">
+                </div>
+                </div>
+                <div class="form-group" id="email">
+                    <label for="email">Email address</label>
+                    <input name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group" id="password">
+                    <label for="password">Password</label>
+                    <input name="password" type="password" class="form-control" placeholder="Password">
+                </div>
+                <div class="form-group danger" id="vpassword">
+                    <label class="form-control-label" for="vpassword">Verify Password</label>
+                    <input name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
+                </div>
+                <div class="form-group" id="gender">
+                    <label for="gender">Gender</label>
+                    <select name="gender" class="form-control">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                    </select>
+                </div>
+                <button id="submit" type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+    <script>
+        let submit = document.querySelector("#submit");
+        let form = document.querySelector("#register");
+        let xhr = new XMLHttpRequest();
+
+
+        submit.addEventListener('click', (e) => {
+            e.preventDefault();
+            xhr.open("POST", "/register", true);
+            xhr.onload = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        let data = JSON.parse(xhr.responseText);
+                        if (data.password_different === true) {
+                            document.getElementById("vpassword").className += " has-danger";
+                            document.getElementById("vpassword_input").className += " form-control-danger";
+                            console.log("password different");
+                        }
+                        else {
+                            console.log("passwords OK");
+                        }
+                    } catch(e) {
+                        console.log("err");
+                    }
+                }
+            };
+            xhr.send(new FormData(form));
+        }, false);
+    </script>
+    </body>
+</html>
