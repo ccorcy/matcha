@@ -7,8 +7,8 @@ const urlDB = "mongodb://localhost:27017/matchaDB";
 const util = require('util');
 const multer = require('multer');
 const upload = multer();
-const crypto = require("crypto");
-const hash = crypto.createHash('sha512');
+const bcrypt = require('bcrypt');
+
 
 app.use(express.static(__dirname + '/public'));
 app.use( bodyparser.json() );
@@ -39,6 +39,10 @@ app.get('/register.html', (req,res) => {
 	res.sendFile(__dirname + '/register.html');
 });
 
+app.get('/login.html', (req, res) => {
+	res.sendFile(__dirname + '/login.html');
+});
+
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/index.html');
 });
@@ -65,14 +69,7 @@ app.get('/get_users', (req,res) => {
 			"password": false,
 			"password_different": false
 		};
-		hash.update(req.body.password);
-		let user = {
-			"name": req.body.name,
-			"surname": req.body.surname,
-			"email": req.body.email,
-			"password": hash.digest('hex'),
-			"gender": req.body.gender
-		};
+
 		if (req.body.password === null) {
 			error.password = true;
 		}
@@ -82,18 +79,50 @@ app.get('/get_users', (req,res) => {
 		if (req.body.name !== "" && req.body.surname !== "" && req.body.email !== ""
 			&& req.body.password !== "" && req.body.gender !== "")
 		{
-			MongoClient.connect(urlDB, (err, db) => {
+			
+			bcrypt.hash(req.body.password, 10, (err, hash) => {
 				if (err) throw err;
-				db.collection("users").insertOne(user, (err,res) => {
+				let user = {
+					"name": req.body.name,
+					"surname": req.body.surname,
+					"email": req.body.email,
+					"password": hash,
+					"gender": req.body.gender
+				};
+				MongoClient.connect(urlDB, (err, db) => {
 					if (err) throw err;
-					console.log("user: " + req.body.name + " added");
+					db.collection("users").insertOne(user, (err,result) => {
+						if (err) throw err;
+						console.log("user: " + req.body.name + " added");
+					});
+					res.json(error);
+					db.close();
 				});
-				res.json(error);
 			});
+			
 		}
 
 	});
 
-
+	app.post('/login', upload.fields([]), (req, res) => {
+		MongoClient.connect(urlDB, (err, db) => {
+			if (err) throw err;
+			db.collection("users").find({ "email": req.body.mail }).toArray((err, result) => {
+				if (result[0] == undefined) {
+					res.send("error mail");
+				}
+				console.log(result[0].name);
+				bcrypt.compare(req.body.password, result[0].password, (err, same) => {
+					if (err) throw err;
+					if (same === true) {
+						res.send("OK");
+					} else {
+						res.send("error password");
+					}
+				});
+			});
+			db.close();
+		});
+	});
 
 app.listen(3000);
