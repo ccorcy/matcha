@@ -16,7 +16,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Matcha</a>
+            <a class="navbar-brand" href="index.html">Matcha</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -31,6 +31,17 @@
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
             </form>
+            <form class="navbar-form navbar-right" method="POST" action="/login" id="login">
+                <div class="form-group" id="email">
+                    <label class="form-control-label" for="login">Email</label>
+                    <input type="email" name="login" class="form-control" placeholder="example@xxx.com">
+                </div>
+                <div class="form-group" id="password">
+                    <label class="form-control-label" for="password">Password</label>
+                    <input id="input-password" type="password" name="password" class="form-control" placeholder="password" value="">
+                </div>
+                <button type="submit" class="btn btn-default">Log In</button>
+            </form>
             </div>
         </div>
         </nav>
@@ -44,6 +55,32 @@
         </div>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+         <script type="text/javascript">
+            const login = document.getElementById("login");
+            const pwd = document.getElementById("password");
+            const mail = document.getElementById("email");
+            const xhr = new XMLHttpRequest();
+
+            login.addEventListener('submit', (e) => {
+                e.preventDefault();
+                xhr.open("POST", "/login", true);
+                xhr.send(new FormData(login));
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        if (xhr.responseText === "OK") {
+                            pwd.style.color = "green";
+                            document.getElementById("input-password").style.color = "green";
+                        }
+                        else if (xhr.responseText === "error password") {
+                            mail.style.color = "green";
+                            pwd.className += " has-danger";
+                            pwd.style.color = "red";
+                            document.getElementById("input-password").style.color += "red";
+                        }
+                    }
+                };
+            }, false);
+        </script>     
     </body>
     <footer class="footer">
         <div class="container">

@@ -111,7 +111,6 @@ app.get('/get_users', (req,res) => {
 				if (result[0] == undefined) {
 					res.send("error mail");
 				}
-				console.log(result[0].name);
 				bcrypt.compare(req.body.password, result[0].password, (err, same) => {
 					if (err) throw err;
 					if (same === true) {
