@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <div class="container">
+            <h1> My profile </h1>
+            <div class="well">
+                Name: <%= obj.name %><br />
+                Surname: <%= obj.surname %> <br />
+                E-Mail: <%= obj.email %> <br />
+            </div>
+        </div>
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>

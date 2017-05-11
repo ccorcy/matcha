@@ -36,20 +36,31 @@ app.get('/config/setup', (req, res) => {
 	res.send("SETUP COMPLETE");
 });
 
-app.get('profile.html', (req,res) => {
-	res.sendFile(__dirname + '/profile.html');
+app.get('/profile.html', (req,res) => {
+	MongoClient.connect(urlDB, (err, db) => {
+		db.collection("users").find({ name: "charles"}).toArray((err, result) => {
+			if (result[0] == undefined) {
+				console.log("no user");
+				res.render('pages/profile');
+			} else {
+				res.render('pages/profile', {
+					name: result[0].name,
+					surname: result[0].surname,
+					obj: result[0]
+				});
+			}
+		});
+	});
 });
 
 app.get('/register.html', (req,res) => {
-	res.sendFile(__dirname + '/register.html');
-});
-
-app.get('/login.html', (req, res) => {
-	res.sendFile(__dirname + '/login.html');
+	res.render('pages/register');
 });
 
 app.get('/', (req, res) => {
-	res.render('pages/index');
+	res.render('pages/index', {
+		name: "Charles"
+	});
 });
 
 app.get('/get_users', (req,res) => {
