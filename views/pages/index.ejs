@@ -1,0 +1,59 @@
+<html>
+    <!DOCTYPE html>
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <main>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4 col-md-offset-4">
+                         <h1>C'est du brin</h1>
+                         <p>lorem ipsum</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <% include ../partials/footer %>
+       </footer>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            const login = document.getElementById("login");
+            const pwd = document.getElementById("password");
+            const mail = document.getElementById("email");
+            const reg_button = document.getElementById("reg_button");
+            const xhr = new XMLHttpRequest();
+
+            reg_button.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.location.href = "/register.html";
+            }, false);
+
+            login.addEventListener('submit', (e) => {
+                e.preventDefault();
+                xhr.open("POST", "/login", true);
+                xhr.send(new FormData(login));
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        if (xhr.responseText === "OK") {
+                            pwd.style.color = "green";
+                            document.getElementById("input-password").style.color = "green";
+                        }
+                        else if (xhr.responseText === "error password") {
+                            mail.style.color = "green";
+                            pwd.className += " has-danger";
+                            pwd.style.color = "red";
+                            document.getElementById("input-password").style.color += "red";
+                        }
+                    }
+                };
+            }, false);
+        </script>
+    </body>
+
+</html>

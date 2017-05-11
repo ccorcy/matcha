@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Matcha / index</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Matcha</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Accueil <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Vos matchs</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            </div>
+        </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
+                     <h1>LOGIN</h1>
+                     <form action="/login" method="POST" id="login">
+                         <div class="form-group has-warning" id="email">
+                             <label class="form-control-label" for="email">E-Mail</label>
+                             <input class="form-control form-control-warning" type="email" name="mail" placeholder="your email" required>
+                         </div>
+                         <div class="form-group" id="password">
+                             <label class="form-control-label" for="password">Password</label>
+                             <input id="input-password" class="form-control" type="password" name="password" required>
+                             <div class="" id="feedback-password">TARTINE DE FION</div>
+                         </div>
+                         <button type="submit" class="btn btn-primary">Log In</button>
+                     </form>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+           <div class="container">
+              <span class="text-muted"><em>ccorcy 2017 / MATCHA</em></span>
+           </div>
+        </footer>
+
+        <script type="text/javascript">
+            const login = document.getElementById("login");
+            const pwd = document.getElementById("password");
+            const mail = document.getElementById("email");
+            const xhr = new XMLHttpRequest();
+
+            login.addEventListener('submit', (e) => {
+                e.preventDefault();
+                xhr.open("POST", "/login", true);
+                xhr.send(new FormData(login));
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        if (xhr.responseText === "OK") {
+                            pwd.style.color = "green";
+                            document.getElementById("input-password").style.color = "green";
+                            document.getElementById("feedback-password").innerHTML = "";
+                        }
+                        else if (xhr.responseText === "error password") {
+                            mail.style.color = "green";
+                            pwd.className += " has-danger";
+                            pwd.style.color = "red";
+                            document.getElementById("input-password").style.color += "red";
+                            document.getElementById("feedback-password").innerHTML = "Password incorrect";
+                        }
+                    }
+                };
+            }, false);
+
+
+        </script>     
+    </body>
+   
+</html>
