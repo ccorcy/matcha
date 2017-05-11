@@ -111,14 +111,16 @@ app.get('/get_users', (req,res) => {
 				if (result[0] == undefined) {
 					res.send("error mail");
 				}
-				bcrypt.compare(req.body.password, result[0].password, (err, same) => {
-					if (err) throw err;
-					if (same === true) {
-						res.send("OK");
-					} else {
-						res.send("error password");
-					}
-				});
+				else {
+					bcrypt.compare(req.body.password, result[0].password, (err, same) => {
+						if (err) throw err;
+						if (same === true) {
+							res.send("OK");
+						} else {
+							res.send("error password");
+						}
+					});
+				}
 			});
 			db.close();
 		});

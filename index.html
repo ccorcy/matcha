@@ -16,7 +16,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">Matcha</a>
+            <a class="navbar-brand" href="/">Matcha</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -33,14 +33,15 @@
             </form>
             <form class="navbar-form navbar-right" method="POST" action="/login" id="login">
                 <div class="form-group" id="email">
-                    <label class="form-control-label" for="login">Email</label>
-                    <input type="email" name="mail" class="form-control" placeholder="example@xxx.com">
+                    <label class="form-control-label" for="mail">Email</label>
+                    <input type="email" name="mail" class="form-control" placeholder="example@xxx.com" value="">
                 </div>
                 <div class="form-group" id="password">
                     <label class="form-control-label" for="password">Password</label>
                     <input id="input-password" type="password" name="password" class="form-control" placeholder="password" value="">
                 </div>
                 <button type="submit" class="btn btn-default">Log In</button>
+                <button type="button" class="btn btn-default" id="reg_button">Register</button>
             </form>
             </div>
         </div>
@@ -59,7 +60,13 @@
             const login = document.getElementById("login");
             const pwd = document.getElementById("password");
             const mail = document.getElementById("email");
+            const reg_button = document.getElementById("reg_button");
             const xhr = new XMLHttpRequest();
+
+            reg_button.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.location.href = "/register.html";
+            }, false);
 
             login.addEventListener('submit', (e) => {
                 e.preventDefault();
