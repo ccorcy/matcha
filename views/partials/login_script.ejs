@@ -1,0 +1,32 @@
+        <script type="text/javascript">
+            const login = document.getElementById("login");
+            const pwd = document.getElementById("password");
+            const usrn = document.getElementById("usrn");
+            const reg_button = document.getElementById("reg_button");
+            const xhr = new XMLHttpRequest();
+
+            reg_button.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.location.href = "/register.html";
+            }, false);
+
+            login.addEventListener('submit', (e) => {
+                e.preventDefault();
+                xhr.open("POST", "/login", true);
+                xhr.send(new FormData(login));
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        if (xhr.responseText === "OK") {
+                            pwd.style.color = "green";
+                            document.getElementById("input-password").style.color = "green";
+                        }
+                        else if (xhr.responseText === "error password") {
+                            usrn.className += " has-success";
+                            pwd.className += " has-error";
+                            pwd.style.color = "red";
+                            document.getElementById("input-password").style.color += "red";
+                        }
+                    }
+                };
+            }, false);
+        </script>

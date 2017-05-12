@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const session = require('express-session');
 const path = require('path');
 const bodyparser = require('body-parser');
 const MongoClient = require("mongodb").MongoClient;
@@ -11,41 +12,25 @@ const bcrypt = require('bcrypt');
 
 
 app.use(express.static(__dirname + '/public'));
+app.use(session( {secret: 'ccorcymatcha'} ));
 app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 
-app.get('/config/setup', (req, res) => {
-	MongoClient.connect(urlDB, (err, db) => {
-		if (err) throw err;
-
-		db.createCollection("users", (err, res) => {
-			if (err) throw err;
-			console.log("User table created !");
-		});
-		let admin = { name: "Admin", surname: "Admin", genre: "none", sex_preference: "bisexual", email: "ccorcy@student.42.fr", password: "admin" };
-		db.collection("users").insertOne(admin, (err, res) => {
-			if (err) throw err;
-			console.log("ADMIN INSERTED");
-		});
-
-
-		db.close();
-	});
-	res.send("SETUP COMPLETE");
-});
+let sess;
 
 app.get('/profile.html', (req,res) => {
+	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
-		db.collection("users").find({ name: "charles"}).toArray((err, result) => {
+		db.collection("users").find({ username: sess.username }).toArray((err, result) => {
 			if (result[0] == undefined) {
 				console.log("no user");
-				res.render('pages/profile');
+				res.render('pages/profile', {
+					obj: {}
+				});
 			} else {
 				res.render('pages/profile', {
-					name: result[0].name,
-					surname: result[0].surname,
 					obj: result[0]
 				});
 			}
@@ -58,68 +43,75 @@ app.get('/register.html', (req,res) => {
 });
 
 app.get('/', (req, res) => {
-	res.render('pages/index', {
-		name: "Charles"
-	});
-});
-
-app.get('/get_users', (req,res) => {
-	MongoClient.connect(urlDB, (err, db) => {
-		if (err) throw err;
-
-		db.collection("users").find({}).toArray((err, result) => {
-			if (err) throw err;
-
-			console.log(result);
-			res.send(result);
-			db.close();
+	sess = req.session;
+	if (sess.username == undefined) {
+		res.render('pages/index', {
+			name: sess.username
 		});
-	});
+	} else {
+		res.render('pages/index', {
+			name: sess.username
+		});
+	}
 });
-
-
 
 app.post('/register', upload.fields([]), (req, res) => {
 	let error = {
+		"username": false,
 		"email": false,
 		"password": false,
 		"password_different": false
 	};
-		if (req.body.password === null) {
-		error.password = true;
-	}
-	if (req.body.password !== req.body.vpassword) {
-		error.password_different = true;
-	}
 	if (req.body.name !== "" && req.body.surname !== "" && req.body.email !== ""
-		&& req.body.password !== "" && req.body.gender !== "")
+		&& req.body.password !== "" && req.body.username !== "")
 	{
 			bcrypt.hash(req.body.password, 10, (err, hash) => {
 			if (err) throw err;
-			let user = {
-				"name": req.body.name,
-				"surname": req.body.surname,
-				"email": req.body.email,
-				"password": hash,
-				"gender": req.body.gender
-			};
 			MongoClient.connect(urlDB, (err, db) => {
-				if (err) throw err;
-				db.collection("users").insertOne(user, (err,result) => {
-					if (err) throw err;
-					console.log("user: " + req.body.name + " added");
+				let user = {
+					"name": req.body.name,
+					"surname": req.body.surname,
+					"username": req.body.username,
+					"email": req.body.email,
+					"password": hash,
+				};
+				db.collection("users").find( {$or: [ { username: req.body.username }, { email: req.body.email }] } ).toArray((err, result) => {
+					if (result[0] != undefined) {
+						if (result[0].username === req.body.username) {
+							error.username = true;
+						}
+						if (result[0].email === req.body.email) {
+							error.email = true;
+						}
+					}
+					if (req.body.password === null) {
+						error.password = true;
+					}
+					if (req.body.password !== req.body.vpassword) {
+						error.password_different = true;
+					}
+					if (error.username === true || error.email === true || error.password === true || error.password_different === true) {
+						res.json(error);
+					} else {
+						db.collection("users").insertOne(user, (err,result) => {
+							if (err) throw err;
+							console.log("user: " + req.body.name + " added");
+						});
+						console.log("");
+						res.json(error);
+						db.close();
+					}
 				});
-				res.json(error);
-				db.close();
 			});
 		});
-		}
-	});
+	}
+});
 
 	app.post('/login', upload.fields([]), (req, res) => {
+	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
 		if (err) throw err;
-		db.collection("users").find({ "email": req.body.mail }).toArray((err, result) => {
+		db.collection("users").find({ "username": req.body.usrn }).toArray((err, result) => {
 			if (result[0] == undefined) {
 				res.send("error mail");
 			}
@@ -127,6 +119,7 @@ app.post('/register', upload.fields([]), (req, res) => {
 				bcrypt.compare(req.body.password, result[0].password, (err, same) => {
 					if (err) throw err;
 					if (same === true) {
+						sess.username = req.body.usrn;
 						res.send("OK");
 					} else {
 						res.send("error password");

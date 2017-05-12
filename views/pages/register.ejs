@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
     <head>
         <% include ../partials/head %>
@@ -8,79 +7,96 @@
             <header>
                 <% include ../partials/header %>
             </header>
-            <div class="well col-md-10 col-md-offset-2">
+            <div class="well col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-1 col-xs-8 col-xs-offset-1">
                         <form method="POST" action="/register.html" id="register">
-                            <div class="form-inline">
                                <div class="form-group"  id="name">
                                 <label for="name">Name</label>
-                                <input name="name" type="text" class="form-control" placeholder="Enter your name">
+                                <input id="name-input" name="name" type="text" class="form-control" placeholder="Enter your name">
                             </div>
                             <div class="form-group" id="surname">
                                 <label for="surname">Surname</label>
-                                <input name="surname" type="text" class="form-control" placeholder="Enter your surname">
+                                <input id="input-surname" name="surname" type="text" class="form-control" placeholder="Enter your surname">
                             </div>
+                            <div class="form-group" id="username">
+                                <label for="username">Username</label>
+                                <input id="username-input" name="username" type="text" class="form-control" placeholder="Enter a username">
+                                <small class="form-text text-muted">Your username has to be unique</small>
                             </div>
                             <div class="form-group" id="email">
                                 <label for="email">Email address</label>
-                                <input name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                                <input id="input-email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
                                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                             </div>
                             <div class="form-group" id="password">
                                 <label for="password">Password</label>
-                                <input name="password" type="password" class="form-control" placeholder="Password">
+                                <input id="input-password" name="password" type="password" class="form-control" placeholder="Password">
                             </div>
                             <div class="form-group danger" id="vpassword">
                                 <label class="form-control-label" for="vpassword">Verify Password</label>
-                                <input name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
-                            </div>
-                            <div class="form-group" id="gender">
-                                <label for="gender">Gender</label>
-                                <select name="gender" class="form-control">
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
-                                </select>
+                                <input id="input-vpassword" name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
                             </div>
                             <button id="submit" type="submit" class="btn btn-primary">Register</button>
                         </form>
                     </div>
                 </div>
             </div>
-        <footer>
-            <% include ../partials/footer %>
-        </footer>
+        <% include ../partials/footer %>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-    <script>
-        let submit = document.querySelector("#submit");
-        let form = document.querySelector("#register");
-        let xhr = new XMLHttpRequest();
+        <% include ../partials/login_script %>
+        <script type="text/javascript">
+                let submit = document.querySelector("#submit");
+                let form = document.querySelector("#register");
 
 
-        submit.addEventListener('click', (e) => {
-            e.preventDefault();
-            xhr.open("POST", "/register", true);
-            xhr.onload = () => {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    try {
-                        let data = JSON.parse(xhr.responseText);
-                        if (data.password_different === true) {
-                            document.getElementById("vpassword").className += " has-danger";
-                            document.getElementById("vpassword_input").className += " form-control-danger";
-                            console.log("password different");
+                submit.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    xhr.open("POST", "/register", true);
+                    xhr.onload = () => {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            try {
+                                let data = JSON.parse(xhr.responseText);
+                                document.getElementById("name").className += " has-success";
+                                document.getElementById("surname").className += " has-success";
+                                document.getElementById("name-input").className += " form-control-success";
+                                document.getElementById("input-surname").className += " form-control-success";
+                                if (data.password_different === true) {
+                                    document.getElementById("vpassword").className += " has-error";
+                                    document.getElementById("input-vpassword").className += " form-control-error";
+                                } else {
+                                    document.getElementById("vpassword").className += " has-success";
+                                    document.getElementById("input-vpassword").className += " form-control-success";
+                                }
+                                if (data.email === true) {
+                                    document.getElementById("email").className += " has-error";
+                                    document.getElementById("input-email").className += " form-control-error";
+                                } else {
+                                    document.getElementById("email").className += " has-success";
+                                    document.getElementById("input-email").className += " form-control-success";
+                                }
+                                if (data.password === true) {
+                                    document.getElementById("password").className += " has-error";
+                                    document.getElementById("input-password").className += " form-control-error";
+                                } else {
+                                    document.getElementById("password").className += " has-success";
+                                    document.getElementById("input-password").className += " form-control-success";
+                                }
+                                if (data.username === true) {
+                                    document.getElementById("username").className += " has-error";
+                                    document.getElementById("username-input") += " form-control-error";
+                                } else {
+                                    document.getElementById("username").className += " has-success";
+                                    document.getElementById("username-input").className += " form-control-success";
+                                }
+                            } catch(e) {
+                                console.log(e);
+                            }
                         }
-                        else {
-                            console.log("passwords OK");
-                        }
-                    } catch(e) {
-                        console.log("err");
-                    }
-                }
-            };
-            xhr.send(new FormData(form));
-        }, false);
-    </script>
+                    };
+                    xhr.send(new FormData(form));
+                }, false);
+        </script>
     </body>
 </html>
