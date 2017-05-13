@@ -1,9 +1,10 @@
         <script type="text/javascript">
             const login = document.getElementById("login");
-            const pwd = document.getElementById("password");
+            const pwd = document.getElementById("pwd");
             const usrn = document.getElementById("usrn");
             const reg_button = document.getElementById("reg_button");
             const xhr = new XMLHttpRequest();
+            const login_form = document.getElementById("loginform");
 
             reg_button.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -16,15 +17,17 @@
                 xhr.send(new FormData(login));
                 xhr.onload = () => {
                     if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(xhr.responseText);
                         if (xhr.responseText === "OK") {
-                            pwd.style.color = "green";
-                            document.getElementById("input-password").style.color = "green";
+                            document.location.reload();
                         }
                         else if (xhr.responseText === "error password") {
-                            usrn.className += " has-success";
-                            pwd.className += " has-error";
-                            pwd.style.color = "red";
-                            document.getElementById("input-password").style.color += "red";
+                            usrn.className = "form-group has-success";
+                            pwd.className = "form-group has-danger";
+                        }
+                        else if (xhr.responseText === "error mail") {
+                            usrn.className = "form-group has-danger";
+                            pwd.className = "form-group has-danger";
                         }
                     }
                 };

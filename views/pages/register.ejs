@@ -4,12 +4,24 @@
         <% include ../partials/head %>
     </head>
     <body>
-            <header>
-                <% include ../partials/header %>
-            </header>
-            <div class="well col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <div class="container" style="margin-top: 15px;">
+            <div class="jumbotron">
                 <div class="row">
-                    <div class="col-md-8 col-md-offset-1 col-xs-8 col-xs-offset-1">
+                    <div class="col">
+                        <h2>Register</h2>
+                        <p class="lead">
+                          Créez un compte pour rencontrer le partenaire qui te correspond vraiment !
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+
+                    </div>
+                    <div class="col-8">
                         <form method="POST" action="/register.html" id="register">
                                <div class="form-group"  id="name">
                                 <label for="name">Name</label>
@@ -31,20 +43,22 @@
                             </div>
                             <div class="form-group" id="password">
                                 <label for="password">Password</label>
-                                <input id="input-password" name="password" type="password" class="form-control" placeholder="Password">
+                                <input id="password-input" name="password" type="password" class="form-control" placeholder="Password">
                             </div>
                             <div class="form-group danger" id="vpassword">
                                 <label class="form-control-label" for="vpassword">Verify Password</label>
                                 <input id="input-vpassword" name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
                             </div>
-                            <button id="submit" type="submit" class="btn btn-primary">Register</button>
+                            <button id="submit" type="submit" class="btn btn-primary col-12">Register</button>
                         </form>
+                    </div>
+                    <div class="col">
+
                     </div>
                 </div>
             </div>
+        </div>
         <% include ../partials/footer %>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
         <% include ../partials/login_script %>
         <script type="text/javascript">
                 let submit = document.querySelector("#submit");
@@ -64,28 +78,28 @@
                                 document.getElementById("input-surname").className += " form-control-success";
                                 if (data.password_different === true) {
                                     document.getElementById("vpassword").className += " has-error";
-                                    document.getElementById("input-vpassword").className += " form-control-error";
+                                    document.getElementById("input-vpassword").className += " form-control-danger";
                                 } else {
                                     document.getElementById("vpassword").className += " has-success";
                                     document.getElementById("input-vpassword").className += " form-control-success";
                                 }
                                 if (data.email === true) {
-                                    document.getElementById("email").className += " has-error";
-                                    document.getElementById("input-email").className += " form-control-error";
+                                    document.getElementById("email").className += " has-danger";
+                                    document.getElementById("input-email").className += " form-control-danger";
                                 } else {
                                     document.getElementById("email").className += " has-success";
                                     document.getElementById("input-email").className += " form-control-success";
                                 }
                                 if (data.password === true) {
-                                    document.getElementById("password").className += " has-error";
-                                    document.getElementById("input-password").className += " form-control-error";
+                                    document.getElementById("password").className += " has-danger";
+                                    document.getElementById("password-input").className += " form-control-danger";
                                 } else {
                                     document.getElementById("password").className += " has-success";
-                                    document.getElementById("input-password").className += " form-control-success";
+                                    document.getElementById("password-input").className += " form-control-success";
                                 }
                                 if (data.username === true) {
-                                    document.getElementById("username").className += " has-error";
-                                    document.getElementById("username-input") += " form-control-error";
+                                    document.getElementById("username").className += " has-danger";
+                                    document.getElementById("username-input").className += " form-control-danger";
                                 } else {
                                     document.getElementById("username").className += " has-success";
                                     document.getElementById("username-input").className += " form-control-success";

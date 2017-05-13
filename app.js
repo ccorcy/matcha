@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt');
 
 
 app.use(express.static(__dirname + '/public'));
-app.use(session( {secret: 'ccorcymatcha'} ));
+app.use(session( { secret: 'ccorcymatcha' } ));
 app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -27,11 +27,13 @@ app.get('/profile.html', (req,res) => {
 			if (result[0] == undefined) {
 				console.log("no user");
 				res.render('pages/profile', {
-					obj: {}
+					obj: {},
+					name: ""
 				});
 			} else {
 				res.render('pages/profile', {
-					obj: result[0]
+					obj: result[0],
+					name: sess.username
 				});
 			}
 		});
@@ -46,13 +48,19 @@ app.get('/', (req, res) => {
 	sess = req.session;
 	if (sess.username == undefined) {
 		res.render('pages/index', {
-			name: sess.username
+			name: ""
 		});
 	} else {
 		res.render('pages/index', {
 			name: sess.username
 		});
 	}
+});
+
+app.get('/logout', (req, res) => {
+	sess = req.session;
+	sess.username = "";
+	res.send("<script type='text/javascript'> document.location.replace('/'); </script>");
 });
 
 app.post('/register', upload.fields([]), (req, res) => {
@@ -97,7 +105,6 @@ app.post('/register', upload.fields([]), (req, res) => {
 							if (err) throw err;
 							console.log("user: " + req.body.name + " added");
 						});
-						console.log("");
 						res.json(error);
 						db.close();
 					}
@@ -107,7 +114,7 @@ app.post('/register', upload.fields([]), (req, res) => {
 	}
 });
 
-	app.post('/login', upload.fields([]), (req, res) => {
+app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
 		if (err) throw err;

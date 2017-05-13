@@ -1,22 +1,47 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
     <head>
         <% include ../partials/head %>
     </head>
     <body>
         <header>
-            <% include ../partials/header %>
+            <% if (name !== "") {%>
+                <%- include("../partials/header_log"); %>
+            <% } else { %>
+                <%- include("../partials/header"); %>
+            <% }%>
         </header>
         <div class="container">
-            <h1> My profile </h1>
-            <div class="well">
-                Name: <%= obj.name %><br />
-                Surname: <%= obj.surname %> <br />
-                E-Mail: <%= obj.email %> <br />
+            <div class="jumbotron" style="margin-top: 15px">
+                <div class="row">
+                    <h1> My profile </h1>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Name: <%= obj.name %><br />
+                        Surname: <%= obj.surname %> <br />
+                        E-Mail: <%= obj.email %> <br />
+                    </div>
+                    <div class="col-4">
+                        <img height="80%" width="80%" src="pp/ccorcy.jpg" alt="profile" class="rounded">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <h1>Complete your profile</h1>
+                    </div>
+                    <div class="row">
+                        <form class="" action="index.html" method="post">
+
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
         <% include ../partials/footer %>
-        <% include ../partials/login_script %>
+        <% if (name === "") {%>
+            <%- include('../partials/login_script'); %>
+        <% } %>
+
     </body>
 </html>

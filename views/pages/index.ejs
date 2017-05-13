@@ -5,22 +5,26 @@
     </head>
     <body>
         <header>
-            <% include ../partials/header %>
+            <% if (name !== "") {%>
+                <%- include("../partials/header_log"); %>
+            <% } else { %>
+                <%- include("../partials/header"); %>
+            <% }%>
         </header>
-        <main>
-            <div class="container-fluid">
+        <div class="container">
+            <div class="jumbotron" style="margin-top: 15px">
                 <div class="row">
-                    <div class="col-md-4 col-md-offset-4">
+                    <div class="col-6">
                          <h1>Bonjour <%= name %></h1>
                          <p>lorem ipsum</p>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
         <% include ../partials/footer %>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <% include ../partials/login_script %>
+        <% if (name === "") {%>
+            <%- include('../partials/login_script'); %>
+        <% } %>
     </body>
 
 </html>
