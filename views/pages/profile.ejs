@@ -20,28 +20,79 @@
                     <div class="col-4">
                         Name: <%= obj.name %><br />
                         Surname: <%= obj.surname %> <br />
-                        E-Mail: <%= obj.email %> <br />
+                        E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
                     </div>
                     <div class="col-4">
                         <img height="80%" width="80%" src="pp/ccorcy.jpg" alt="profile" class="rounded">
                     </div>
                 </div>
+                <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
                 <div class="container">
                     <div class="row">
                         <h1>Complete your profile</h1>
                     </div>
                     <div class="row">
-                        <form class="" action="index.html" method="post">
+                        <div class="col-6">
+                            <form class="form-controller" action="index.html" method="post" id="fin_subs">
+                              <div class="form-group">
+                                <label class="form-control-label" for="age">Age: </label>
+                                <input type="number" name="age" class="form-control" value="" min="18" max="125">
+                                <small class="form-text text-muted">You must be oldier than 18 years old</small>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-control-label" for="gender">Gender: </label>
+                                <select name="gender" class="form-control">
+                                  <option value="male">Male</option>
+                                  <option value="female">Female</option>
+                                  <option value="other">Other</option>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-control-label" for="age">You are: </label>
+                                <select name="pref" class="form-control">
+                                  <option value="heterosexual">Heterosexual</option>
+                                  <option value="homosexual">Homosexual</option>
+                                  <option value="bisexual">Bisexual</option>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                  <label for="exampleInputFile">File input</label>
+                                  <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+                                  <small id="fileHelp" class="form-text text-muted">Choose your profile picture</small>
+                                </div>
+                              <button type="submit" class="btn btn-default" name="button">Finish your account creation</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
 
-                        </form>
                     </div>
                 </div>
+                <% } %>
             </div>
         </div>
         <% include ../partials/footer %>
         <% if (name === "") {%>
             <%- include('../partials/login_script'); %>
         <% } %>
-
+        <script type="text/javascript">
+          let form_fin_subs = document.getElementById("fin_subs");
+          const xhr = new XMLHttpRequest()
+          form_fin_subs.addEventListener('submit', (e) => {
+            e.preventDefault();
+            xhr.open('POST', '/finish_sub', true)
+            xhr.send(new FormData(form_fin_subs))
+            xhr.onload = () => {
+              if (xhr.status === 200 & xhr.readyState === 4) {
+                if (xhr.responseText === "ok") {
+                  alert('Your profile is now completed')
+                  document.location.reload()
+                } else {
+                  alert("Something went wrong")
+                }
+              }
+            }
+          }, false);
+        </script>
     </body>
 </html>

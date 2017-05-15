@@ -2,8 +2,8 @@
             const login = document.getElementById("login");
             const pwd = document.getElementById("pwd");
             const usrn = document.getElementById("usrn");
+            const xhrrequest = new XMLHttpRequest();
             const reg_button = document.getElementById("reg_button");
-            const xhr = new XMLHttpRequest();
             const login_form = document.getElementById("loginform");
 
             reg_button.addEventListener('click', (e) => {
@@ -13,19 +13,19 @@
 
             login.addEventListener('submit', (e) => {
                 e.preventDefault();
-                xhr.open("POST", "/login", true);
-                xhr.send(new FormData(login));
-                xhr.onload = () => {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        console.log(xhr.responseText);
-                        if (xhr.responseText === "OK") {
+                xhrrequest.open("POST", "/login", true);
+                xhrrequest.send(new FormData(login));
+                xhrrequest.onload = () => {
+                    if (xhrrequest.readyState === 4 && xhrrequest.status === 200) {
+                        console.log(xhrrequest.responseText);
+                        if (xhrrequest.responseText === "OK") {
                             document.location.reload();
                         }
-                        else if (xhr.responseText === "error password") {
+                        else if (xhrrequest.responseText === "error password") {
                             usrn.className = "form-group has-success";
                             pwd.className = "form-group has-danger";
                         }
-                        else if (xhr.responseText === "error mail") {
+                        else if (xhrrequest.responseText === "error mail") {
                             usrn.className = "form-group has-danger";
                             pwd.className = "form-group has-danger";
                         }

@@ -24,25 +24,25 @@
                     <div class="col-8">
                         <form method="POST" action="/register.html" id="register">
                                <div class="form-group"  id="name">
-                                <label for="name">Name</label>
+                                <label class="form-control-label" for="name">Name</label>
                                 <input id="name-input" name="name" type="text" class="form-control" placeholder="Enter your name">
                             </div>
                             <div class="form-group" id="surname">
-                                <label for="surname">Surname</label>
+                                <label class="form-control-label" for="surname">Surname</label>
                                 <input id="input-surname" name="surname" type="text" class="form-control" placeholder="Enter your surname">
                             </div>
                             <div class="form-group" id="username">
-                                <label for="username">Username</label>
+                                <label class="form-control-label" for="username">Username</label>
                                 <input id="username-input" name="username" type="text" class="form-control" placeholder="Enter a username">
                                 <small class="form-text text-muted">Your username has to be unique</small>
                             </div>
                             <div class="form-group" id="email">
-                                <label for="email">Email address</label>
+                                <label class="form-control-label" for="email">Email address</label>
                                 <input id="input-email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
                                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                             </div>
                             <div class="form-group" id="password">
-                                <label for="password">Password</label>
+                                <label class="form-control-label" for="password">Password</label>
                                 <input id="password-input" name="password" type="password" class="form-control" placeholder="Password">
                             </div>
                             <div class="form-group danger" id="vpassword">
@@ -61,6 +61,7 @@
         <% include ../partials/footer %>
         <% include ../partials/login_script %>
         <script type="text/javascript">
+                const xhr = new XMLHttpRequest();
                 let submit = document.querySelector("#submit");
                 let form = document.querySelector("#register");
 

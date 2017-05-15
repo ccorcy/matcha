@@ -9,7 +9,7 @@ const util = require('util');
 const multer = require('multer');
 const upload = multer();
 const bcrypt = require('bcrypt');
-
+const up = multer({ dest: 'pp/' });
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha' } ));
@@ -25,7 +25,6 @@ app.get('/profile.html', (req,res) => {
 	MongoClient.connect(urlDB, (err, db) => {
 		db.collection("users").find({ username: sess.username }).toArray((err, result) => {
 			if (result[0] == undefined) {
-				console.log("no user");
 				res.render('pages/profile', {
 					obj: {},
 					name: ""
@@ -103,7 +102,6 @@ app.post('/register', upload.fields([]), (req, res) => {
 					} else {
 						db.collection("users").insertOne(user, (err,result) => {
 							if (err) throw err;
-							console.log("user: " + req.body.name + " added");
 						});
 						res.json(error);
 						db.close();
@@ -137,5 +135,22 @@ app.post('/login', upload.fields([]), (req, res) => {
 		db.close();
 	});
 });
+
+app.post('/finish_sub', upload.fields([]), (req, res) => {
+	sess = req.session;
+	if (req.body.age >= 18 && req.body.age <= 125
+		&& (req.body.gender === "male"
+			|| req.body.gender === "female" || req.body.gender === "other")
+				&& (req.body.pref === "heterosexual" || req.body.pref === "homosexual"
+					|| req.body.pref === "bisexual") && sess.username != undefined) {
+			MongoClient.connect(urlDB, (err, db) => {
+				if (err) throw err
+				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref }} )
+				res.send("ok")
+			});
+	} else {
+			res.send("invalid request")
+	}
+})
 
 app.listen(3000);
