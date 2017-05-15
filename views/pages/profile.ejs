@@ -14,16 +14,18 @@
         <div class="container">
             <div class="jumbotron" style="margin-top: 15px">
                 <div class="row">
-                    <h1> My profile </h1>
+                    <div class="col-6">
+                        <h1> My profile </h1>
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-8">
                         Name: <%= obj.name %><br />
                         Surname: <%= obj.surname %> <br />
                         E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
                     </div>
                     <div class="col-4">
-                        <img height="80%" width="80%" src="pp/ccorcy.jpg" alt="profile" class="rounded">
+                        <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px">
                     </div>
                 </div>
                 <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
@@ -55,20 +57,36 @@
                                   <option value="bisexual">Bisexual</option>
                                 </select>
                               </div>
-                              <div class="form-group">
-                                  <label for="exampleInputFile">File input</label>
-                                  <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-                                  <small id="fileHelp" class="form-text text-muted">Choose your profile picture</small>
-                                </div>
                               <button type="submit" class="btn btn-default" name="button">Finish your account creation</button>
+                            </form>
+                        </div>
+
+                    </div>                <% } %>
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-controller" action="index.html" method="post" id="upload_pictures">
+                                <div class="form-group">
+                                    <label for="exampleInputFile">File input</label>
+                                    <input type="file" class="form-control-file" aria-describedby="fileHelp" name="profile_picture">
+                                    <small id="fileHelp" class="form-text text-muted">Choose your profile picture</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload picture</button>
                             </form>
                         </div>
                     </div>
                     <div class="row">
-
+                        <div class="col">
+                            <h1> Your pictures</h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <% for (var i = 0; i < pics.length ; i++) {%>
+                                <img src="/pp/<%= pics[i].img.filename %>" class="rounded img-fluid" style="width:200px; height: 200px">
+                            <% } %>
+                        </div>
                     </div>
                 </div>
-                <% } %>
             </div>
         </div>
         <% include ../partials/footer %>
@@ -76,14 +94,15 @@
             <%- include('../partials/login_script'); %>
         <% } %>
         <script type="text/javascript">
-          let form_fin_subs = document.getElementById("fin_subs");
           const xhr = new XMLHttpRequest()
+        <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
+          let form_fin_subs = document.getElementById("fin_subs");
           form_fin_subs.addEventListener('submit', (e) => {
-            e.preventDefault();
+            e.preventDefault()
             xhr.open('POST', '/finish_sub', true)
             xhr.send(new FormData(form_fin_subs))
             xhr.onload = () => {
-              if (xhr.status === 200 & xhr.readyState === 4) {
+              if (xhr.status === 200 && xhr.readyState === 4) {
                 if (xhr.responseText === "ok") {
                   alert('Your profile is now completed')
                   document.location.reload()
@@ -93,6 +112,25 @@
               }
             }
           }, false);
+        <% } %>
+          let sub_pics = document.getElementById("upload_pictures")
+
+          sub_pics.addEventListener('submit', (e) => {
+            e.preventDefault()
+            xhr.open('POST', '/up_pics', true)
+            xhr.send(new FormData(sub_pics))
+            xhr.onload = () => {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    if ( xhr.responseText === "OK") {
+                        alert('Upload completed')
+                        document.location.reload()
+                    } else if (xhr.responseText === "error") {
+                        alert('Something went wrong')
+                    }
+                }
+            }
+          }, false)
+
         </script>
     </body>
 </html>

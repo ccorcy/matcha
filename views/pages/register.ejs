@@ -34,20 +34,24 @@
                             <div class="form-group" id="username">
                                 <label class="form-control-label" for="username">Username</label>
                                 <input id="username-input" name="username" type="text" class="form-control" placeholder="Enter a username">
+                                <div id="username-feed" class="form-control-feedback" style="display: none">Username unavailable</div>
                                 <small class="form-text text-muted">Your username has to be unique</small>
                             </div>
                             <div class="form-group" id="email">
                                 <label class="form-control-label" for="email">Email address</label>
                                 <input id="input-email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                                <div id="email-feed" class="form-control-feedback" style="display: none">E-Mail adress already use</div>
                                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                             </div>
                             <div class="form-group" id="password">
                                 <label class="form-control-label" for="password">Password</label>
                                 <input id="password-input" name="password" type="password" class="form-control" placeholder="Password">
+                                <div id="password-feed" class="form-control-feedback" style="display: none">This password is too weak or wrong</div>
                             </div>
                             <div class="form-group danger" id="vpassword">
                                 <label class="form-control-label" for="vpassword">Verify Password</label>
                                 <input id="input-vpassword" name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
+                                <div id="vpassword-feed" class="form-control-feedback" style="display: none"></div>
                             </div>
                             <button id="submit" type="submit" class="btn btn-primary col-12">Register</button>
                         </form>
@@ -78,32 +82,40 @@
                                 document.getElementById("name-input").className += " form-control-success";
                                 document.getElementById("input-surname").className += " form-control-success";
                                 if (data.password_different === true) {
-                                    document.getElementById("vpassword").className += " has-error";
-                                    document.getElementById("input-vpassword").className += " form-control-danger";
+                                    document.getElementById("vpassword").className = "form-group has-danger";
+                                    document.getElementById("input-vpassword").className = "form-control form-control-danger";
+                                    document.getElementById("vpassword-feed").style.display = "inline";
                                 } else {
-                                    document.getElementById("vpassword").className += " has-success";
-                                    document.getElementById("input-vpassword").className += " form-control-success";
+                                    document.getElementById("vpassword").className = "form-group has-success";
+                                    document.getElementById("input-vpassword").className = "form-control form-control-success";
+                                    document.getElementById("vpassword-feed").style.display = "none";
                                 }
                                 if (data.email === true) {
-                                    document.getElementById("email").className += " has-danger";
-                                    document.getElementById("input-email").className += " form-control-danger";
+                                    document.getElementById("email").className = "form-group has-danger";
+                                    document.getElementById("input-email").className = "form-control form-control-danger";
+                                    document.getElementById("email-feed").style.display = "inline";
                                 } else {
-                                    document.getElementById("email").className += " has-success";
-                                    document.getElementById("input-email").className += " form-control-success";
+                                    document.getElementById("email").className = "form-group has-success";
+                                    document.getElementById("input-email").className = "form-control form-control-success";
+                                    document.getElementById("email-feed").style.display = "none";
                                 }
                                 if (data.password === true) {
-                                    document.getElementById("password").className += " has-danger";
-                                    document.getElementById("password-input").className += " form-control-danger";
+                                    document.getElementById("password").className = "form-group has-danger";
+                                    document.getElementById("password-input").className = "form-control form-control-danger";
+                                    document.getElementById("password-feed").style.display = "inline";
                                 } else {
-                                    document.getElementById("password").className += " has-success";
-                                    document.getElementById("password-input").className += " form-control-success";
+                                    document.getElementById("password").className = "form-group has-success";
+                                    document.getElementById("password-input").className = "form-control form-control-success";
+                                    document.getElementById("password-feed").style.display = "none";
                                 }
                                 if (data.username === true) {
-                                    document.getElementById("username").className += " has-danger";
-                                    document.getElementById("username-input").className += " form-control-danger";
+                                    document.getElementById("username").className = "form-group has-danger";
+                                    document.getElementById("username-input").className = "form-control form-control-danger";
+                                    document.getElementById("username-feed").style.display = "inline";
                                 } else {
-                                    document.getElementById("username").className += " has-success";
-                                    document.getElementById("username-input").className += " form-control-success";
+                                    document.getElementById("username").className = "form-group has-success";
+                                    document.getElementById("username-input").className = "form-control form-control-success";
+                                    document.getElementById("username-feed").style.display = "none";
                                 }
                             } catch(e) {
                                 console.log(e);
