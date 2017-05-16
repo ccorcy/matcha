@@ -10,6 +10,7 @@ const multer = require('multer');
 const upload = multer();
 const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
+const url = require('url');
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha' } ));
@@ -88,82 +89,48 @@ app.get('/', (req, res) => {
 	}
 });
 
+app.get('/update_pp', (req, res) => {
+	sess = req.session
+	let id = req.query.id
+	let ok = false
+	console.log(id);
+	if (sess.username != undefined && id != null) {
+		MongoClient.connect(urlDB, (err, db) => {
+			if (err) throw err
+			db.collection("pp").find({ username: sess.username }).toArray((err, result) => {
+				if (err) throw err
+				result.forEach((elem) => {
+					console.log(elem)
+					if (elem.img.filename === id) {
+						db.collection("users").update({ username: sess.username}, { $set: { pics: "/pp/" + id } })
+						ok = true
+						res.send("ok")
+					}
+				})
+				if (ok === false) {
+					 res.send("error")
+				}
+			})
+		})
+	} else {
+		res.send("error");
+	}
+})
+
+
 app.get('/logout', (req, res) => {
 	sess = req.session;
 	sess.username = "";
 	res.send("<script type='text/javascript'> document.location.replace('/'); </script>");
 });
 
-app.post('/register', upload.fields([]), (req, res) => {
-	let error = {
-		"username": false,
-		"email": false,
-		"password": false,
-		"password_different": false
-	};
-	if (req.body.name !== "" && req.body.surname !== "" && req.body.email !== ""
-		&& req.body.password !== "" && req.body.username !== "")
-	{
-			bcrypt.hash(req.body.password, 10, (err, hash) => {
-			if (err) throw err;
-			MongoClient.connect(urlDB, (err, db) => {
-				let user = {
-					"name": req.body.name,
-					"surname": req.body.surname,
-					"username": req.body.username,
-					"email": req.body.email,
-					"password": hash,
-				};
-				db.collection("users").find( {$or: [ { username: req.body.username }, { email: req.body.email }] } ).toArray((err, result) => {
-					if (result[0] != undefined) {
-						if (result[0].username === req.body.username) {
-							error.username = true;
-						}
-						if (result[0].email === req.body.email) {
-							error.email = true;
-						}
-					}
-					if (req.body.password === null) {
-						error.password = true;
-					}
-					if (req.body.password !== req.body.vpassword) {
-						error.password_different = true;
-					}
-					if (error.username === true || error.email === true || error.password === true || error.password_different === true) {
-						res.json(error);
-					} else {
-						db.collection("users").insertOne(user, (err,result) => {
-							if (err) throw err;
-						});
-						res.json(error);
-						db.close();
-					}
-				});
-			});
-		});
-	}
-});
+
 
 app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
 		if (err) throw err;
-		db.collection("users").find({ "username": req.body.usrn }).toArray((err, result) => {
-			if (result[0] == undefined) {
-				res.send("error mail");
-			}
-			else {
-				bcrypt.compare(req.body.password, result[0].password, (err, same) => {
-					if (err) throw err;
-					if (same === true) {
-						sess.username = req.body.usrn;
-						res.send("OK");
-					} else {
-						res.send("error password");
-					}
-				});
-			}
-		});
+		func_login(db, req.body, sess, res)
 		db.close();
 	});
 });
@@ -182,6 +149,19 @@ app.post('/up_pics', up.single('profile_picture'), (req, res, next) => {
 	}
 });
 
+app.post('/update_bio', upload.fields([]), (req, res) => {
+	sess = req.session
+	if (sess.username != undefined && req.body.bio !== "" && req.body.bio.length <= 250) {
+		MongoClient.connect(urlDB, (err, db) => {
+			if (err) throw err
+			db.collection("users").update({ username: sess.username }, { $set: { bio: req.body.bio }} )
+			res.send("ok")
+		})
+	} else {
+		res.send("error")
+	}
+})
+
 app.post('/finish_sub', upload.fields([]), (req, res) => {
 	sess = req.session;
 	if (req.body.age >= 18 && req.body.age <= 125
@@ -198,5 +178,78 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 			res.send("invalid request")
 	}
 })
+
+app.post('/register', upload.fields([]), (req, res) => {
+	let error = {
+		"username": false,
+		"email": false,
+		"password": false,
+		"password_different": false
+	};
+	if (req.body.name !== "" && req.body.surname !== "" && req.body.email !== ""
+		&& req.body.password !== "" && req.body.username !== "")
+	{
+		MongoClient.connect(urlDB, (err, db) => {
+			func_register(db, req.body, res, error)
+		})
+	}
+	});
+
+async function func_login(db, body, sess, res) {
+	let result = await db.collection("users").findOne({ username: body.usrn })
+	if (result) {
+		let comp = await bcrypt.compare(body.password, result.password)
+		if (comp) {
+			sess.username = body.usrn
+			res.end("OK")
+		} else {
+			res.end("error password")
+		}
+	} else {
+		res.end("error mail")
+	}
+}
+
+async function func_register(db, body, res, error) {
+	let pwd_hash = await bcrypt.hash(body.password, 10)
+	if (pwd_hash) {
+		let user = {
+			"name": body.name,
+			"surname": body.surname,
+			"username": body.username,
+			"email": body.email,
+			"password": pwd_hash,
+		}
+		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
+		if (users != undefined) {
+			if (users.username === body.username) {
+				error.username = true
+			}
+			if (users.email === body.email) {
+				error.email = true
+			}
+		}
+		if (body.password === null) {
+			error.password = true;
+		}
+		if (body.password !== body.vpassword) {
+			error.password_different = true;
+		}
+		console.log(error)
+		if (error.username === true || error.email === true || error.password === true || error.password_different === true) {
+			res.json(error);
+		} else {
+			db.collection("users").insertOne(user, (err,result) => {
+				if (err) throw err;
+			});
+			res.json(error);
+			db.close();
+		}
+	}
+	else {
+		res.send("error")
+	}
+}
+
 
 app.listen(3000);

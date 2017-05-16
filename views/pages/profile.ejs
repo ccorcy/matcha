@@ -19,13 +19,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-5" style="background-color: rgb(200, 195, 195); border-radius: 5px 5px 5px 5px">
                         Name: <%= obj.name %><br />
                         Surname: <%= obj.surname %> <br />
                         E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
+                        Age: <% if (obj.age != undefined) %> <%= obj.age %><br>
+                        Gender: <% if (obj.gender != undefined) %> <%= obj.gender %><br>
+                        I am: <% if (obj.pref != undefined) %> <%= obj.pref %><br>
                     </div>
                     <div class="col-4">
-                        <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px">
+
+                    </div>
+                    <div class="col-3">
+                        <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px" id="pp">
+                        <h5>Bio:</h5>
+                        <p id="biographie"><% if (obj.bio != undefined)%><%= obj.bio %></p>
                     </div>
                 </div>
                 <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
@@ -60,20 +68,29 @@
                               <button type="submit" class="btn btn-default" name="button">Finish your account creation</button>
                             </form>
                         </div>
-
                     </div>                <% } %>
                     <div class="row">
                         <div class="col">
                             <form class="form-controller" action="index.html" method="post" id="upload_pictures">
                                 <div class="form-group">
-                                    <label for="exampleInputFile">File input</label>
+                                    <label for="profile_picture">File input</label>
                                     <input type="file" class="form-control-file" aria-describedby="fileHelp" name="profile_picture">
                                     <small id="fileHelp" class="form-text text-muted">Choose your profile picture</small>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Upload picture</button>
                             </form>
                         </div>
-                    </div>
+                        <div class="col">
+                            <form class="form-controller" method="post" id="update_bio">
+                                <div class="form-group">
+                                    <label for="bio">Update bio:</label>
+                                    <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"></textarea>
+                                    <small class="form-text text-muted">(250 characters maximum)</small>
+                                    <button type="submit" name="button" class="btn btn-info">Update My Bio</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div><br><br>
                     <div class="row">
                         <div class="col">
                             <h1> Your pictures</h1>
@@ -82,7 +99,7 @@
                     <div class="row">
                         <div class="col">
                             <% for (var i = 0; i < pics.length ; i++) {%>
-                                <img src="/pp/<%= pics[i].img.filename %>" class="rounded img-fluid" style="width:200px; height: 200px">
+                                <img src="/pp/<%= pics[i].img.filename %>" id="<%= pics[i].img.filename %>" class="rounded img-fluid img_user" style="width:200px; height: 200px">
                             <% } %>
                         </div>
                     </div>
@@ -94,28 +111,28 @@
             <%- include('../partials/login_script'); %>
         <% } %>
         <script type="text/javascript">
-          const xhr = new XMLHttpRequest()
+        const xhr = new XMLHttpRequest()
         <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
-          let form_fin_subs = document.getElementById("fin_subs");
-          form_fin_subs.addEventListener('submit', (e) => {
+        let form_fin_subs = document.getElementById("fin_subs");
+        form_fin_subs.addEventListener('submit', (e) => {
             e.preventDefault()
             xhr.open('POST', '/finish_sub', true)
             xhr.send(new FormData(form_fin_subs))
             xhr.onload = () => {
-              if (xhr.status === 200 && xhr.readyState === 4) {
+            if (xhr.status === 200 && xhr.readyState === 4) {
                 if (xhr.responseText === "ok") {
-                  alert('Your profile is now completed')
-                  document.location.reload()
+                    alert('Your profile is now completed')
+                    document.location.reload()
                 } else {
-                  alert("Something went wrong")
+                    alert("Something went wrong")
+                    }
                 }
-              }
             }
-          }, false);
+        }, false);
         <% } %>
-          let sub_pics = document.getElementById("upload_pictures")
+        let sub_pics = document.getElementById("upload_pictures")
 
-          sub_pics.addEventListener('submit', (e) => {
+        sub_pics.addEventListener('submit', (e) => {
             e.preventDefault()
             xhr.open('POST', '/up_pics', true)
             xhr.send(new FormData(sub_pics))
@@ -129,7 +146,42 @@
                     }
                 }
             }
-          }, false)
+        }, false)
+
+
+        let update_bio = document.getElementById("update_bio")
+        update_bio.addEventListener('submit', (e) => {
+            e.preventDefault();
+            xhr.open('POST', '/update_bio', true)
+            xhr.send(new FormData(update_bio))
+            xhr.onload = () => {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    if (xhr.responseText === "ok") {
+                        document.getElementById("biographie").innerHTML = document.getElementById("bio").value
+                        document.getElementById("bio").value = ""
+                    } else if (xhr.responseText === "error") {
+                        alert("Don't use special character like '<' or '>'")
+                    }                }
+            }
+        }, false)
+
+        let pictures_user = document.getElementsByClassName("img_user")
+        for (let i = 0; i < pictures_user.length; i++) {
+            pictures_user[i].addEventListener('click', (e) => {
+                e.preventDefault()
+                xhr.open('GET', '/update_pp?id=' + pictures_user[i].id, true)
+                xhr.send()
+                xhr.onload = () => {
+                    if (xhr.status === 200 && xhr.readyState === 4) {
+                        if (xhr.responseText === "ok") {
+                            document.getElementById("pp").src = "/pp/" + pictures_user[i].id
+                        } else if (xhr.responseText === "error") {
+                            alert("Something went wrong :( ")
+                        }
+                    }
+                }
+            }, false)
+        }
 
         </script>
     </body>
