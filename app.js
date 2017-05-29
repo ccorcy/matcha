@@ -1,16 +1,13 @@
 const express = require('express');
 const app = express();
 const session = require('express-session');
-const path = require('path');
 const bodyparser = require('body-parser');
 const MongoClient = require("mongodb").MongoClient;
 const urlDB = "mongodb://localhost:27020/matchaDB";
-const util = require('util');
 const multer = require('multer');
 const upload = multer();
 const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
-const url = require('url');
 const func = require("./utils.js")
 
 app.use(express.static(__dirname + '/public'));
