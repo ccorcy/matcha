@@ -61,6 +61,7 @@ app.get('/profile.html', (req,res) => {
 				})
 			}
 		});
+		db.close()
 	});
 });
 
@@ -85,6 +86,29 @@ app.get('/', (req, res) => {
 					usr: usrs
 				});
 			})
+			db.close()
+		})
+	}
+});
+
+app.get('/match', (req, res) => {
+	sess = req.session;
+	if (sess.username == undefined) {
+		res.render('pages/index', {
+			name: "",
+			usr: {}
+		});
+	} else {
+		MongoClient.connect(urlDB, (err, db) => {
+			if (err) throw err
+			db.collection("users").find({}).toArray((err, usrs) => {
+				if (err) throw err
+				res.render('pages/match', {
+					name: sess.username,
+					usr: usrs
+				});
+			})
+			db.close()
 		})
 	}
 });
@@ -111,12 +135,26 @@ app.get('/update_pp', (req, res) => {
 					 res.send("error")
 				}
 			})
+			db.close()
 		})
 	} else {
 		res.send("error");
 	}
 })
 
+app.get('/like', (req, res) => {
+	sess = req.session
+	let usr = req.query.usr
+	let liked = req.query.like
+	if (sess.username !== usr) {
+		res.end("You are not " + usr)
+	} else {
+		MongoClient.connect(urlDB, (err, db) => {
+			if (err) throw err
+			find_user(db, usr, liked, res)
+		})
+	}
+})
 
 app.get('/logout', (req, res) => {
 	sess = req.session;
@@ -144,6 +182,7 @@ app.post('/up_pics', up.single('profile_picture'), (req, res, next) => {
 			db.collection("users").update({ username: sess.username }, { $set: {pics: "/pp/" + req.file.filename} } )
 			res.send("OK")
 		})
+		db.close()
 	} catch(err) {
 		res.send("error")
 	}
@@ -156,6 +195,7 @@ app.post('/update_bio', upload.fields([]), (req, res) => {
 			if (err) throw err
 			db.collection("users").update({ username: sess.username }, { $set: { bio: req.body.bio }} )
 			res.send("ok")
+			db.close()
 		})
 	} else {
 		res.send("error")
@@ -173,6 +213,7 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 				if (err) throw err
 				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref }} )
 				res.send("ok")
+				db.close()
 			});
 	} else {
 			res.send("invalid request")
@@ -207,6 +248,39 @@ async function func_login(db, body, sess, res) {
 		}
 	} else {
 		res.end("error mail")
+	}
+	db.close()
+}
+
+async function find_user(db, usrn, usr, res) {
+	let found = await db.collection("users").findOne({ username: usr })
+	if (found) {
+		let user = await db.collection("users").findOne({ username: usrn })
+		if (user) {
+			let like_info = user.like;
+			if (like_info !== "") {
+				like_info = like_info + "/" + usr
+			} else {
+				like_info = usr
+			}
+			let status = await db.collection("users").update({ username: usrn }, { $set: { like: like_info } })
+			if (status)
+				if (found.like !== undefined) {
+					if (found.like.split("/").indexOf(usrn) != -1)
+						res.end("MATCH!")
+					else {
+							res.end("Liked")
+						}
+				} else {
+					res.end("Liked")
+				}
+			else {
+				res.end("ERROR DATABASE")
+			}
+			db.close()
+		}
+	} else {
+		res.end("Error: " + usr + " doesn't exist (anymore ?)")
 	}
 }
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/head %>
+  </head>
+  <body>
+    <header>
+        <% if (name !== "") {%>
+            <%- include("../partials/header_log"); %>
+        <% } else { %>
+            <%- include("../partials/header"); %>
+        <% }%>
+    </header>
+    <span id="alert_container"></span>
+    <div class="container">
+      <div class="jumbotron" style="margin-top: 15px">
+        <% for (var i = 0; i < usr.length ; i++) { %>
+        <% if (name !== usr[i].username) {%>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        user: <%= usr[i].username %>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <img src="<%= usr[i].pics %>" class="rounded img-fluid like" style="width: 200px; height: 200px">
+                        <button style="" type="button" class="btn btn-success like" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+    <% include ../partials/footer %>
+    <% if (name === "") {%>
+        <%- include('../partials/login_script'); %>
+    <% } %>
+    <script type="text/javascript">
+    const xhr = new XMLHttpRequest()
+
+    <% if (name !== "") {%>
+      let like_button = document.getElementsByClassName("like")
+
+      for (let i = 0; i < like_button.length; i++) {
+        like_button[i].addEventListener('click', (e) => {
+          e.preventDefault()
+          xhr.open('GET', '/like?usr=<%= name %>&like=' + like_button[i].id, true)
+          xhr.send()
+          xhr.onload = () => {
+            if (xhr.status === 200 && xhr.readyState === 4) {
+              if (xhr.responseText === "OK") {
+                console.log("liked")
+              } else if (xhr.responseText === "MATCH!"){
+                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "</span></div>"
+                console.log("match")
+              } else {
+                console.log(xhr.responseText)
+              }
+            }
+          }
+        }, false)
+      }
+    <%}%>
+    </script>
+  </body>
+</html>
