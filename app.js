@@ -11,6 +11,7 @@ const upload = multer();
 const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
 const url = require('url');
+const func = require("./utils.js")
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha' } ));
@@ -26,6 +27,7 @@ app.get('/profile.html', (req,res) => {
 	MongoClient.connect(urlDB, (err, db) => {
 		db.collection("users").find({ username: sess.username }).toArray((err, result) => {
 			if (result[0] == undefined) {
+				db.close()
 				res.render('pages/profile', {
 					obj: {},
 					name: "",
@@ -41,6 +43,7 @@ app.get('/profile.html', (req,res) => {
 							profile_pic: "pp/default.png",
 							pics: []
 						});
+						db.close()
 					} else {
 						if (pic_res[0] != undefined) {
 							res.render('pages/profile', {
@@ -57,11 +60,11 @@ app.get('/profile.html', (req,res) => {
 								pics: []
 							});
 						}
+						db.close()
 					}
 				})
 			}
 		});
-		db.close()
 	});
 });
 
@@ -124,7 +127,6 @@ app.get('/update_pp', (req, res) => {
 			db.collection("pp").find({ username: sess.username }).toArray((err, result) => {
 				if (err) throw err
 				result.forEach((elem) => {
-					console.log(elem)
 					if (elem.img.filename === id) {
 						db.collection("users").update({ username: sess.username}, { $set: { pics: "/pp/" + id } })
 						ok = true
@@ -151,7 +153,7 @@ app.get('/like', (req, res) => {
 	} else {
 		MongoClient.connect(urlDB, (err, db) => {
 			if (err) throw err
-			find_user(db, usr, liked, res)
+			func.user(db, usr, liked, res)
 		})
 	}
 })
@@ -168,7 +170,7 @@ app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
 		if (err) throw err;
-		func_login(db, req.body, sess, res)
+		func.login(db, req.body, sess, res)
 		db.close();
 	});
 });
@@ -176,15 +178,16 @@ app.post('/login', upload.fields([]), (req, res) => {
 app.post('/up_pics', up.single('profile_picture'), (req, res, next) => {
 	sess = req.session;
 	try {
-		MongoClient.connect(urlDB, (err, db) => {
-			if (err) throw err
-			db.collection("pp").insertOne({ username: sess.username, img: req.file })
-			db.collection("users").update({ username: sess.username }, { $set: {pics: "/pp/" + req.file.filename} } )
-			res.send("OK")
-		})
-		db.close()
+		if (req.file == undefined) {
+			res.end("error")
+		} else {
+			MongoClient.connect(urlDB, (err, db) => {
+				if (err) throw err
+				func.up_pics(db, sess, req, res)
+			})
+		}
 	} catch(err) {
-		res.send("error")
+		res.end("error")
 	}
 });
 
@@ -231,99 +234,11 @@ app.post('/register', upload.fields([]), (req, res) => {
 		&& req.body.password !== "" && req.body.username !== "")
 	{
 		MongoClient.connect(urlDB, (err, db) => {
-			func_register(db, req.body, res, error)
+			func.register(db, req.body, res, error)
 		})
 	}
 	});
 
-async function func_login(db, body, sess, res) {
-	let result = await db.collection("users").findOne({ username: body.usrn })
-	if (result) {
-		let comp = await bcrypt.compare(body.password, result.password)
-		if (comp) {
-			sess.username = body.usrn
-			res.end("OK")
-		} else {
-			res.end("error password")
-		}
-	} else {
-		res.end("error mail")
-	}
-	db.close()
-}
-
-async function find_user(db, usrn, usr, res) {
-	let found = await db.collection("users").findOne({ username: usr })
-	if (found) {
-		let user = await db.collection("users").findOne({ username: usrn })
-		if (user) {
-			let like_info = user.like;
-			if (like_info !== "") {
-				like_info = like_info + "/" + usr
-			} else {
-				like_info = usr
-			}
-			let status = await db.collection("users").update({ username: usrn }, { $set: { like: like_info } })
-			if (status)
-				if (found.like !== undefined) {
-					if (found.like.split("/").indexOf(usrn) != -1)
-						res.end("MATCH!")
-					else {
-							res.end("Liked")
-						}
-				} else {
-					res.end("Liked")
-				}
-			else {
-				res.end("ERROR DATABASE")
-			}
-			db.close()
-		}
-	} else {
-		res.end("Error: " + usr + " doesn't exist (anymore ?)")
-	}
-}
-
-async function func_register(db, body, res, error) {
-	let pwd_hash = await bcrypt.hash(body.password, 10)
-	if (pwd_hash) {
-		let user = {
-			"name": body.name,
-			"surname": body.surname,
-			"username": body.username,
-			"email": body.email,
-			"password": pwd_hash,
-		}
-		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
-		if (users != undefined) {
-			if (users.username === body.username) {
-				error.username = true
-			}
-			if (users.email === body.email) {
-				error.email = true
-			}
-		}
-		if (body.password === null) {
-			error.password = true;
-		}
-		if (body.password !== body.vpassword) {
-			error.password_different = true;
-		}
-		console.log(error)
-		if (error.username === true || error.email === true || error.password === true || error.password_different === true) {
-			res.json(error);
-		} else {
-			db.collection("users").insertOne(user, (err,result) => {
-				if (err) throw err;
-			});
-			res.json(error);
-			db.close();
-		}
-	}
-	else {
-		res.send("error")
-	}
-}
 
 
 app.listen(3000);
