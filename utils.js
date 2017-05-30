@@ -42,7 +42,33 @@ module.exports = {
   			if (status)
   				if (found.like !== undefined) {
   					if (found.like.split("/").indexOf(usrn) != -1)
-  						res.end("MATCH!")
+            {
+              var match_usr = await db.collection("users").findOne({ username: usrn})
+              if (match_usr) {
+                if (match_usr.match != "") {
+                  match_usr = match_usr.match
+                } else {
+                  match_usr = "/"
+                }
+              }
+              let status = await db.collection("users").update({username: usrn}, { $set: { match: match_usr + "/" + usr } })
+              if (!status) {
+                console.log("error cannot update base for match, user: " + usrn)
+              }
+              match_usr = await db.collection("users").findOne({ username: usr})
+              if (match_usr) {
+                if (match_usr.match != "") {
+                  match_usr = match_usr.match
+                } else {
+                  match_usr = "/"
+                }
+              }
+              status = await db.collection("users").update({ username: usr}, { $set: { match: match_usr + "/" + usrn}})
+              if (!status) {
+                console.log("error cannot update base for match, user: " + usr)
+              }
+              res.end("MATCH!")
+            }
   					else {
   							res.end("Liked")
   						}
