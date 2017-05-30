@@ -11,7 +11,9 @@ const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
 
 app.use(express.static(__dirname + '/public'));
-app.use(session( { secret: 'ccorcymatcha' } ));
+app.use(session( { secret: 'ccorcymatcha',
+ 									 resave: true,
+								 	 saveUninitialized: true }));
 app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
