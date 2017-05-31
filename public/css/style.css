@@ -1,0 +1,32 @@
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #FF5F6D;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFC371, #FF5F6D);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FFC371, #FF5F6D); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+h1 {
+  color:#FF5F6D;
+  font-family: 'Hind', sans-serif;
+}
+
+#biographie {
+  color: #ec4755;
+}
+
+#reg_button, #log_button {
+  color:  #FF5F6D;
+  background-color: initial;
+  border-color: #FF5F6D;
+  width: 100%;
+}
+#reg_button:hover, #log_button:hover {
+  color: rgb(236,238,239);
+  background-color: #FF5F6D;
+  border-color: rgb(236,238,239);
+  width: 100%;
+}

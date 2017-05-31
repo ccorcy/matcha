@@ -32,52 +32,58 @@ module.exports = {
   	if (found) {
   		let user = await db.collection("users").findOne({ username: usrn })
   		if (user) {
-  			let like_info = user.like;
-  			if (like_info !== "") {
-  				like_info = like_info + "/" + usr
-  			} else {
-  				like_info = usr
-  			}
-  			let status = await db.collection("users").update({ username: usrn }, { $set: { like: like_info } })
-  			if (status)
-  				if (found.like !== undefined) {
-  					if (found.like.split("/").indexOf(usrn) != -1)
-            {
-              var match_usr = await db.collection("users").findOne({ username: usrn})
-              if (match_usr) {
-                if (match_usr.match != "") {
-                  match_usr = match_usr.match
-                } else {
-                  match_usr = "/"
+  			var like_info = "/";
+  			if (user.like != undefined) {
+          like_info = user.like
+        }
+        if (like_info.split("/").indexOf(usr) == -1) {
+          let status = await db.collection("users").update({ username: usrn }, { $set: { like: like_info + "/" + usr } })
+          if (status) {
+            if (found.like != undefined) {
+              if (found.like.split("/").indexOf(usrn) != -1)
+              {
+                var match_usr = await db.collection("users").findOne({ username: usrn})
+                if (match_usr) {
+                  if (match_usr.match != undefined) {
+                    match_usr = match_usr.match
+                  } else {
+                    match_usr = "/"
+                  }
+                  if (match_usr.split("/").indexOf(usr) == -1) {
+                    let status = await db.collection("users").update({username: usrn}, { $set: { match: match_usr + "/" + usr } })
+                    if (!status) {
+                      console.log("error cannot update base for match, user: " + usrn)
+                    }
+                    match_usr = await db.collection("users").findOne({ username: usr})
+                    if (match_usr) {
+                      if (match_usr.match != undefined) {
+                        match_usr = match_usr.match
+                      } else {
+                        match_usr = "/"
+                      }
+                    }
+                    status = await db.collection("users").update({ username: usr}, { $set: { match: match_usr + "/" + usrn}})
+                    if (!status) {
+                      console.log("error cannot update base for match, user: " + usr)
+                    }
+                    res.end("MATCH!")
+                  } else {
+                    res.end("User and you already match")
+                  }
                 }
+              } else {
+                  res.end("Liked")
               }
-              let status = await db.collection("users").update({username: usrn}, { $set: { match: match_usr + "/" + usr } })
-              if (!status) {
-                console.log("error cannot update base for match, user: " + usrn)
-              }
-              match_usr = await db.collection("users").findOne({ username: usr})
-              if (match_usr) {
-                if (match_usr.match != "") {
-                  match_usr = match_usr.match
-                } else {
-                  match_usr = "/"
-                }
-              }
-              status = await db.collection("users").update({ username: usr}, { $set: { match: match_usr + "/" + usrn}})
-              if (!status) {
-                console.log("error cannot update base for match, user: " + usr)
-              }
-              res.end("MATCH!")
+            } else {
+              res.end("Liked")
             }
-  					else {
-  							res.end("Liked")
-  						}
-  				} else {
-  					res.end("Liked")
-  				}
-  			else {
-  				res.end("ERROR DATABASE")
-  			}
+          }
+          else {
+            res.end("ERROR DATABASE")
+          }
+        } else {
+          res.end("User already liked")
+        }
   			db.close()
   		}
   	} else {

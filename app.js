@@ -9,6 +9,7 @@ const upload = multer();
 const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
+const routes = require("./routes.js")
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -22,49 +23,7 @@ app.set('view engine', 'ejs');
 let sess;
 
 app.get('/profile.html', (req,res) => {
-	sess = req.session;
-	MongoClient.connect(urlDB, (err, db) => {
-		db.collection("users").find({ username: sess.username }).toArray((err, result) => {
-			if (result[0] == undefined) {
-				db.close()
-				res.render('pages/profile', {
-					obj: {},
-					name: "",
-					profile_pic: "pp/default.png",
-					pics: []
-				});
-			} else {
-				db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
-					if (err) {
-						res.render('pages/profile', {
-							obj: result[0],
-							name: sess.username,
-							profile_pic: "pp/default.png",
-							pics: []
-						});
-						db.close()
-					} else {
-						if (pic_res[0] != undefined) {
-							res.render('pages/profile', {
-								obj: result[0],
-								name: sess.username,
-								profile_pic: result[0].pics,
-								pics: pic_res
-							});
-						} else {
-							res.render('pages/profile', {
-								obj: result[0],
-								name: sess.username,
-								profile_pic: "pp/default.png",
-								pics: []
-							});
-						}
-						db.close()
-					}
-				})
-			}
-		});
-	});
+  routes.profile(req, res, sess)
 });
 
 app.get('/register.html', (req,res) => {
@@ -72,89 +31,19 @@ app.get('/register.html', (req,res) => {
 });
 
 app.get('/', (req, res) => {
-	sess = req.session;
-	if (sess.username == undefined) {
-		res.render('pages/index', {
-			name: "",
-			usr: {}
-		});
-	} else {
-		MongoClient.connect(urlDB, (err, db) => {
-			if (err) throw err
-			db.collection("users").find({}).toArray((err, usrs) => {
-				if (err) throw err
-				res.render('pages/index', {
-					name: sess.username,
-					usr: usrs
-				});
-			})
-			db.close()
-		})
-	}
+	routes.index(req, res, sess)
 });
 
-app.get('/match', (req, res) => {
-	sess = req.session;
-	if (sess.username == undefined) {
-		res.render('pages/index', {
-			name: "",
-			usr: {}
-		});
-	} else {
-		MongoClient.connect(urlDB, (err, db) => {
-			if (err) throw err
-			db.collection("users").find({}).toArray((err, usrs) => {
-				if (err) throw err
-				res.render('pages/match', {
-					name: sess.username,
-					usr: usrs
-				});
-			})
-			db.close()
-		})
-	}
+app.get('/like_page', (req, res) => {
+	routes.like_page(req, res, sess)
 });
 
 app.get('/update_pp', (req, res) => {
-	sess = req.session
-	let id = req.query.id
-	let ok = false
-	console.log(id);
-	if (sess.username != undefined && id != null) {
-		MongoClient.connect(urlDB, (err, db) => {
-			if (err) throw err
-			db.collection("pp").find({ username: sess.username }).toArray((err, result) => {
-				if (err) throw err
-				result.forEach((elem) => {
-					if (elem.img.filename === id) {
-						db.collection("users").update({ username: sess.username}, { $set: { pics: "/pp/" + id } })
-						ok = true
-						res.send("ok")
-					}
-				})
-				if (ok === false) {
-					 res.send("error")
-				}
-			})
-			db.close()
-		})
-	} else {
-		res.send("error");
-	}
+	routes.update_pp(req, res, sess)
 })
 
 app.get('/like', (req, res) => {
-	sess = req.session
-	let usr = req.query.usr
-	let liked = req.query.like
-	if (sess.username !== usr) {
-		res.end("You are not " + usr)
-	} else {
-		MongoClient.connect(urlDB, (err, db) => {
-			if (err) throw err
-			func.user(db, usr, liked, res)
-		})
-	}
+	routes.like(req, res, sess)
 })
 
 app.get('/logout', (req, res) => {
@@ -175,19 +64,7 @@ app.post('/login', upload.fields([]), (req, res) => {
 });
 
 app.post('/up_pics', up.single('profile_picture'), (req, res, next) => {
-	sess = req.session;
-	try {
-		if (req.file == undefined) {
-			res.end("error")
-		} else {
-			MongoClient.connect(urlDB, (err, db) => {
-				if (err) throw err
-				func.up_pics(db, sess, req, res)
-			})
-		}
-	} catch(err) {
-		res.end("error")
-	}
+	routes.up_pics(req, res, sess)
 });
 
 app.post('/update_bio', upload.fields([]), (req, res) => {

@@ -19,7 +19,7 @@
                     if (xhrrequest.readyState === 4 && xhrrequest.status === 200) {
                         console.log(xhrrequest.responseText);
                         if (xhrrequest.responseText === "OK") {
-                            document.location.reload();
+                            document.location.replace("/like_page");
                         }
                         else if (xhrrequest.responseText === "error password") {
                             usrn.className = "form-group has-success";

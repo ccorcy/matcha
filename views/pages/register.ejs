@@ -117,6 +117,9 @@
                                     document.getElementById("username-input").className = "form-control form-control-success";
                                     document.getElementById("username-feed").style.display = "none";
                                 }
+                                if (data.password === false && data.password_different === false && data.username === false && data.email === false) {
+                                    document.location.replace("/")
+                                }
                             } catch(e) {
                                 console.log(e);
                             }

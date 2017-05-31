@@ -15,7 +15,7 @@
     <div class="container">
       <div class="jumbotron" style="margin-top: 15px">
         <% for (var i = 0; i < usr.length ; i++) { %>
-        <% if (name !== usr[i].username) {%>
+        <% if (name !== usr[i].username && like.split("/").indexOf(usr[i].username) == -1) {%>
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -53,13 +53,12 @@
           xhr.send()
           xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
-              if (xhr.responseText === "OK") {
-                console.log("liked")
+              if (xhr.responseText === "Liked") {
+                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-info alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "</span></div>"
               } else if (xhr.responseText === "MATCH!"){
                 document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "</span></div>"
-                console.log("match")
               } else {
-                console.log(xhr.responseText)
+                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-danger alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
               }
             }
           }

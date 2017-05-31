@@ -14,29 +14,39 @@
         <div class="container">
             <div class="jumbotron" style="margin-top: 15px">
                 <div class="row">
-                    <div class="col-6">
-                        <h1> My profile </h1>
+                  <div class="col">
+                    <h1>My profile</h1>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px" id="pp">
+                  </div>
+                  <div class="col-2">
+                    <%= obj.username %>
+                  </div>
+                  <div class="col-7">
+                    <p id="biographie"><% if (obj.bio != undefined)%><%= obj.bio %></p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <h1>My private informations </h1>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-5" style="background-color: rgb(200, 195, 195); border-radius: 5px 5px 5px 5px">
+                    <div class="col" style="">
                         Name: <%= obj.name %><br />
                         Surname: <%= obj.surname %> <br />
                         E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
                         Age: <% if (obj.age != undefined) %> <%= obj.age %><br>
-                        Gender: <% if (obj.gender != undefined) %> <%= obj.gender %><br>
-                        I am: <% if (obj.pref != undefined) %> <%= obj.pref %><br>
-                    </div>
-                    <div class="col-4">
-
-                    </div>
-                    <div class="col-3">
-                        <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px" id="pp">
-                        <h5>Bio:</h5>
-                        <p id="biographie"><% if (obj.bio != undefined)%><%= obj.bio %></p>
+                        Gender: <i><% if (obj.gender != undefined) %> <%= obj.gender %></i><br>
+                        I am: <i><% if (obj.pref != undefined) %> <%= obj.pref %></i><br>
                     </div>
                 </div>
                 <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
+                <hr>
                 <div class="container">
                     <div class="row">
                         <h1>Complete your profile</h1>
@@ -69,6 +79,12 @@
                             </form>
                         </div>
                     </div>                <% } %>
+                    <hr>
+                    <div class="row">
+                      <div class="col">
+                        <h1>Upload pictures / Update your bio </h1>
+                      </div>
+                    </div>
                     <div class="row">
                         <div class="col">
                             <form class="form-controller" action="index.html" method="post" id="upload_pictures">
