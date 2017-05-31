@@ -68,11 +68,11 @@
                                 </select>
                               </div>
                               <div class="form-group">
-                                <label class="form-control-label" for="age">You are: </label>
+                                <label class="form-control-label" for="age">You are searching for: </label>
                                 <select name="pref" class="form-control">
-                                  <option value="heterosexual">Heterosexual</option>
-                                  <option value="homosexual">Homosexual</option>
-                                  <option value="bisexual">Bisexual</option>
+                                  <option value="male">Men</option>
+                                  <option value="female">Women</option>
+                                  <option value="other">Both</option>
                                 </select>
                               </div>
                               <button type="submit" class="btn btn-default" name="button">Finish your account creation</button>
@@ -89,9 +89,9 @@
                         <div class="col">
                             <form class="form-controller" action="index.html" method="post" id="upload_pictures">
                                 <div class="form-group">
-                                    <label for="profile_picture">File input</label>
+                                    <label for="profile_picture">Upload your photo:</label>
                                     <input type="file" class="form-control-file" aria-describedby="fileHelp" name="profile_picture">
-                                    <small id="fileHelp" class="form-text text-muted">Choose your profile picture</small>
+                                    <small id="fileHelp" class="form-text text-muted">Choose the photo that you want to upload</small>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Upload picture</button>
                             </form>
@@ -100,7 +100,7 @@
                             <form class="form-controller" method="post" id="update_bio">
                                 <div class="form-group">
                                     <label for="bio">Update bio:</label>
-                                    <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"></textarea>
+                                    <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"><%= obj.bio %></textarea>
                                     <small class="form-text text-muted">(250 characters maximum)</small>
                                     <button type="submit" name="button" class="btn btn-info">Update My Bio</button>
                                 </div>
@@ -174,7 +174,6 @@
                 if (xhr.status === 200 && xhr.readyState === 4) {
                     if (xhr.responseText === "ok") {
                         document.getElementById("biographie").innerHTML = document.getElementById("bio").value
-                        document.getElementById("bio").value = ""
                     } else if (xhr.responseText === "error") {
                         alert("Don't use special character like '<' or '>'")
                     }                }

@@ -98,6 +98,7 @@ module.exports = {
             }
             res.render('pages/like', {
               name: sess.username,
+              user: user,
               like: like,
               usr: usrs
             });

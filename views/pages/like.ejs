@@ -15,7 +15,7 @@
     <div class="container">
       <div class="jumbotron" style="margin-top: 15px">
         <% for (var i = 0; i < usr.length ; i++) { %>
-        <% if (name !== usr[i].username && like.split("/").indexOf(usr[i].username) == -1) {%>
+        <% if (name !== usr[i].username && like.split("/").indexOf(usr[i].username) == -1 && user.pref === usr[i].gender) { %>
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -25,10 +25,16 @@
 
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <img src="<%= usr[i].pics %>" class="rounded img-fluid like" style="width: 200px; height: 200px">
-                        <button style="" type="button" class="btn btn-success like" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
-                    </div>
+                  <div class="col">
+
+                  </div>
+                  <div class="col-4">
+                      <img src="<%= usr[i].pics %>" class="rounded img-fluid like" style="width: 200px; height: 200px">
+                      <button style="" type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                  </div>
+                  <div class="col">
+
+                  </div>
                 </div>
             </div>
         </div>
@@ -44,7 +50,7 @@
     const xhr = new XMLHttpRequest()
 
     <% if (name !== "") {%>
-      let like_button = document.getElementsByClassName("like")
+      let like_button = document.getElementsByClassName("like_button")
 
       for (let i = 0; i < like_button.length; i++) {
         like_button[i].addEventListener('click', (e) => {
@@ -54,11 +60,11 @@
           xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
               if (xhr.responseText === "Liked") {
-                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-info alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "</span></div>"
+                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-info alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
               } else if (xhr.responseText === "MATCH!"){
-                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "</span></div>"
+                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
               } else {
-                document.getElementById('alert_container').innerHTML = "<div style='position: absolute; top: 25px' id='alert_container' class='alert alert-danger alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
+                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-danger alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "       </span></div>"
               }
             }
           }

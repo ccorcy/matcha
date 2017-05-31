@@ -11,9 +11,9 @@
             <div class="jumbotron">
                 <div class="row">
                     <div class="col">
-                        <h2>Register</h2>
+                        <h1>Register</h1>
                         <p class="lead">
-                          Créez un compte pour rencontrer le partenaire qui te correspond vraiment !
+                          Create your account to find your soulmate !
                         </p>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                         <form method="POST" action="/register.html" id="register">
                                <div class="form-group"  id="name">
                                 <label class="form-control-label" for="name">Name</label>
-                                <input id="name-input" name="name" type="text" class="form-control" placeholder="Enter your name">
+                                <input id="input-name" name="name" type="text" class="form-control" placeholder="Enter your name">
                             </div>
                             <div class="form-group" id="surname">
                                 <label class="form-control-label" for="surname">Surname</label>
@@ -51,7 +51,7 @@
                             <div class="form-group danger" id="vpassword">
                                 <label class="form-control-label" for="vpassword">Verify Password</label>
                                 <input id="input-vpassword" name="vpassword" type="password" class="form-control form-control-danger" placeholder="Password" id="vpassword_input">
-                                <div id="vpassword-feed" class="form-control-feedback" style="display: none"></div>
+                                <div id="vpassword-feed" class="form-control-feedback" style="display: none">The two passwords are differents</div>
                             </div>
                             <button id="submit" type="submit" class="btn btn-primary col-12">Register</button>
                         </form>
@@ -77,10 +77,6 @@
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             try {
                                 let data = JSON.parse(xhr.responseText);
-                                document.getElementById("name").className += " has-success";
-                                document.getElementById("surname").className += " has-success";
-                                document.getElementById("name-input").className += " form-control-success";
-                                document.getElementById("input-surname").className += " form-control-success";
                                 if (data.password_different === true) {
                                     document.getElementById("vpassword").className = "form-group has-danger";
                                     document.getElementById("input-vpassword").className = "form-control form-control-danger";
@@ -117,7 +113,21 @@
                                     document.getElementById("username-input").className = "form-control form-control-success";
                                     document.getElementById("username-feed").style.display = "none";
                                 }
-                                if (data.password === false && data.password_different === false && data.username === false && data.email === false) {
+                                if (data.name === true) {
+                                  document.getElementById("name").className = "form-group has-danger"
+                                  document.getElementById("input-name").className = "form-control form-control-danger"
+                                } else {
+                                  document.getElementById("name").className = "form-group has-success"
+                                  document.getElementById("input-name").className = "form-control form-control-success"
+                                }
+                                if (data.surname === true) {
+                                  document.getElementById("surname").className = "form-group has-danger"
+                                  document.getElementById("input-surname").className = "form-control form-control-danger"
+                                } else {
+                                  document.getElementById("surname").className = "form-group has-success"
+                                  document.getElementById("input-surname").className = "form-control form-control-success"
+                                }
+                                if (data.password === false && data.password_different === false && data.username === false && data.email === false && data.name === false && data.surname === false) {
                                     document.location.replace("/")
                                 }
                             } catch(e) {

@@ -18,15 +18,19 @@ h1 {
   color: #ec4755;
 }
 
-#reg_button, #log_button {
-  color:  #FF5F6D;
+#reg_button, #log_button, .like_button, #submit {
+  color: #FF5F6D;
   background-color: initial;
   border-color: #FF5F6D;
   width: 100%;
 }
-#reg_button:hover, #log_button:hover {
+#reg_button:hover, #log_button:hover, .like_button:hover, #submit:hover {
   color: rgb(236,238,239);
   background-color: #FF5F6D;
   border-color: rgb(236,238,239);
   width: 100%;
+}
+
+.like_button {
+  margin-top: -63px;
 }

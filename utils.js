@@ -110,10 +110,22 @@ module.exports = {
   				error.email = true
   			}
   		}
-  		if (body.password === null) {
+      if (body.name == "") {
+        error.name = true
+      }
+      if (body.surname == "") {
+        error.surname = true
+      }
+      if (body.username == "") {
+        error.username = true
+      }
+      if (body.email == "") {
+        error.email = true
+      }
+  		if (body.password == "") {
   			error.password = true;
   		}
-  		if (body.password !== body.vpassword) {
+  		if (body.password !== body.vpassword || body.vpassword == "") {
   			error.password_different = true;
   		}
   		if (error.username === true || error.email === true || error.password === true || error.password_different === true) {

@@ -86,8 +86,8 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 	if (req.body.age >= 18 && req.body.age <= 125
 		&& (req.body.gender === "male"
 			|| req.body.gender === "female" || req.body.gender === "other")
-				&& (req.body.pref === "heterosexual" || req.body.pref === "homosexual"
-					|| req.body.pref === "bisexual") && sess.username != undefined) {
+				&& (req.body.pref === "male" || req.body.pref === "female"
+					|| req.body.pref === "other") && sess.username != undefined) {
 			MongoClient.connect(urlDB, (err, db) => {
 				if (err) throw err
 				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref }} )
@@ -101,19 +101,17 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 
 app.post('/register', upload.fields([]), (req, res) => {
 	let error = {
+    "name": false,
+    "surname": false,
 		"username": false,
 		"email": false,
 		"password": false,
 		"password_different": false
 	};
-	if (req.body.name !== "" && req.body.surname !== "" && req.body.email !== ""
-		&& req.body.password !== "" && req.body.username !== "")
-	{
-		MongoClient.connect(urlDB, (err, db) => {
-			func.register(db, req.body, res, error)
-		})
-	}
-	});
+	MongoClient.connect(urlDB, (err, db) => {
+		func.register(db, req.body, res, error)
+	})
+});
 
 
 
