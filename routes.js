@@ -165,8 +165,30 @@ module.exports = {
   		res.end("error")
   	}
   },
-  match: function (req, res, sess) {
+  match: async function (req, res, sess, db) {
     sess = req.session
 
+    let result = await db.collection("users").findOne({ username: sess.username})
+    if (result) {
+      let usrs = await db.collection("users").find({ gender: result.pref }).toArray()
+      if (result.match != "") {
+        result = result.match.split("/")
+      } else {
+        result = []
+      }
+      if (usrs) {
+        console.log(usrs)
+        res.render('pages/match', {
+          name: sess.username,
+          usr_matched: result,
+          usrs: usrs
+        })
+        db.close()
+      } else {
+        db.close()
+      }
+    } else {
+      db.close()
+    }
   }
 }

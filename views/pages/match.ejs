@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/head %>
+  </head>
+  <body>
+    <% include ../partials/header_log %>
+    <div class="container" style="margin-top: 15px">
+      <div class="jumbotron">
+        <% for (var i = 0; i < usrs.length ; i++) { %>
+        <% if (name !== usrs[i].username && usr_matched.indexOf(usrs[i].username) != -1) { %>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                  <div class="col-7">
+                      <div style="background-color: rgba(0,0,0,0)">
+                        <img src="<%= usrs[i].pics %>" class="rounded mx-auto d-block like" style=" display: block;width: auto;height: auto; max-height: 200px">
+                      </div>
+                      <span class="name_pic text-center" style="margin-top: -63px"><%= usrs[i].name %> <%= usrs[i].surname %></span><br>
+                      <span class="age_pic text-center"><%= usrs[i].age %> yo</span>
+                  </div>
+                  <div class="col">
+                      <p style="color:#FF5F6D; "><%= usrs[i].bio %></p>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <% include ../partials/footer %>
+  </body>
+</html>

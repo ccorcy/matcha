@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
 const routes = require("./routes.js")
+const favicon = require('serve-favicon')
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -17,6 +18,7 @@ app.use(session( { secret: 'ccorcymatcha',
 								 	 saveUninitialized: true }));
 app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
+app.use(favicon(__dirname + '/public/favicon.ico'))
 app.set('view engine', 'ejs');
 
 
@@ -46,13 +48,22 @@ app.get('/like', (req, res) => {
 	routes.like(req, res, sess)
 })
 
+app.get('/match', (req, res) => {
+  MongoClient.connect(urlDB, (err, db) => {
+    if (err) throw err
+    routes.match(req, res, sess, db)
+  })
+})
+
 app.get('/logout', (req, res) => {
 	sess = req.session;
 	sess.username = "";
 	res.send("<script type='text/javascript'> document.location.replace('/'); </script>");
 });
 
-
+app.get('/login', (req, res) => {
+  res.render('pages/login')
+})
 
 app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;

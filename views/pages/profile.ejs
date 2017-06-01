@@ -20,7 +20,7 @@
                 </div>
                 <div class="row">
                   <div class="col">
-                    <img src="<%= profile_pic %>" alt="profile" class="rounded img-fluid" style="width:200px; height: 200px" id="pp">
+                    <img src="<%= profile_pic %>" alt="profile" class="rounded" style="width:200px; height: 200px" id="pp">
                   </div>
                   <div class="col-2">
                     <%= obj.username %>
@@ -42,9 +42,16 @@
                         E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
                         Age: <% if (obj.age != undefined) %> <%= obj.age %><br>
                         Gender: <i><% if (obj.gender != undefined) %> <%= obj.gender %></i><br>
-                        I am: <i><% if (obj.pref != undefined) %> <%= obj.pref %></i><br>
+                        I am searching for <i><% if (obj.pref != undefined) {
+                            if (obj.pref === "male") {
+                              %> men
+                            <% } else if (obj.pref === "female") {
+                                %> women <% } else if (obj.pref === "other") {
+                                  %> men or women <% }
+                          }
+                      %> </i><br>
                     </div>
-                </div>
+                </div><br>
                 <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
                 <hr>
                 <div class="container">
@@ -91,7 +98,8 @@
                                 <div class="form-group">
                                     <label for="profile_picture">Upload your photo:</label>
                                     <input type="file" class="form-control-file" aria-describedby="fileHelp" name="profile_picture">
-                                    <small id="fileHelp" class="form-text text-muted">Choose the photo that you want to upload</small>
+                                    <small id="fileHelp" class="form-text text-muted">Choose the photo that you want to upload <br>
+                                    A 200x200 picture is better</small>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Upload picture</button>
                             </form>
@@ -106,7 +114,7 @@
                                 </div>
                             </form>
                         </div>
-                    </div><br><br>
+                    </div><br><hr>
                     <div class="row">
                         <div class="col">
                             <h1> Your pictures</h1>

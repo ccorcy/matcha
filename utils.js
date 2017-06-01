@@ -92,7 +92,11 @@ module.exports = {
   },
 
   register: async function (db, body, res, error) {
-  	let pwd_hash = await bcrypt.hash(body.password, 10)
+    let regName = /^[a-zA-Z]{4,20}$/
+    let regUsername = /^[a-zA-Z0-9]{6,20}$/
+    let regMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    let regPwd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+    let pwd_hash = await bcrypt.hash(body.password, 10)
   	if (pwd_hash) {
   		let user = {
   			"name": body.name,
@@ -103,32 +107,32 @@ module.exports = {
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
   		if (users != undefined) {
-  			if (users.username === body.username) {
+  			if (users.username === body.username || regUsername.test(body.username) === false) {
   				error.username = true
   			}
   			if (users.email === body.email) {
   				error.email = true
   			}
   		}
-      if (body.name == "") {
+      if (body.name == "" || regName.test(body.name) === false) {
         error.name = true
       }
-      if (body.surname == "") {
+      if (body.surname == "" || regName.test(body.surname) === false) {
         error.surname = true
       }
       if (body.username == "") {
         error.username = true
       }
-      if (body.email == "") {
+      if (body.email == "" || regMail.test(body.email) === false) {
         error.email = true
       }
-  		if (body.password == "") {
+  		if (body.password == "" || regPwd.test(body.password) === false) {
   			error.password = true;
   		}
   		if (body.password !== body.vpassword || body.vpassword == "") {
   			error.password_different = true;
   		}
-  		if (error.username === true || error.email === true || error.password === true || error.password_different === true) {
+  		if (error.name === true || error.surname === true || error.username === true || error.email === true || error.password === true || error.password_different === true) {
   			res.json(error);
   		} else {
   			db.collection("users").insertOne(user, (err,result) => {

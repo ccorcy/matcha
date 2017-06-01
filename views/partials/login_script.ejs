@@ -3,13 +3,8 @@
             const pwd = document.getElementById("pwd");
             const usrn = document.getElementById("usrn");
             const xhrrequest = new XMLHttpRequest();
-            const reg_button = document.getElementById("reg_button");
             const login_form = document.getElementById("loginform");
 
-            reg_button.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.location.href = "/register.html";
-            }, false);
 
             login.addEventListener('submit', (e) => {
                 e.preventDefault();

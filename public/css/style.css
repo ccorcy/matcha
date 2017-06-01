@@ -14,17 +14,21 @@ h1 {
   font-family: 'Hind', sans-serif;
 }
 
+i {
+  color: #FF5F6D;
+}
+
 #biographie {
   color: #ec4755;
 }
 
-#reg_button, #log_button, .like_button, #submit {
+#reg_button, #log_button, .like_button, #submit, #login_button, .matcha_button {
   color: #FF5F6D;
   background-color: initial;
   border-color: #FF5F6D;
   width: 100%;
 }
-#reg_button:hover, #log_button:hover, .like_button:hover, #submit:hover {
+#reg_button:hover, #log_button:hover, .like_button:hover, #submit:hover, #login_button:hover, .matcha_button:hover {
   color: rgb(236,238,239);
   background-color: #FF5F6D;
   border-color: rgb(236,238,239);
@@ -33,4 +37,9 @@ h1 {
 
 .like_button {
   margin-top: -63px;
+  width: 200px;
+}
+
+.like_button:hover {
+  width: 200px;
 }
