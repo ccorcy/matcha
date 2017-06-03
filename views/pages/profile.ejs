@@ -17,16 +17,17 @@
                   <div class="col">
                     <h1>My profile</h1>
                   </div>
-                </div>
+                </div><br>
                 <div class="row">
-                  <div class="col">
-                    <img src="<%= profile_pic %>" alt="profile" class="rounded" style="width:200px; height: 200px" id="pp">
+                  <div class="col-4">
+                    <div style="background-color: rgba(224, 166, 77, 0)">
+                      <img src="<%= obj.pics %>" class="rounded mx-auto d-block like" style="width: 200px; height: 200px" id="pp">
+                    </div>
                   </div>
-                  <div class="col-2">
-                    <%= obj.username %>
-                  </div>
-                  <div class="col-7">
-                    <p id="biographie"><% if (obj.bio != undefined)%><%= obj.bio %></p>
+                  <div class="col" style=" border: 1px dashed #FF5F6D;">
+                    <h4>About me:</h4>
+                    <small class="text-muted"><%= obj.age %> years old</small>
+                    <p id="biographie" style="color:#FF5F6D;"><%= obj.bio %></p>
                   </div>
                 </div>
                 <hr>
@@ -34,15 +35,13 @@
                     <div class="col">
                         <h1>My private informations </h1>
                     </div>
-                </div>
+                </div><br>
                 <div class="row">
                     <div class="col" style="">
                         Name: <%= obj.name %><br />
                         Surname: <%= obj.surname %> <br />
                         E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
-                        Age: <% if (obj.age != undefined) %> <%= obj.age %><br>
-                        Gender: <i><% if (obj.gender != undefined) %> <%= obj.gender %></i><br>
-                        I am searching for <i><% if (obj.pref != undefined) {
+                        I am <i><%= obj.gender %></i> searching for <i><% if (obj.pref != undefined) {
                             if (obj.pref === "male") {
                               %> men
                             <% } else if (obj.pref === "female") {
@@ -52,12 +51,11 @@
                       %> </i><br>
                     </div>
                 </div><br>
-                <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
                 <hr>
                 <div class="container">
                     <div class="row">
-                        <h1>Complete your profile</h1>
-                    </div>
+                        <h1>Update your profile</h1>
+                    </div><br>
                     <div class="row">
                         <div class="col-6">
                             <form class="form-controller" action="index.html" method="post" id="fin_subs">
@@ -82,16 +80,20 @@
                                   <option value="other">Both</option>
                                 </select>
                               </div>
-                              <button type="submit" class="btn btn-default" name="button">Finish your account creation</button>
+                              <div class="form-group">
+                                <label class="form-control-label" for="age">Interest: </label>
+                                #<input class="form-control" type="text" name="" value="">
+                              </div>
+                              <button type="submit" class="btn btn-default matcha_button" name="button">Update your informations</button>
                             </form>
                         </div>
-                    </div>                <% } %>
+                    </div>
                     <hr>
                     <div class="row">
                       <div class="col">
                         <h1>Upload pictures / Update your bio </h1>
                       </div>
-                    </div>
+                    </div><br>
                     <div class="row">
                         <div class="col">
                             <form class="form-controller" action="index.html" method="post" id="upload_pictures">
@@ -101,7 +103,7 @@
                                     <small id="fileHelp" class="form-text text-muted">Choose the photo that you want to upload <br>
                                     A 200x200 picture is better</small>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Upload picture</button>
+                                <button type="submit" class="btn btn-primary matcha_button">Upload picture</button>
                             </form>
                         </div>
                         <div class="col">
@@ -110,7 +112,7 @@
                                     <label for="bio">Update bio:</label>
                                     <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"><%= obj.bio %></textarea>
                                     <small class="form-text text-muted">(250 characters maximum)</small>
-                                    <button type="submit" name="button" class="btn btn-info">Update My Bio</button>
+                                    <button type="submit" name="button" class="btn btn-info matcha_button">Update My Bio</button>
                                 </div>
                             </form>
                         </div>
@@ -119,7 +121,7 @@
                         <div class="col">
                             <h1> Your pictures</h1>
                         </div>
-                    </div>
+                    </div><br>
                     <div class="row">
                         <div class="col">
                             <% for (var i = 0; i < pics.length ; i++) {%>
@@ -136,7 +138,6 @@
         <% } %>
         <script type="text/javascript">
         const xhr = new XMLHttpRequest()
-        <% if (obj.age == undefined || obj.gender == undefined || obj.pref == undefined) { %>
         let form_fin_subs = document.getElementById("fin_subs");
         form_fin_subs.addEventListener('submit', (e) => {
             e.preventDefault()
@@ -153,7 +154,6 @@
                 }
             }
         }, false);
-        <% } %>
         let sub_pics = document.getElementById("upload_pictures")
 
         sub_pics.addEventListener('submit', (e) => {

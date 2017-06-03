@@ -67,6 +67,27 @@ module.exports = {
                       console.log("error cannot update base for match, user: " + usr)
                     }
                     res.end("MATCH!")
+                    let token = usrn + usr
+                    if (token) {
+                      let room = {
+                        token: token,
+                        users: usrn + "/" + usr,
+                        messages: [
+                            {
+                              sender: usrn,
+                              value: 'example message for test'
+                            },
+                            {
+                              sender: usr,
+                              value: "example message for test2"
+                            }
+                        ]
+                      }
+                      let status = await db.collection('chat_room').insertOne(room)
+                      if (!status) {
+                        console.log("error creating the chat room")
+                      }
+                    }
                   } else {
                     res.end("User and you already match")
                   }

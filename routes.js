@@ -96,12 +96,22 @@ module.exports = {
             if (user.like != undefined) {
               like = user.like
             }
-            res.render('pages/like', {
-              name: sess.username,
-              user: user,
-              like: like,
-              usr: usrs
-            });
+            console.log(usrs)
+            if (usrs == undefined) {
+              res.render('pages/like', {
+                name: sess.username,
+                user: user,
+                like: like,
+                usr: ""
+              });
+            } else {
+              res.render('pages/like', {
+                name: sess.username,
+                user: user,
+                like: like,
+                usr: usrs
+              });
+            }
           })
           db.close()
         })
@@ -177,7 +187,6 @@ module.exports = {
         result = []
       }
       if (usrs) {
-        console.log(usrs)
         res.render('pages/match', {
           name: sess.username,
           usr_matched: result,

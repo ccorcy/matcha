@@ -11,6 +11,7 @@ const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
 const routes = require("./routes.js")
 const favicon = require('serve-favicon')
+const enableWs = require('express-ws')
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -20,7 +21,7 @@ app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(favicon(__dirname + '/public/favicon.ico'))
 app.set('view engine', 'ejs');
-
+enableWs(app)
 
 let sess;
 
@@ -49,10 +50,16 @@ app.get('/like', (req, res) => {
 })
 
 app.get('/match', (req, res) => {
-  MongoClient.connect(urlDB, (err, db) => {
-    if (err) throw err
-    routes.match(req, res, sess, db)
-  })
+  sess = req.session
+  console.log(sess.username)
+  if (sess.username == undefined) {
+      res.render("pages/index")
+  } else {
+    MongoClient.connect(urlDB, (err, db) => {
+      if (err) throw err
+      routes.match(req, res, sess, db)
+    })
+  }
 })
 
 app.get('/logout', (req, res) => {
@@ -63,6 +70,29 @@ app.get('/logout', (req, res) => {
 
 app.get('/login', (req, res) => {
   res.render('pages/login')
+})
+
+app.get('/tchat', (req, res) => {
+  sess = req.session
+  let token = req.query.id
+  if (sess.username === "") {
+    res.render('pages/index')
+  } else {
+    MongoClient.connect(urlDB, (err, db) => {
+      if (err) throw err
+      db.collection("chat_room").findOne({ token: token }, (err, result) => {
+        if (err) throw err
+        let usrs = result.users.split("/")
+        res.render('pages/tchat', {
+          user: sess.username,
+          usr1: usrs[0],
+          usr2: usrs[1],
+          messages: result.messages
+        })
+      })
+      db.close()
+    })
+  }
 })
 
 app.post('/login', upload.fields([]), (req, res) => {
@@ -124,6 +154,19 @@ app.post('/register', upload.fields([]), (req, res) => {
 	})
 });
 
+app.ws('/chat', (ws, req) => {
+  sess = req.session
+  let token = req.query.id
 
+  ws.on('open', () => {
+    console.log("WS: " + sess.username + " connected ")
+  })
+  ws.on('message', msg => {
+    ws.send(JSON.stringify({ sender: sess.username, msg: msg }))
+  })
+  ws.on('close', () => {
+    console.log('SebSocket was closed')
+  })
+})
 
 app.listen(3000);

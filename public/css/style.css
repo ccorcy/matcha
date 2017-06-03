@@ -11,11 +11,15 @@ body {
 
 h1 {
   color:#FF5F6D;
-  font-family: 'Hind', sans-serif;
+  font-family: 'Pacifico', sans-serif;
 }
 
 i {
   color: #FF5F6D;
+}
+
+.btn {
+  font-size: 2vw;
 }
 
 #biographie {
@@ -42,4 +46,15 @@ i {
 
 .like_button:hover {
   width: 200px;
+}
+
+.pic {
+  position: absolute;
+  margin-top: -63px;
+}
+
+.name {
+  color: rgb(221, 110, 17);
+  background-color: rgba(252, 252, 252, 0.4);
+  align: center;
 }

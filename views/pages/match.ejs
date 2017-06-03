@@ -7,29 +7,47 @@
     <% include ../partials/header_log %>
     <div class="container" style="margin-top: 15px">
       <div class="jumbotron">
+        <div class="row">
+          <span id="nouser"></span>
         <% for (var i = 0; i < usrs.length ; i++) { %>
         <% if (name !== usrs[i].username && usr_matched.indexOf(usrs[i].username) != -1) { %>
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                  <div class="col-7">
-                      <div style="background-color: rgba(0,0,0,0)">
-                        <img src="<%= usrs[i].pics %>" class="rounded mx-auto d-block like" style=" display: block;width: auto;height: auto; max-height: 200px">
-                      </div>
-                      <span class="name_pic text-center" style="margin-top: -63px"><%= usrs[i].name %> <%= usrs[i].surname %></span><br>
-                      <span class="age_pic text-center"><%= usrs[i].age %> yo</span>
-                  </div>
-                  <div class="col">
-                      <p style="color:#FF5F6D; "><%= usrs[i].bio %></p>
-                  </div>
+          <div class="col">
+            <div class="row">
+              <div class="col-4">
+                <div style="background-color: rgba(224, 166, 77, 0)">
+                  <img src="<%= usrs[i].pics %>" class="rounded mx-auto d-block like" style="width: 200px; height: 200px">
                 </div>
+              </div>
+              <div class="col" style=" border: 1px dashed #FF5F6D;">
+                <h4>About <%= usrs[i].name %>:</h4>
+                <small class="text-muted"><%= usrs[i].age %> years old</small>
+                <p style="color:#FF5F6D;"><%= usrs[i].bio %></p>
+              </div>
             </div>
-        </div>
+            <div class="row">
+              <div class="col-4 offset-4">
+                <button type="button" class="btn matcha_button chat_button" name="button" id='<%= name + usrs[i].username %>'>chat with <%= usrs[i].name %></button>
+              </div>
+            </div>
+          </div>
+
+          <hr>
         <% } %>
         <% } %>
       </div>
     </div>
-
     <% include ../partials/footer %>
+    <script type="text/javascript">
+      let chat = document.getElementsByClassName("chat_button")
+
+      if (chat.length == 0) {
+        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'>You have no match</div></div>"
+      }
+      for (let i = 0; i < chat.length; i++) {
+        chat[i].addEventListener('click', () => {
+          document.location.replace("/tchat?id=" + chat[i].id)
+        }, false)
+      }
+    </script>
   </body>
 </html>

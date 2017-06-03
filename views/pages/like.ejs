@@ -14,22 +14,22 @@
     <span id="alert_container"></span>
     <div class="container">
       <div class="jumbotron" style="margin-top: 15px">
+        <span id="nouser"></span>
         <% for (var i = 0; i < usr.length ; i++) { %>
         <% if (name !== usr[i].username && like.split("/").indexOf(usr[i].username) == -1 && user.pref === usr[i].gender) { %>
-        <div class="row">
+        <div class="row user">
             <div class="col">
                 <div class="row">
                     <div class="col">
                         user: <%= usr[i].username %>
                     </div>
-
                 </div>
                 <div class="row">
                   <div class="col">
 
                   </div>
                   <div class="col-4">
-                      <img src="<%= usr[i].pics %>" class="rounded img-fluid like" style="width: 200px; height: 200px">
+                      <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="width: 200px; height: 200px">
                       <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
                   </div>
                   <div class="col">
@@ -43,15 +43,15 @@
       </div>
     </div>
     <% include ../partials/footer %>
-    <% if (name === "") {%>
-        <%- include('../partials/login_script'); %>
-    <% } %>
     <script type="text/javascript">
     const xhr = new XMLHttpRequest()
 
     <% if (name !== "") {%>
       let like_button = document.getElementsByClassName("like_button")
 
+      if (like_button.length == 0) {
+        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'>No user find to match with you</div></div>"
+      }
       for (let i = 0; i < like_button.length; i++) {
         like_button[i].addEventListener('click', (e) => {
           e.preventDefault()
