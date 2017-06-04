@@ -15,7 +15,7 @@
         </div>
         <div class="row">
           <div class="col">
-            <textarea name="message" rows="8" cols="80" id="usr_message" style="width: 100%; height: 70px"></textarea>
+            <input class="form-control" name="message" type="text" id="usr_message" style="width: 100%;" value="">
           </div>
         </div>
         <div class="row">
@@ -46,7 +46,8 @@
     }
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
-      ws.send(document.getElementById("usr_message").value)
+      ws.send(JSON.stringify({ sender: '<%= user %>', msg: document.getElementById("usr_message").value }))
+      document.getElementById("usr_message").value = ""
     }, false)
 
     ws.onmessage = (message) => {

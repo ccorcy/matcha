@@ -16,7 +16,7 @@
       <div class="jumbotron" style="margin-top: 15px">
         <span id="nouser"></span>
         <% for (var i = 0; i < usr.length ; i++) { %>
-        <% if (name !== usr[i].username && like.split("/").indexOf(usr[i].username) == -1 && user.pref === usr[i].gender) { %>
+        <% if (like.split("/").indexOf(usr[i].username) == -1) { %>
         <div class="row user">
             <div class="col">
                 <div class="row">
@@ -43,6 +43,7 @@
       </div>
     </div>
     <% include ../partials/footer %>
+    <script src="js/socket.io.js"></script>
     <script type="text/javascript">
     const xhr = new XMLHttpRequest()
 
@@ -50,7 +51,7 @@
       let like_button = document.getElementsByClassName("like_button")
 
       if (like_button.length == 0) {
-        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'>No user find to match with you</div></div>"
+        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
       }
       for (let i = 0; i < like_button.length; i++) {
         like_button[i].addEventListener('click', (e) => {
@@ -61,6 +62,7 @@
             if (xhr.status === 200 && xhr.readyState === 4) {
               if (xhr.responseText === "Liked") {
                 document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-info alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
+                socket.emit('notif', { username: like_button[i].id, msg: "like" })
               } else if (xhr.responseText === "MATCH!"){
                 document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
               } else {

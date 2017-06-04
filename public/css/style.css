@@ -58,3 +58,7 @@ i {
   background-color: rgba(252, 252, 252, 0.4);
   align: center;
 }
+
+.matcha_button {
+  margin: 5px
+}

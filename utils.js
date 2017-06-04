@@ -113,7 +113,7 @@ module.exports = {
   },
 
   register: async function (db, body, res, error) {
-    let regName = /^[a-zA-Z]{4,20}$/
+    let regName = /^[a-zA-Z]{2,20}$/
     let regUsername = /^[a-zA-Z0-9]{6,20}$/
     let regMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     let regPwd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
@@ -125,6 +125,13 @@ module.exports = {
   			"username": body.username,
   			"email": body.email,
   			"password": pwd_hash,
+        "interest": [],
+        "age" : null,
+        "pics": null,
+        "bio": null,
+        "gender": "other",
+        "pref": "other",
+        "account_completed": false
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
   		if (users != undefined) {

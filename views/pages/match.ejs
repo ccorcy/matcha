@@ -13,24 +13,26 @@
         <% if (name !== usrs[i].username && usr_matched.indexOf(usrs[i].username) != -1) { %>
           <div class="col">
             <div class="row">
-              <div class="col-4">
+              <div class="col">
                 <div style="background-color: rgba(224, 166, 77, 0)">
-                  <img src="<%= usrs[i].pics %>" class="rounded mx-auto d-block like" style="width: 200px; height: 200px">
+                  <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="width: 20vw; height: 20vw">
                 </div>
               </div>
-              <div class="col" style=" border: 1px dashed #FF5F6D;">
-                <h4>About <%= usrs[i].name %>:</h4>
+              <div class="col-8" style=" border: 1px dashed #FF5F6D; margin: 15px; min-width: 200px">
+                <h4 style="color: #FF5F6D"><%= usrs[i].username %></h4>
                 <small class="text-muted"><%= usrs[i].age %> years old</small>
                 <p style="color:#FF5F6D;"><%= usrs[i].bio %></p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-4 offset-4">
-                <button type="button" class="btn matcha_button chat_button" name="button" id='<%= name + usrs[i].username %>'>chat with <%= usrs[i].name %></button>
+                <div class="row">
+                  <div class="col">
+                    <button type="button" class="btn matcha_button chat_button" name="button" id='<%= name + usrs[i].username %>'>Say hello !</button>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usrs[i].username %>'>View profile</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
           <hr>
         <% } %>
         <% } %>
@@ -39,13 +41,19 @@
     <% include ../partials/footer %>
     <script type="text/javascript">
       let chat = document.getElementsByClassName("chat_button")
+      let profile = document.getElementsByClassName("profile_button")
 
       if (chat.length == 0) {
-        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'>You have no match</div></div>"
+        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>You have no match</p></div></div>"
       }
       for (let i = 0; i < chat.length; i++) {
         chat[i].addEventListener('click', () => {
-          document.location.replace("/tchat?id=" + chat[i].id)
+          document.location.href = "/tchat?id=" + chat[i].id
+        }, false)
+      }
+      for (let i = 0; i < profile.length; i++) {
+        profile[i].addEventListener('click', () => {
+          document.location.href = "/profile?usr=" + profile[i].id
         }, false)
       }
     </script>

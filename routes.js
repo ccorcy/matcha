@@ -36,8 +36,8 @@ module.exports = {
   profile: function (req, res, sess) {
     sess = req.session;
   	MongoClient.connect(urlDB, (err, db) => {
-  		db.collection("users").find({ username: sess.username }).toArray((err, result) => {
-  			if (result[0] == undefined) {
+  		db.collection("users").findOne({ username: sess.username}, (err, result) => {
+  			if (result == undefined) {
   				db.close()
   				res.render('pages/profile', {
   					obj: {},
@@ -49,23 +49,24 @@ module.exports = {
   				db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
   					if (err) {
   						res.render('pages/profile', {
-  							obj: result[0],
+  							obj: result,
   							name: sess.username,
   							profile_pic: "pp/default.png",
   							pics: []
   						});
   						db.close()
   					} else {
+              console.log(result.interest)
   						if (pic_res[0] != undefined) {
   							res.render('pages/profile', {
-  								obj: result[0],
+  								obj: result,
   								name: sess.username,
-  								profile_pic: result[0].pics,
+  								profile_pic: result.pics,
   								pics: pic_res
   							});
   						} else {
   							res.render('pages/profile', {
-  								obj: result[0],
+  								obj: result,
   								name: sess.username,
   								profile_pic: "pp/default.png",
   								pics: []
@@ -89,30 +90,49 @@ module.exports = {
   	} else {
   		MongoClient.connect(urlDB, (err, db) => {
   			if (err) throw err
-  			db.collection("users").find({}).toArray((err, usrs) => {
-  				if (err) throw err
-          db.collection("users").findOne({ username: sess.username }, (err, user) => {
-            var like = "/"
-            if (user.like != undefined) {
-              like = user.like
-            }
-            console.log(usrs)
-            if (usrs == undefined) {
-              res.render('pages/like', {
-                name: sess.username,
-                user: user,
-                like: like,
-                usr: ""
-              });
-            } else {
-              res.render('pages/like', {
-                name: sess.username,
-                user: user,
-                like: like,
-                usr: usrs
-              });
-            }
-          })
+        db.collection("users").findOne({ username: sess.username}, (err, user) => {
+          if (err) throw err
+          var like = "/"
+          if (user.like != undefined) {
+            like = user.like
+          }
+          if (user.pref === "other") {
+            db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
+              if (users == undefined) {
+                res.render('pages/like', {
+                  name: sess.username,
+                  user: user,
+                  like: like,
+                  usr: ""
+                });
+              } else {
+                res.render('pages/like', {
+                  name: sess.username,
+                  user: user,
+                  like: like,
+                  usr: users
+                });
+              }
+            })
+          } else {
+            db.collection("users").find({ $and: [ { username: { $ne: sess.username }}, { gender: user.pref } ] }).toArray((err, users) => {
+              if (users == undefined) {
+                res.render('pages/like', {
+                  name: sess.username,
+                  user: user,
+                  like: like,
+                  usr: ""
+                });
+              } else {
+                res.render('pages/like', {
+                  name: sess.username,
+                  user: user,
+                  like: like,
+                  usr: users
+                });
+              }
+            })
+          }
           db.close()
         })
       })
@@ -181,7 +201,7 @@ module.exports = {
     let result = await db.collection("users").findOne({ username: sess.username})
     if (result) {
       let usrs = await db.collection("users").find({ gender: result.pref }).toArray()
-      if (result.match != "") {
+      if (result.match != undefined) {
         result = result.match.split("/")
       } else {
         result = []
@@ -198,6 +218,24 @@ module.exports = {
       }
     } else {
       db.close()
+    }
+  },
+  user_profile: async function (req, res, sess) {
+    sess = req.session
+    if (sess.username != undefined && req.query.usr != undefined) {
+      let db = await MongoClient.connect(urlDB)
+      if (db) {
+        let user = await db.collection("users").findOne({ username: req.query.usr })
+        if (user) {
+          res.render('pages/user_profile', {
+            user: user
+          })
+        } else {
+          res.render('pages/user_profile')
+        }
+      }
+    } else {
+      res.render('pages/index')
     }
   }
 }

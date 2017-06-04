@@ -5,11 +5,7 @@
     </head>
     <body>
         <header>
-            <% if (name !== "") {%>
-                <%- include("../partials/header_log"); %>
-            <% } else { %>
-                <%- include("../partials/header"); %>
-            <% }%>
+            <%- include("../partials/header_log"); %>
         </header>
         <div class="container">
             <div class="jumbotron" style="margin-top: 15px">
@@ -21,7 +17,7 @@
                 <div class="row">
                   <div class="col-4">
                     <div style="background-color: rgba(224, 166, 77, 0)">
-                      <img src="<%= obj.pics %>" class="rounded mx-auto d-block like" style="width: 200px; height: 200px" id="pp">
+                      <img src="<%= obj.pics %>" class="rounded mx-auto d-block like" style="width: 20vw; height: 20vw" id="pp">
                     </div>
                   </div>
                   <div class="col" style=" border: 1px dashed #FF5F6D;">
@@ -47,8 +43,7 @@
                             <% } else if (obj.pref === "female") {
                                 %> women <% } else if (obj.pref === "other") {
                                   %> men or women <% }
-                          }
-                      %> </i><br>
+                          } %> </i><br />
                     </div>
                 </div><br>
                 <hr>
@@ -61,28 +56,34 @@
                             <form class="form-controller" action="index.html" method="post" id="fin_subs">
                               <div class="form-group">
                                 <label class="form-control-label" for="age">Age: </label>
-                                <input type="number" name="age" class="form-control" value="" min="18" max="125">
+                                <input type="number" name="age" class="form-control" min="18" max="125" value="<%= obj.age %>">
                                 <small class="form-text text-muted">You must be oldier than 18 years old</small>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="gender">Gender: </label>
                                 <select name="gender" class="form-control">
-                                  <option value="male">Male</option>
-                                  <option value="female">Female</option>
-                                  <option value="other">Other</option>
+                                  <option value="male" <% if (obj.gender === 'male') {%> selected <% } %>>Male</option>
+                                  <option value="female" <% if (obj.gender === 'female') {%> selected <% } %>>Female</option>
+                                  <option value="other" <% if (obj.gender === 'other') {%> selected <% } %>>Other</option>
                                 </select>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="age">You are searching for: </label>
                                 <select name="pref" class="form-control">
-                                  <option value="male">Men</option>
-                                  <option value="female">Women</option>
-                                  <option value="other">Both</option>
+                                  <option value="male" <% if (obj.pref === 'male') {%> selected <% } %>>Men</option>
+                                  <option value="female" <% if (obj.pref === 'female') {%> selected <% } %>>Women</option>
+                                  <option value="other" <% if (obj.pref === 'other') {%> selected <% } %>>Both</option>
                                 </select>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="age">Interest: </label>
-                                #<input class="form-control" type="text" name="" value="">
+                                <span style="color: #FF5F6D;">
+                                  <% for (var i = 0; i < obj.interest.length; i++) { %>
+                                    #<%= obj.interest[i] %> <% if (obj.interest[i + 1] != undefined) { %>, <% } %>
+                                  <% } %>
+                                </span>
+                                <input class="form-control" type="text" name="interest" value="<% for (var i = 0; i < obj.interest.length; i++) { %><%= obj.interest[i] %><% if (obj.interest[i + 1] != undefined) { %>,<% } %><% } %>" id="interest">
+                                <small class="form-text text-muted">Every interest must be separated by a coma without any spaces. Example: music,dev,video_games</small>
                               </div>
                               <button type="submit" class="btn btn-default matcha_button" name="button">Update your informations</button>
                             </form>
@@ -120,12 +121,13 @@
                     <div class="row">
                         <div class="col">
                             <h1> Your pictures</h1>
+                            <small class="text-muted"> Click on one of your pictures to set it as your profile picture</small>
                         </div>
                     </div><br>
                     <div class="row">
                         <div class="col">
                             <% for (var i = 0; i < pics.length ; i++) {%>
-                                <img src="/pp/<%= pics[i].img.filename %>" id="<%= pics[i].img.filename %>" class="rounded img-fluid img_user" style="width:200px; height: 200px">
+                                <img src="/pp/<%= pics[i].img.filename %>" id="<%= pics[i].img.filename %>" class="rounded img-fluid img_user" style="width:15vw; height: 15vw">
                             <% } %>
                         </div>
                     </div>
@@ -146,7 +148,7 @@
             xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
                 if (xhr.responseText === "ok") {
-                    alert('Your profile is now completed')
+                    alert('Informations updated')
                     document.location.reload()
                 } else {
                     alert("Something went wrong")

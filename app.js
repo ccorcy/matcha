@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const session = require('express-session');
 const bodyparser = require('body-parser');
 const MongoClient = require("mongodb").MongoClient;
@@ -11,7 +10,8 @@ const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
 const routes = require("./routes.js")
 const favicon = require('serve-favicon')
-const enableWs = require('express-ws')
+const app = express()
+const expressWs = require('express-ws')(app)
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -21,7 +21,6 @@ app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(favicon(__dirname + '/public/favicon.ico'))
 app.set('view engine', 'ejs');
-enableWs(app)
 
 let sess;
 
@@ -95,6 +94,10 @@ app.get('/tchat', (req, res) => {
   }
 })
 
+app.get('/profile', (req, res) => {
+  routes.user_profile(req, res, sess)
+})
+
 app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {
@@ -128,10 +131,12 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 		&& (req.body.gender === "male"
 			|| req.body.gender === "female" || req.body.gender === "other")
 				&& (req.body.pref === "male" || req.body.pref === "female"
-					|| req.body.pref === "other") && sess.username != undefined) {
+					|| req.body.pref === "other") && req.body.interest != "" && sess.username != undefined) {
 			MongoClient.connect(urlDB, (err, db) => {
 				if (err) throw err
-				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref }} )
+        let interest = req.body.interest
+        interest = interest.split(",")
+				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref, interest: interest }} )
 				res.send("ok")
 				db.close()
 			});
@@ -155,17 +160,21 @@ app.post('/register', upload.fields([]), (req, res) => {
 });
 
 app.ws('/chat', (ws, req) => {
-  sess = req.session
-  let token = req.query.id
-
-  ws.on('open', () => {
-    console.log("WS: " + sess.username + " connected ")
+  ws.on('connect', () => {
+    let clients = expressWs.getWss("/tchat").clients
+    console.log(clients)
   })
-  ws.on('message', msg => {
-    ws.send(JSON.stringify({ sender: sess.username, msg: msg }))
-  })
-  ws.on('close', () => {
-    console.log('SebSocket was closed')
+  ws.on('message', (msg) => {
+    let clients = expressWs.getWss("/tchat").clients
+    console.log(msg)
+    try {
+        let message = JSON.parse(msg)
+        clients.forEach((client) => {
+          client.send(JSON.stringify( { sender: message.sender , msg: message.msg }))
+        })
+    } catch (e) {
+      console.log("message is not a json")
+    }
   })
 })
 
