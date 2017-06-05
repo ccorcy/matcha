@@ -38,7 +38,7 @@
     const msg_div = document.getElementById("message")
 
     ws.onopen = () => {
-      console.log("send message")
+
     }
 
     ws.onerror = (error) => {
@@ -46,7 +46,7 @@
     }
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
-      ws.send(JSON.stringify({ sender: '<%= user %>', msg: document.getElementById("usr_message").value }))
+      ws.send(JSON.stringify({ sender: '<%= user %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
       document.getElementById("usr_message").value = ""
     }, false)
 

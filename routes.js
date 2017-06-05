@@ -237,5 +237,71 @@ module.exports = {
     } else {
       res.render('pages/index')
     }
+  },
+  tchat: async function (req, res, sess) {
+    sess = req.session
+    if (sess.username != undefined && req.query.id != undefined) {
+      let db = await MongoClient.connect(urlDB)
+      let token1 = sess.username + req.query.id
+      let token2 = req.query.id + sess.username
+      if (db) {
+        let room = await db.collection("chat_room").findOne({ token: token1})
+        if (room) {
+          let usrs = room.users.split("/")
+          if ((usrs[0] === sess.username || usrs[1] === sess.username)
+            && (usrs[0] === req.query.id || usrs[1] === req.query.id)) {
+              let user2 = ""
+              if (sess.username === usrs[0]) {
+                user2 = usrs[1]
+              } else {
+                user2 = usrs[0]
+              }
+              res.render('pages/tchat', {
+                user: sess.username,
+                usr2: user2,
+                messages: room.messages
+              })
+              db.close()
+          } else {
+            db.close()
+            // TODO: 403
+          }
+        } else {
+          room = await db.collection("chat_room").findOne({token: token2})
+          if (room) {
+            let usrs = room.users.split("/")
+            if ((usrs[0] === sess.username || usrs[1] === sess.username)
+              && (usrs[0] === req.query.id || usrs[1] === req.query.id)) {
+                let user2 = ""
+                if (sess.username === usrs[0]) {
+                  user2 = usrs[1]
+                } else {
+                  user2 = usrs[0]
+                }
+                res.render('pages/tchat', {
+                  user: sess.username,
+                  usr2: user2,
+                  messages: room.messages
+                })
+                db.close()
+            } else {
+              // TODO: 403
+              db.close()
+            }
+          } else {
+            db.close()
+            // TODO: 404 not found
+          }
+        }
+      }
+    } else if (sess.username == undefined) {
+      res.render('pages/index')
+    } else {
+      MongoClient.connect(urlDB, (err, db) => {
+        if (err) throw err
+        res.send("<script> document.location.replace('/like_page')</script>")
+        db.close()
+      })
+    }
   }
 }

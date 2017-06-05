@@ -18,13 +18,12 @@
                   <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="width: 20vw; height: 20vw">
                 </div>
               </div>
-              <div class="col-8" style=" border: 1px dashed #FF5F6D; margin: 15px; min-width: 200px">
+              <div class="col-8" style=" border: 1px dashed #FF5F6D; margin: 15px; min-width: 200px; padding: 10px">
                 <h4 style="color: #FF5F6D"><%= usrs[i].username %></h4>
                 <small class="text-muted"><%= usrs[i].age %> years old</small>
-                <p style="color:#FF5F6D;"><%= usrs[i].bio %></p>
                 <div class="row">
                   <div class="col">
-                    <button type="button" class="btn matcha_button chat_button" name="button" id='<%= name + usrs[i].username %>'>Say hello !</button>
+                    <button type="button" class="btn matcha_button chat_button" name="button" id='<%= usrs[i].username %>'>Say hello !</button>
                   </div>
                   <div class="col">
                     <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usrs[i].username %>'>View profile</button>

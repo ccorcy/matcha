@@ -23,6 +23,7 @@ app.use(favicon(__dirname + '/public/favicon.ico'))
 app.set('view engine', 'ejs');
 
 let sess;
+let ws_user = [];
 
 app.get('/profile.html', (req,res) => {
   routes.profile(req, res, sess)
@@ -50,7 +51,6 @@ app.get('/like', (req, res) => {
 
 app.get('/match', (req, res) => {
   sess = req.session
-  console.log(sess.username)
   if (sess.username == undefined) {
       res.render("pages/index")
   } else {
@@ -72,26 +72,7 @@ app.get('/login', (req, res) => {
 })
 
 app.get('/tchat', (req, res) => {
-  sess = req.session
-  let token = req.query.id
-  if (sess.username === "") {
-    res.render('pages/index')
-  } else {
-    MongoClient.connect(urlDB, (err, db) => {
-      if (err) throw err
-      db.collection("chat_room").findOne({ token: token }, (err, result) => {
-        if (err) throw err
-        let usrs = result.users.split("/")
-        res.render('pages/tchat', {
-          user: sess.username,
-          usr1: usrs[0],
-          usr2: usrs[1],
-          messages: result.messages
-        })
-      })
-      db.close()
-    })
-  }
+  routes.tchat(req, res, sess)
 })
 
 app.get('/profile', (req, res) => {
@@ -160,21 +141,31 @@ app.post('/register', upload.fields([]), (req, res) => {
 });
 
 app.ws('/chat', (ws, req) => {
-  ws.on('connect', () => {
-    let clients = expressWs.getWss("/tchat").clients
-    console.log(clients)
-  })
+  sess = req.session
+  ws_user.push({ username: sess.username, ws: ws})
   ws.on('message', (msg) => {
-    let clients = expressWs.getWss("/tchat").clients
-    console.log(msg)
     try {
         let message = JSON.parse(msg)
+        let clients = expressWs.getWss("/tchat").clients
         clients.forEach((client) => {
-          client.send(JSON.stringify( { sender: message.sender , msg: message.msg }))
+          for (var i = 0; i < ws_user.length; i++) {
+            console.log(ws_user[i].username)
+            if (ws_user[i].ws === client && (ws_user[i].username === message.sender || ws_user[i].username === message.receiver)) {
+              client.send(JSON.stringify( { sender: message.sender , msg: message.msg }))
+            }
+          }
         })
     } catch (e) {
-      console.log("message is not a json")
+      console.log(e)
     }
+  })
+  ws.on('close', () => {
+    for(var i = ws_user.length - 1; i >= 0; i--) {
+      if(ws_user[i].ws === ws) {
+        ws_user.splice(i, 1);
+     }
+    }
+  console.log(ws_user)
   })
 })
 
