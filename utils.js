@@ -72,16 +72,7 @@ module.exports = {
                       let room = {
                         token: token,
                         users: usrn + "/" + usr,
-                        messages: [
-                            {
-                              sender: usrn,
-                              value: 'example message for test'
-                            },
-                            {
-                              sender: usr,
-                              value: "example message for test2"
-                            }
-                        ]
+                        messages: []
                       }
                       let status = await db.collection('chat_room').insertOne(room)
                       if (!status) {
@@ -113,7 +104,7 @@ module.exports = {
   },
 
   register: async function (db, body, res, error) {
-    let regName = /^[a-zA-Z]{2,20}$/
+    let regName = /^[a-zA-Z\-]{2,20}$/
     let regUsername = /^[a-zA-Z0-9]{6,20}$/
     let regMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     let regPwd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
@@ -176,13 +167,45 @@ module.exports = {
   },
 
   up_pics: async function (db, sess, req, res) {
-    let status = await db.collection("pp").insertOne({ username: sess.username, img: req.file })
-    let status1 = await db.collection("users").update({ username: sess.username }, { $set: {pics: "/pp/" + req.file.filename} } )
-    if (status && status1) {
-      res.end("OK")
-    } else {
-      res.end("error")
+    let pictures = await db.collection("pp").find({ username: sess.username })
+    if (pictures) {
+      if (pictures.length >= 5) {
+        res.end("toomany")
+      } else {
+        let status = await db.collection("pp").insertOne({ username: sess.username, img: req.file })
+        let status1 = await db.collection("users").update({ username: sess.username }, { $set: {pics: "/pp/" + req.file.filename} } )
+        if (status && status1) {
+          res.end("OK")
+        } else {
+          res.end("error")
+        }
+      }
     }
     db.close()
+  },
+  update_chat_room: async function (sess, msg) {
+    let message = { sender: sess.username, value: msg.msg }
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+      let room = await db.collection("chat_room").findOne({ token: sess.username + msg.receiver })
+      if (room) {
+        let messages = room.messages
+        messages.push(message)
+        let status = await db.collection("chat_room").update({ token: sess.username + msg.receiver}, { $set: { messages: messages }})
+        if (!status) {
+          console.log("error: cannot update " + sess.username + msg.receiver)
+        }
+      } else {
+        room = await db.collection("chat_room").findOne({ token: msg.receiver + sess.username })
+        if (room) {
+          let messages = room.messages
+          messages.push(message)
+          let status = await db.collection("chat_room").update({ token: msg.receiver + sess.username }, { $set: { messages: messages }})
+          if (!status) {
+            console.log("error: cannot update " + sess.username + msg.receiver)
+          }
+        }
+      }
+    }
   }
 }

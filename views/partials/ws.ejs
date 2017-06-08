@@ -1,0 +1,15 @@
+<script type="text/javascript">
+const ws = new WebSocket("ws://localhost:3000/notif")
+ws.onopen = () => {
+  console.log("connection established with websocket server")
+}
+ws.onerror = (error) => {
+  console.log("error")
+}
+ws.onmessage = (message) => {
+  console.log(message)
+  let msg = JSON.parse(message.data)
+  console.log(msg.sender)
+  console.log(msg.msg)
+}
+</script>

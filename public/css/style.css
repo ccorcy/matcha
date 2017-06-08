@@ -62,3 +62,7 @@ i {
 .matcha_button {
   margin: 5px
 }
+
+.notif {
+  position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible;
+}

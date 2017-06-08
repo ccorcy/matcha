@@ -43,7 +43,7 @@
       </div>
     </div>
     <% include ../partials/footer %>
-    <script src="js/socket.io.js"></script>
+    <% include ../partials/ws %>
     <script type="text/javascript">
     const xhr = new XMLHttpRequest()
 
@@ -61,12 +61,13 @@
           xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
               if (xhr.responseText === "Liked") {
-                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-info alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
-                socket.emit('notif', { username: like_button[i].id, msg: "like" })
+                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
+                ws.send(JSON.stringify( { sender: '<%= name %>', msg: "like"} ))
               } else if (xhr.responseText === "MATCH!"){
-                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-success alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
+                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
+                ws.send(JSON.stringify( { sender: '<%= name %>', msg: "match"} ))
               } else {
-                document.getElementById('alert_container').innerHTML = "<div style='position: fixed; top: 45px; left: 40%; z-index: 999; overflow: visible' id='alert_container' class='alert alert-danger alert-dismissable' style='display:none'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "       </span></div>"
+                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
               }
             }
           }

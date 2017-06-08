@@ -39,11 +39,7 @@ module.exports = {
   		db.collection("users").findOne({ username: sess.username}, (err, result) => {
   			if (result == undefined) {
   				db.close()
-  				res.render('pages/profile', {
-  					obj: {},
-  					name: "",
-  					profile_pic: "pp/default.png",
-  					pics: []
+  				res.render('pages/index', {
   				});
   			} else {
   				db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {

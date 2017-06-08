@@ -5,6 +5,7 @@
   </head>
   <body>
     <% include ../partials/header_log %>
+    <span id="alert_container"></span>
     <div class="container" style="margin-top: 15px">
       <div class="jumbotron">
         <div class="row">
@@ -38,6 +39,7 @@
       </div>
     </div>
     <% include ../partials/footer %>
+    <% include ../partials/ws %>
     <script type="text/javascript">
       let chat = document.getElementsByClassName("chat_button")
       let profile = document.getElementsByClassName("profile_button")
@@ -52,6 +54,7 @@
       }
       for (let i = 0; i < profile.length; i++) {
         profile[i].addEventListener('click', () => {
+          ws.send(JSON.stringify({ sender: '<%= name %>', receiver: profile[i].id, msg: "visite" }))
           document.location.href = "/profile?usr=" + profile[i].id
         }, false)
       }

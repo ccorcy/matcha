@@ -12,6 +12,7 @@ const routes = require("./routes.js")
 const favicon = require('serve-favicon')
 const app = express()
 const expressWs = require('express-ws')(app)
+const wss = require('./ws.js')
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -24,6 +25,7 @@ app.set('view engine', 'ejs');
 
 let sess;
 let ws_user = [];
+let ws_notif_user = [];
 
 app.get('/profile.html', (req,res) => {
   routes.profile(req, res, sess)
@@ -108,16 +110,22 @@ app.post('/update_bio', upload.fields([]), (req, res) => {
 
 app.post('/finish_sub', upload.fields([]), (req, res) => {
 	sess = req.session;
+  let regName = /^[a-zA-Z\-]{2,}$/
+  let regMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 	if (req.body.age >= 18 && req.body.age <= 125
 		&& (req.body.gender === "male"
 			|| req.body.gender === "female" || req.body.gender === "other")
 				&& (req.body.pref === "male" || req.body.pref === "female"
-					|| req.body.pref === "other") && req.body.interest != "" && sess.username != undefined) {
+					|| req.body.pref === "other") && req.body.interest != ""
+            && req.body.name != "" && regName.test(req.body.name) && req.body.surname != "" && regName.test(req.body.surname)
+              && req.body.email != "" && regMail.test(req.body.email)
+                && sess.username != undefined) {
 			MongoClient.connect(urlDB, (err, db) => {
 				if (err) throw err
         let interest = req.body.interest
         interest = interest.split(",")
-				db.collection("users").update({ username: sess.username }, { $set: { age: req.body.age, gender: req.body.gender, pref: req.body.pref, interest: interest }} )
+				db.collection("users").update({ username: sess.username }, { $set: { name: req.body.name, surname: req.body.surname, email: req.body.email, age: req.body.age, gender: req.body.gender, pref: req.body.pref, interest: interest }} )
 				res.send("ok")
 				db.close()
 			});
@@ -142,31 +150,15 @@ app.post('/register', upload.fields([]), (req, res) => {
 
 app.ws('/chat', (ws, req) => {
   sess = req.session
-  ws_user.push({ username: sess.username, ws: ws})
-  ws.on('message', (msg) => {
-    try {
-        let message = JSON.parse(msg)
-        let clients = expressWs.getWss("/tchat").clients
-        clients.forEach((client) => {
-          for (var i = 0; i < ws_user.length; i++) {
-            console.log(ws_user[i].username)
-            if (ws_user[i].ws === client && (ws_user[i].username === message.sender || ws_user[i].username === message.receiver)) {
-              client.send(JSON.stringify( { sender: message.sender , msg: message.msg }))
-            }
-          }
-        })
-    } catch (e) {
-      console.log(e)
-    }
-  })
-  ws.on('close', () => {
-    for(var i = ws_user.length - 1; i >= 0; i--) {
-      if(ws_user[i].ws === ws) {
-        ws_user.splice(i, 1);
-     }
-    }
-  console.log(ws_user)
+  wss.chat(ws, req, sess, expressWs)
+})
+
+app.ws('/notif', (ws, req) => {
+  sess = req.session
+  MongoClient.connect(urlDB, (err, db) => {
+    wss.notif(ws, req, sess, db, expressWs)
   })
 })
+
 
 app.listen(3000);
