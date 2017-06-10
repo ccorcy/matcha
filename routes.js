@@ -78,20 +78,13 @@ module.exports = {
   like_page: async function (req, res, sess) {
     sess = req.session;
   	if (sess.username == undefined) {
-  		res.render('pages/index', {
-  			name: "",
-        like: "",
-  			usr: {}
-  		});
+  		res.render('pages/index');
   	} else {
   		MongoClient.connect(urlDB, (err, db) => {
   			if (err) throw err
         db.collection("users").findOne({ username: sess.username}, (err, user) => {
           if (err) throw err
-          var like = "/"
-          if (user.like != undefined) {
-            like = user.like
-          }
+          let like = user.like
           if (user.pref === "other") {
             db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
               if (users == undefined) {
@@ -196,16 +189,11 @@ module.exports = {
 
     let result = await db.collection("users").findOne({ username: sess.username})
     if (result) {
-      let usrs = await db.collection("users").find({ gender: result.pref }).toArray()
-      if (result.match != undefined) {
-        result = result.match.split("/")
-      } else {
-        result = []
-      }
+      let usrs = await db.collection("users").find({}).toArray()
       if (usrs) {
         res.render('pages/match', {
           name: sess.username,
-          usr_matched: result,
+          usr_matched: result.match,
           usrs: usrs
         })
         db.close()
@@ -298,6 +286,91 @@ module.exports = {
         res.send("<script> document.location.replace('/like_page')</script>")
         db.close()
       })
+    }
+  },
+  dislike: async function (sess, usr_to_dislike) {
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+      console.log("username: " + sess.username + "\nusername: " + usr_to_dislike)
+      let user = await db.collection("users").findOne({ username: sess.username })
+      let user2 = await db.collection("users").findOne({ username: usr_to_dislike })
+      if (user && user2) {
+        let like = user.like
+        let like2 = user2.like
+        console.log(like)
+        console.log(like2)
+        if (like.indexOf(usr_to_dislike) != -1 && like2.indexOf(sess.username) != -1) {
+          for (var i = 0; i < like.length; i++) {
+            if (like[i] === usr_to_dislike) {
+              like.splice(i, 1)
+            }
+          }
+          for (var i = 0; i < like2.length; i++) {
+            if (like2[i] === sess.username) {
+              like2.splice(i, 1)
+            }
+          }
+          let status = await db.collection("users").update({ username: sess.username}, { $set: { like: like} })
+          let status2 = await db.collection("users").update({ username: sess.username}, { $set: { like: like2 } })
+          if (!status || !status2) {
+            console.log("error update")
+            return (0)
+          } else {
+            return (1)
+          }
+        } else {
+          console.log("error: cannot find users in likes of users")
+          return (0)
+        }
+      } else {
+        console.log("error: cannot find users")
+        return (0)
+      }
+      db.close()
+    } else {
+      console.log("error: cannot get access to db")
+      return (0)
+    }
+  },
+  delete_match: async function (sess, usr_to_dislike) {
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+      let user = await db.collection("users").findOne({ username: sess.username })
+      let user2 = await db.collection("users").findOne({ username: usr_to_dislike })
+      if (user && user2) {
+        let match = user.match
+        let match2 = user2.match
+        if (match.indexOf(usr_to_dislike) != -1 && match2.indexOf(sess.username) != -1) {
+          for (var i = 0; i < match.length; i++) {
+            if (match[i] === usr_to_dislike) {
+              match.splice(i, 1)
+            }
+          }
+          for (var i = 0; i < match2.length; i++) {
+            if (match2[i] === sess.username) {
+              match2.splice(i ,1)
+            }
+          }
+          let status = await db.collection("users").update({ username: sess.username}, { $set: { match: match } })
+          let status2 = await db.collection("users").update({ username: usr_to_dislike}, { $set: { match: match2} })
+          if (!status || !status2) {
+            console.log("error update")
+            return (0)
+          } else {
+            return (1)
+          }
+        } else {
+          console.log("error: cannot find " + usr_to_dislike + " or " + sess.username + " in match of users")
+          return (0)
+        }
+      } else {
+        console.log("error: cannot find users")
+        return (0)
+      }
+      db.close()
+    } else {
+      console.log("error: cannot get access to db")
+      return (0)
     }
   }
 }

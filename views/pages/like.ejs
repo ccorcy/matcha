@@ -16,7 +16,6 @@
       <div class="jumbotron" style="margin-top: 15px">
         <span id="nouser"></span>
         <% for (var i = 0; i < usr.length ; i++) { %>
-        <% if (like.split("/").indexOf(usr[i].username) == -1) { %>
         <div class="row user">
             <div class="col">
                 <div class="row">
@@ -31,6 +30,7 @@
                   <div class="col-4">
                       <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="width: 200px; height: 200px">
                       <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                      <button type="button" class="btn btn-success dislike_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
                   </div>
                   <div class="col">
 
@@ -38,7 +38,6 @@
                 </div>
             </div>
         </div>
-        <% } %>
         <% } %>
       </div>
     </div>
@@ -49,7 +48,7 @@
 
     <% if (name !== "") {%>
       let like_button = document.getElementsByClassName("like_button")
-
+      let dislike_button = document.getElementsByClassName("dislike_button")
       if (like_button.length == 0) {
         document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
       }
@@ -72,6 +71,23 @@
             }
           }
         }, false)
+      }
+      for (let i = 0; i < dislike_button.length; i++) {
+        dislike_button[i].addEventListener('click', (e) => {
+          e.preventDefault()
+          xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
+          xhr.send()
+          xhr.onload = () => {
+            if (xhr.status === 200 && xhr.readyState === 4) {
+              console.log(xhr.responseText)
+              if (xhr.responseText === "ok") {
+                document.getElementById('alert-container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Dislike</strong> You just dislike " + like_button[i].id + "</span></div>"
+              } else if ("error") {
+                document.getElementById('alert-container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Something bad happend</strong></span></div>"
+              }
+            }
+          }
+        })
       }
     <%}%>
     </script>

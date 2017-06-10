@@ -32,40 +32,32 @@ module.exports = {
   	if (found) {
   		let user = await db.collection("users").findOne({ username: usrn })
   		if (user) {
-  			var like_info = "/";
-  			if (user.like != undefined) {
-          like_info = user.like
+        let like = []
+        if (user.like != undefined) {
+          like = user.like
         }
-        if (like_info.split("/").indexOf(usr) == -1) {
-          let status = await db.collection("users").update({ username: usrn }, { $set: { like: like_info + "/" + usr } })
+        if (like.indexOf(usr) == -1) {
+          like.push(usr)
+          let status = await db.collection("users").update({username: usrn}, { $set: { like: like} })
           if (status) {
             if (found.like != undefined) {
-              if (found.like.split("/").indexOf(usrn) != -1)
-              {
-                var match_usr = await db.collection("users").findOne({ username: usrn})
-                if (match_usr) {
-                  if (match_usr.match != undefined) {
-                    match_usr = match_usr.match
+              if (found.like.indexOf(usrn) != -1) {
+                let match = []
+                if (user.match != undefined) {
+                  match = user.match
+                }
+                let match_2 = []
+                if (found.match != undefined) {
+                  match_2 = found.match
+                }
+                if (match.indexOf(usr) == -1 && match_2.indexOf(usrn) == -1) {
+                  match.push(usr)
+                  match_2.push(usrn)
+                  let status = await db.collection("users").update({ username: usrn }, { $set: { match: match } })
+                  let status2 = await db.collection("users").update({ username: usr}, { $set: { match: match_2 } })
+                  if (!status || !status2) {
+                    console.log("error update match in database");
                   } else {
-                    match_usr = "/"
-                  }
-                  if (match_usr.split("/").indexOf(usr) == -1) {
-                    let status = await db.collection("users").update({username: usrn}, { $set: { match: match_usr + "/" + usr } })
-                    if (!status) {
-                      console.log("error cannot update base for match, user: " + usrn)
-                    }
-                    match_usr = await db.collection("users").findOne({ username: usr})
-                    if (match_usr) {
-                      if (match_usr.match != undefined) {
-                        match_usr = match_usr.match
-                      } else {
-                        match_usr = "/"
-                      }
-                    }
-                    status = await db.collection("users").update({ username: usr}, { $set: { match: match_usr + "/" + usrn}})
-                    if (!status) {
-                      console.log("error cannot update base for match, user: " + usr)
-                    }
                     res.end("MATCH!")
                     let token = usrn + usr
                     if (token) {
@@ -79,23 +71,21 @@ module.exports = {
                         console.log("error creating the chat room")
                       }
                     }
-                  } else {
-                    res.end("User and you already match")
                   }
+                } else {
+                  res.end(usr + " and you already match")
                 }
-              } else {
-                  res.end("Liked")
               }
             } else {
               res.end("Liked")
             }
-          }
-          else {
-            res.end("ERROR DATABASE")
+          } else {
+            res.end("error")
           }
         } else {
-          res.end("User already liked")
+          res.end(usr + " already liked")
         }
+
   			db.close()
   		}
   	} else {
@@ -117,11 +107,14 @@ module.exports = {
   			"email": body.email,
   			"password": pwd_hash,
         "interest": [],
+        "notification": [],
         "age" : null,
         "pics": null,
         "bio": null,
         "gender": "other",
         "pref": "other",
+        "like": [],
+        "match": [],
         "account_completed": false
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )

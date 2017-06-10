@@ -81,6 +81,20 @@ app.get('/profile', (req, res) => {
   routes.user_profile(req, res, sess)
 })
 
+app.get('/dislike', (req, res) => {
+  sess = req.session
+  let user_to_dislike = req.query.id
+  if (user_to_dislike == undefined) {
+    res.end("error user to dislike incorrect")
+    return
+  }
+  if (routes.delete_match(sess, user_to_dislike) == 1 && routes.dislike(sess, user_to_dislike) == 1) {
+    res.end("ok")
+  } else {
+    res.end("error")
+  }
+})
+
 app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {

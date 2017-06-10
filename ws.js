@@ -35,18 +35,21 @@ module.exports = {
           })
           db.collection("users").findOne({ username: msg.receiver }, (err, notif) => {
             let notification = { username: msg.sender, message: msg.msg}
-            if (notif.notification) {
-              let arr = notif.notification
-              arr.push(notification)
-              db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                db.close()
-              })
-            } else {
-              let arr = []
-              arr.push(notification)
-              db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                db.close()
-              })
+            console.log(notif)
+            if (notif) {
+              if (notif.notification != undefined) {
+                let arr = notif.notification
+                arr.push(notification)
+                db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
+                  db.close()
+                })
+              } else {
+                let arr = []
+                arr.push(notification)
+                db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
+                  db.close()
+                })
+              }
             }
           })
         } catch (e) {
