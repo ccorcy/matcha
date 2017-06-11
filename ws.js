@@ -28,14 +28,13 @@ module.exports = {
           clients.forEach((client) => {
             for (var i = 0; i < ws_notif_user.length; i++) {
               if (ws_notif_user[i].ws === client && ws_notif_user[i].username === msg.receiver
-                && (msg.msg === "like" || msg.msg === "match" || msg.msg === "message" || msg.msg === 'visite')) {
+                && (msg.msg === "like" || msg.msg === "dislike" || msg.msg === "match" || msg.msg === "message" || msg.msg === 'visite')) {
                   client.send(JSON.stringify({ sender: msg.sender, msg: msg.msg }))
               }
             }
           })
           db.collection("users").findOne({ username: msg.receiver }, (err, notif) => {
             let notification = { username: msg.sender, message: msg.msg}
-            console.log(notif)
             if (notif) {
               if (notif.notification != undefined) {
                 let arr = notif.notification

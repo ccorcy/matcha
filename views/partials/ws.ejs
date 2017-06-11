@@ -1,5 +1,19 @@
 <script type="text/javascript">
 const ws = new WebSocket("ws://localhost:3000/notif")
+let alert = document.getElementById('alert_container')
+
+function createNotif(sender, message) {
+  if (message == "like") {
+      alert.innerHTML = "<div class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> likes you !"
+  } else if (message == "match") {
+    alert.innerHTML = "<div class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a>You just match with <strong>" + sender + "</strong> !"
+  } else if (message == "visite") {
+    alert.innerHTML = "<div class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> just visites you !"
+  } else if (message == "message") {
+    alert.innerHTML = "<div class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> just send you a message !"
+  }
+}
+
 ws.onopen = () => {
   console.log("connection established with websocket server")
 }
@@ -8,8 +22,11 @@ ws.onerror = (error) => {
 }
 ws.onmessage = (message) => {
   console.log(message)
-  let msg = JSON.parse(message.data)
-  console.log(msg.sender)
-  console.log(msg.msg)
+  try {
+    let msg = JSON.parse(message.data)
+    createNotif(msg.sender, msg.msg)
+  } catch (e) {
+      console.log(e)
+  }
 }
 </script>

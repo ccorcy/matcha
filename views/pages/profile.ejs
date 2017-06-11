@@ -105,6 +105,9 @@
                     <div class="row">
                       <div class="col">
                         <h1>Upload pictures / Update your bio </h1>
+                        <% if (obj.account_completed === false) { %>
+                          <small class="text-muted text-center">You must at least a profile picture to be able to like someone</small>
+                        <% } %>
                       </div>
                     </div><br>
                     <div class="row">

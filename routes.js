@@ -293,37 +293,26 @@ module.exports = {
     if (db) {
       console.log("username: " + sess.username + "\nusername: " + usr_to_dislike)
       let user = await db.collection("users").findOne({ username: sess.username })
-      let user2 = await db.collection("users").findOne({ username: usr_to_dislike })
-      if (user && user2) {
+      if (user) {
         let like = user.like
-        let like2 = user2.like
         console.log(like)
-        console.log(like2)
-        if (like.indexOf(usr_to_dislike) != -1 && like2.indexOf(sess.username) != -1) {
+        if (like.indexOf(usr_to_dislike) != -1) {
           for (var i = 0; i < like.length; i++) {
             if (like[i] === usr_to_dislike) {
               like.splice(i, 1)
             }
           }
-          for (var i = 0; i < like2.length; i++) {
-            if (like2[i] === sess.username) {
-              like2.splice(i, 1)
-            }
-          }
           let status = await db.collection("users").update({ username: sess.username}, { $set: { like: like} })
-          let status2 = await db.collection("users").update({ username: sess.username}, { $set: { like: like2 } })
-          if (!status || !status2) {
+          if (!status) {
             console.log("error update")
             return (0)
           } else {
             return (1)
           }
         } else {
-          console.log("error: cannot find users in likes of users")
           return (0)
         }
       } else {
-        console.log("error: cannot find users")
         return (0)
       }
       db.close()
@@ -353,18 +342,17 @@ module.exports = {
           }
           let status = await db.collection("users").update({ username: sess.username}, { $set: { match: match } })
           let status2 = await db.collection("users").update({ username: usr_to_dislike}, { $set: { match: match2} })
-          if (!status || !status2) {
+          let status3 = await db.collection("chat_room").remove({ $or: [{ token: sess.username + usr_to_dislike }, { token: usr_to_dislike + sess.username }]})
+          if (!status || !status2 || !status3) {
             console.log("error update")
             return (0)
           } else {
             return (1)
           }
         } else {
-          console.log("error: cannot find " + usr_to_dislike + " or " + sess.username + " in match of users")
           return (0)
         }
       } else {
-        console.log("error: cannot find users")
         return (0)
       }
       db.close()

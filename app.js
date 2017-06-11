@@ -81,6 +81,16 @@ app.get('/profile', (req, res) => {
   routes.user_profile(req, res, sess)
 })
 
+async function waitfordislike(res, sess, user_to_dislike) {
+  let status = await routes.delete_match(sess, user_to_dislike)
+  let status2 = await routes.dislike(sess,user_to_dislike)
+  if (status == 1 && status2 == 1) {
+    res.send("ok")
+  } else {
+    res.send("error")
+  }
+}
+
 app.get('/dislike', (req, res) => {
   sess = req.session
   let user_to_dislike = req.query.id
@@ -88,11 +98,7 @@ app.get('/dislike', (req, res) => {
     res.end("error user to dislike incorrect")
     return
   }
-  if (routes.delete_match(sess, user_to_dislike) == 1 && routes.dislike(sess, user_to_dislike) == 1) {
-    res.end("ok")
-  } else {
-    res.end("error")
-  }
+  waitfordislike(res, sess, user_to_dislike)
 })
 
 app.post('/login', upload.fields([]), (req, res) => {
