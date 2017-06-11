@@ -144,9 +144,16 @@ app.post('/finish_sub', upload.fields([]), (req, res) => {
 			MongoClient.connect(urlDB, (err, db) => {
 				if (err) throw err
         let interest = req.body.interest
+        let arr = []
         interest = interest.split(",")
-				db.collection("users").update({ username: sess.username }, { $set: { name: req.body.name, surname: req.body.surname, email: req.body.email, age: req.body.age, gender: req.body.gender, pref: req.body.pref, interest: interest }} )
+        for (let i = 0; i < interest.length; i++) {
+          if (arr.indexOf(interest[i]) == -1) {
+            arr.push(interest[i])
+          }
+        }
+				db.collection("users").update({ username: sess.username }, { $set: { name: req.body.name, surname: req.body.surname, email: req.body.email, age: req.body.age, gender: req.body.gender, pref: req.body.pref, interest: arr }} )
 				res.send("ok")
+        func.get_interest(arr)
 				db.close()
 			});
 	} else {

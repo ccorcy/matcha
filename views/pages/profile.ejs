@@ -95,6 +95,12 @@
                                   <% } %>
                                 </span>
                                 <input class="form-control" type="text" name="interest" value="<% for (var i = 0; i < obj.interest.length; i++) { %><%= obj.interest[i] %><% if (obj.interest[i + 1] != undefined) { %>,<% } %><% } %>" id="interest" required>
+                                <select class="form-control" id="inter">
+                                  <% for (var i = 0; i < inter.length; i++) { %>
+                                    <option value="<%= inter[i] %>"><%= inter[i] %></option>
+                                  <% } %>
+                                </select>
+                                <button type="button" class="btn btn-default matcha_button" id="add_inter" name="button">Add</button>
                                 <small class="form-text text-muted">Every interest must be separated by a coma without any spaces. Example: music,dev,video_games</small>
                               </div>
                               <button type="submit" class="btn btn-default matcha_button" name="button">Update your informations</button>
@@ -153,7 +159,11 @@
         <% include ../partials/ws %>
         <script type="text/javascript">
         const xhr = new XMLHttpRequest()
+        const inter = document.getElementById('inter')
+        const add = document.getElementById('add_inter')
+        let interest = document.getElementById('interest')
         let form_fin_subs = document.getElementById("fin_subs");
+
         form_fin_subs.addEventListener('submit', (e) => {
             e.preventDefault()
             xhr.open('POST', '/finish_sub', true)
@@ -221,6 +231,11 @@
             }, false)
         }
 
+        add.addEventListener('click', () => {
+          if (inter.value != "") {
+            interest.value = interest.value + "," + inter.value
+          }
+        }, false)
         </script>
     </body>
 </html>

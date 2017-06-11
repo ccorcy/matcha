@@ -42,35 +42,40 @@ module.exports = {
   				res.render('pages/index', {
   				});
   			} else {
-  				db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
-  					if (err) {
-  						res.render('pages/profile', {
-  							obj: result,
-  							name: sess.username,
-  							profile_pic: "pp/default.png",
-  							pics: []
-  						});
-  						db.close()
-  					} else {
-              console.log(result.interest)
-  						if (pic_res[0] != undefined) {
-  							res.render('pages/profile', {
-  								obj: result,
-  								name: sess.username,
-  								profile_pic: result.pics,
-  								pics: pic_res
-  							});
-  						} else {
-  							res.render('pages/profile', {
-  								obj: result,
-  								name: sess.username,
-  								profile_pic: "pp/default.png",
-  								pics: []
-  							});
-  						}
-  						db.close()
-  					}
-  				})
+          db.collection("interest").findOne({}, (err, inter) => {
+            if (err) console.log(err);
+            db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
+              if (err) {
+                res.render('pages/profile', {
+                  obj: result,
+                  name: sess.username,
+                  profile_pic: "pp/default.png",
+                  pics: [],
+                  inter: inter.interests
+                });
+                db.close()
+              } else {
+                if (pic_res[0] != undefined) {
+                  res.render('pages/profile', {
+                    obj: result,
+                    name: sess.username,
+                    profile_pic: result.pics,
+                    pics: pic_res,
+                    inter: inter.interests
+                  });
+                } else {
+                  res.render('pages/profile', {
+                    obj: result,
+                    name: sess.username,
+                    profile_pic: "pp/default.png",
+                    pics: [],
+                    inter: inter.interests
+                  });
+                }
+                db.close()
+              }
+            })
+          })
   			}
   		});
   	});
@@ -212,7 +217,7 @@ module.exports = {
         let user = await db.collection("users").findOne({ username: req.query.usr })
         if (user) {
           res.render('pages/user_profile', {
-            user: user
+            user: user,
           })
         } else {
           res.render('pages/user_profile')

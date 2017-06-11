@@ -200,5 +200,33 @@ module.exports = {
         }
       }
     }
+  },
+  get_interest: async function (interests) {
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+      let interests_db = await db.collection("interest").find({}).toArray()
+      if (interests_db.length != 0) {
+        let inter = interests_db[0].interests
+        let arr = []
+        for (let i = 0; i < inter.length; i++) {
+          arr.push(inter[i])
+        }
+        for (let i = 0; i < interests.length; i++) {
+          if (arr.indexOf(interests[i]) == -1)
+            arr.push(interests[i])
+        }
+        let status = await db.collection("interest").update({}, { $set: { interests: arr } })
+        if (!status) {
+            console.log("error");
+        }
+      } else {
+        let status = await db.collection("interest").insertOne({ interests: interests })
+        if (!status) {
+          console.log("error");
+        }
+      }
+    } else {
+      console.log("error: cannot get access to database. function get_interest");
+    }
   }
 }

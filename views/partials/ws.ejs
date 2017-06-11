@@ -1,6 +1,6 @@
 <script type="text/javascript">
 const ws = new WebSocket("ws://localhost:3000/notif")
-let alert = document.getElementById('alert_container')
+let alert_content = document.getElementById('alert_container')
 
 function createNotif(sender, message) {
   if (message == "like") {
