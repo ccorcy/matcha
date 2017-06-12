@@ -15,36 +15,40 @@
     <div class="container">
       <div class="jumbotron" style="margin-top: 15px">
         <span id="nouser"></span>
+        <div class="row">
         <% for (var i = 0; i < usr.length ; i++) { %>
-          <div class="row" style=" border: 1px dashed #FF5F6D; margin: 15px; min-width: 200px; padding: 10px">
-            <div class="col">
-              <div class="row">
-                <div class="col">
-                  <h4 style="color: #FF5F6D"><%= usr[i].username %></h4>
-                  <small class="text-muted"><%= usr[i].age %> years old</small>
-                </div>
-                <div class="col">
-                  <div style="background-color: rgba(224, 166, 77, 0)">
-                    <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 200px">
-                  </div>
-                </div>
+          <div class="col-sm-6 col-md-4">
+            <div class="card text-center" style="max-width: 300px">
+              <div class="card-header">
+                <h4 class="card-title"><%= usr[i].username %></h4>
               </div>
-              <div class="row">
-                <div class="row">
-                  <div class="col-6" style="text-align:center">
-                    <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
-                  </div>
-                  <div class="col-6" style="text-align:center">
-                    <button type="button" class="btn btn-success dislike_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
-                  </div>
-                </div>
+              <div class="card-block">
                 <div class="row">
                   <div class="col">
-                    <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
+                    <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                    <h1></h1>
+                    <small style="text-muted"><%= usr[i].age %> years old</small><br>
+                    Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
+                            <% if (usr[i].gender === "female") { %>&#9792;<% } %>
+                            <% if (usr[i].gender === "other") { %>&#9906;<% } %>
+                    <div class="col">
+                      <div class="row">
+                        <div class="col-6" style="text-align:center">
+                          <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                        </div>
+                        <div class="col-6" style="text-align:center">
+                          <button type="button" class="btn btn-success dislike_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           </div>
         <% } %>
