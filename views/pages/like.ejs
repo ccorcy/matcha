@@ -96,9 +96,10 @@
             if (xhr.status === 200 && xhr.readyState === 4) {
               console.log(xhr.responseText)
               if (xhr.responseText === "ok") {
-                document.getElementById('alert-container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Dislike</strong> You just dislike " + like_button[i].id + "</span></div>"
+                ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
+                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Dislike</strong> You just dislike " + like_button[i].id + "</span></div>"
               } else if ("error") {
-                document.getElementById('alert-container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Something bad happend</strong></span></div>"
+                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Stop!</strong> You already dislike " + like_button[i].id + "</span></div>"
               }
             }
           }

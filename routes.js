@@ -44,6 +44,10 @@ module.exports = {
   			} else {
           db.collection("interest").findOne({}, (err, inter) => {
             if (err) console.log(err);
+            let interests = []
+            if (inter != undefined) {
+              interests = inter.interests
+            }
             db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
               if (err) {
                 res.render('pages/profile', {
@@ -51,7 +55,7 @@ module.exports = {
                   name: sess.username,
                   profile_pic: "pp/default.png",
                   pics: [],
-                  inter: inter.interests
+                  inter: interests
                 });
                 db.close()
               } else {
@@ -61,7 +65,7 @@ module.exports = {
                     name: sess.username,
                     profile_pic: result.pics,
                     pics: pic_res,
-                    inter: inter.interests
+                    inter: interests
                   });
                 } else {
                   res.render('pages/profile', {
@@ -69,7 +73,7 @@ module.exports = {
                     name: sess.username,
                     profile_pic: "pp/default.png",
                     pics: [],
-                    inter: inter.interests
+                    inter: interests
                   });
                 }
                 db.close()
@@ -218,6 +222,7 @@ module.exports = {
         if (user) {
           res.render('pages/user_profile', {
             user: user,
+            sess: sess
           })
         } else {
           res.render('pages/user_profile')

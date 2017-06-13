@@ -115,6 +115,8 @@ module.exports = {
         "pref": "other",
         "like": [],
         "match": [],
+        "score": 0,
+        "last_visite": null,
         "account_completed": false
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
@@ -160,13 +162,13 @@ module.exports = {
   },
 
   up_pics: async function (db, sess, req, res) {
-    let pictures = await db.collection("pp").find({ username: sess.username })
+    let pictures = await db.collection("pp").find({ username: sess.username }).toArray()
     if (pictures) {
-      if (pictures.length >= 5) {
+      if (pictures.length > 5) {
         res.end("toomany")
       } else {
         let status = await db.collection("pp").insertOne({ username: sess.username, img: req.file })
-        let status1 = await db.collection("users").update({ username: sess.username }, { $set: {pics: "/pp/" + req.file.filename} } )
+        let status1 = await db.collection("users").update({ username: sess.username }, { $set: { pics: "/pp/" + req.file.filename, account_completed: true }} )
         if (status && status1) {
           res.end("OK")
         } else {
@@ -212,7 +214,7 @@ module.exports = {
           arr.push(inter[i])
         }
         for (let i = 0; i < interests.length; i++) {
-          if (arr.indexOf(interests[i]) == -1)
+          if (arr.indexOf(interests[i]) == -1 && interests[i] !== "")
             arr.push(interests[i])
         }
         let status = await db.collection("interest").update({}, { $set: { interests: arr } })

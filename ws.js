@@ -56,7 +56,7 @@ module.exports = {
         }
       })
       ws.on('close', () => {
-        for (var i = ws_notif_user.length - 1; i >= 0; i--) {
+        for (let i = ws_notif_user.length - 1; i >= 0; i--) {
           if (ws_notif_user[i].ws === ws) {
             ws_notif_user.splice(i, 1)
           }

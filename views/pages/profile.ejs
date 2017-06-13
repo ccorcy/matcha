@@ -14,38 +14,38 @@
                     <h1>My profile</h1>
                   </div>
                 </div><br>
-                <div class="row">
-                  <div class="col-4">
-                    <div style="background-color: rgba(224, 166, 77, 0)">
-                      <img src="<%= obj.pics %>" class="rounded mx-auto d-block like" style="width: 20vw; height: 20vw" id="pp">
+                <div class="card text-center">
+                  <h3 class="card-header"><%= obj.username %></h3>
+                  <div class="card-block">
+                    <div class="row">
+                      <div class="col-3" style="min-width: 250px; margin-bottom: 15px;">
+                        <div style="background-color: rgba(0,0,0,0)">
+                          <img id="pp" src="<%= obj.pics %>" alt="pp" class="rounded mx-auto d-block like" style="width:200px; height: 200px">
+                        </div>
+                      </div>
+                      <div class="col" style="border: 2px dashed #FF5F6D; margin-left: 15px; margin-right: 15px; padding:10px;">
+                        <h3 style="color: #FF5F6D"><%= obj.name %> <%= obj.surname %></h3>
+                        <small class="text-muted"><%= obj.age %> years old</small><br>
+                        Gender: <% if (obj.gender === "male") { %>&#9794;<% } %>
+                                <% if (obj.gender === "female") { %>&#9792;<% } %>
+                                <% if (obj.gender === "other") { %>&#9906;<% } %>
+                        <div class="row">
+                          <div class="col">
+                            <center>
+                              <p class="lead" style="text-align:center;word-wrap: break-word; max-width: 400px; max-height: 100px; overflow:auto; font-size: 14px" id="biographie"><%= obj.bio %></p>
+                            </center>
+                          </div>
+                        </div>
+                        <h5>My spheres of interet</h5>
+                        <span style="color: rgb(240, 90, 90); font-decoration: underline">
+                          <% for (var i = 0; i < obj.interest.length; i++) { %>
+                            #<%= obj.interest[i] %> <% if (obj.interest[i + 1] != undefined) { %>, <% } %>
+                          <% } %>
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col" style=" border: 1px dashed #FF5F6D;">
-                    <h4>About me:</h4>
-                    <small class="text-muted"><%= obj.age %> years old</small>
-                    <p id="biographie" style="color:#FF5F6D;"><%= obj.bio %></p>
                   </div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <h1>My private informations </h1>
-                    </div>
-                </div><br>
-                <div class="row">
-                    <div class="col" style="">
-                        Name: <%= obj.name %><br />
-                        Surname: <%= obj.surname %> <br />
-                        E-Mail: <%= obj.email %> <button type="button" name="change_mail" class="btn btn-info">Change e-mail adress</button><br />
-                        I am <i><%= obj.gender %></i> searching for <i><% if (obj.pref != undefined) {
-                            if (obj.pref === "male") {
-                              %> men
-                            <% } else if (obj.pref === "female") {
-                                %> women <% } else if (obj.pref === "other") {
-                                  %> men or women <% }
-                          } %> </i><br />
-                    </div>
-                </div><br>
                 <hr>
                 <div class="container">
                     <div class="row">
@@ -192,6 +192,8 @@
                         document.location.reload()
                     } else if (xhr.responseText === "error") {
                         alert('Something went wrong')
+                    } else if (xhr.responseText === "toomany") {
+                      alert("You can have only five pictures on your account")
                     }
                 }
             }
@@ -233,7 +235,11 @@
 
         add.addEventListener('click', () => {
           if (inter.value != "") {
-            interest.value = interest.value + "," + inter.value
+            if (interest.value != "") {
+              interest.value = interest.value + "," + inter.value
+            } else {
+              interest.value = inter.value  
+            }
           }
         }, false)
         </script>

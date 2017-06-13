@@ -8,32 +8,39 @@
     <span id="alert_container"></span>
     <div class="container" style="margin-top: 15px">
       <div class="jumbotron">
-        <div class="row">
           <span id="nouser"></span>
+          <div class="row">
         <% for (var i = 0; i < usrs.length ; i++) { %>
         <% if (name !== usrs[i].username && usr_matched.indexOf(usrs[i].username) != -1) { %>
-          <div class="col">
-            <div class="row">
-              <div class="col">
-                <div style="background-color: rgba(224, 166, 77, 0)">
-                  <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="width: 20vw; height: 20vw">
-                </div>
+          <div class="col-sm-6 col-md-4">
+            <div class="card text-center">
+              <div class="card-header">
+                <h4 class="card-title"><%= usrs[i].username %></h4>
               </div>
-              <div class="col-8" style=" border: 1px dashed #FF5F6D; margin: 15px; min-width: 200px; padding: 10px">
-                <h4 style="color: #FF5F6D"><%= usrs[i].username %></h4>
-                <small class="text-muted"><%= usrs[i].age %> years old</small>
+              <div class="card-block">
                 <div class="row">
                   <div class="col">
-                    <button type="button" class="btn matcha_button chat_button" name="button" id='<%= usrs[i].username %>'>Say hello !</button>
-                  </div>
-                  <div class="col">
-                    <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usrs[i].username %>'>View profile</button>
+                      <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                      <h1></h1>
+                      <small style="text-muted"><%= usrs[i].age %> years old</small><br>
+                      Gender: <% if (usrs[i].gender === "male") { %>&#9794;<% } %>
+                              <% if (usrs[i].gender === "female") { %>&#9792;<% } %>
+                              <% if (usrs[i].gender === "other") { %>&#9906;<% } %>
+                      <div class="col">
+                        <div class="row">
+                          <div class="col">
+                            <button type="button" class="btn matcha_button chat_button" name="button" id='<%= usrs[i].username %>'>Say hello !</button>
+                          </div>
+                          <div class="col">
+                            <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usrs[i].username %>'>View profile</button>
+                          </div>
+                        </div>
+                      </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <hr>
         <% } %>
         <% } %>
       </div>
