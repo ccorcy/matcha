@@ -43,7 +43,7 @@ module.exports = {
   				});
   			} else {
           db.collection("interest").findOne({}, (err, inter) => {
-            if (err) console.log(err);
+            if (err) throw err;
             let interests = []
             if (inter != undefined) {
               interests = inter.interests
@@ -301,11 +301,9 @@ module.exports = {
   dislike: async function (sess, usr_to_dislike) {
     let db = await MongoClient.connect(urlDB)
     if (db) {
-      console.log("username: " + sess.username + "\nusername: " + usr_to_dislike)
       let user = await db.collection("users").findOne({ username: sess.username })
       if (user) {
         let like = user.like
-        console.log(like)
         if (like.indexOf(usr_to_dislike) != -1) {
           for (var i = 0; i < like.length; i++) {
             if (like[i] === usr_to_dislike) {

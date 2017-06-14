@@ -6,11 +6,13 @@ function createNotif(sender, message) {
   if (message == "like") {
       alert_content.innerHTML = "<div style='display:inline' class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> likes you !"
   } else if (message == "match") {
-    alert_content.innerHTML = "<div style='display:inline' class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a>You just match with <strong>" + sender + "</strong> !"
+    swal("YOU MATCH !", "You just match with " + sender, "success")
   } else if (message == "visite") {
-    alert_content.innerHTML = "<div style='display:inline' class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> just visites you !"
+    $.notify(sender + " visites you", "info")
   } else if (message == "message") {
-    alert_content.innerHTML = "<div style='display:inline' class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> just send you a message !"
+    $.notify(sender + " sends you a message", "info")
+  } else if (message == "dislike") {
+    $.notify(sender + " does not like you anymore :(", "error")
   }
 }
 

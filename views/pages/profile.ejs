@@ -171,10 +171,10 @@
             xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
                 if (xhr.responseText === "ok") {
-                    alert('Informations updated')
+                    $.notify('Informations updated', "success")
                     document.location.reload()
                 } else {
-                    alert("Something went wrong")
+                    $.notify("Something went wrong", "error")
                     }
                 }
             }
@@ -188,12 +188,14 @@
             xhr.onload = () => {
                 if (xhr.status === 200 && xhr.readyState === 4) {
                     if ( xhr.responseText === "OK") {
-                        alert('Upload completed')
-                        document.location.reload()
+                        $.notify('Upload completed', "success")
+                        setTimeout(() => {
+                            document.location.reload()
+                        }, 750)
                     } else if (xhr.responseText === "error") {
-                        alert('Something went wrong')
+                        $.notify('Something went wrong', "error")
                     } else if (xhr.responseText === "toomany") {
-                      alert("You can have only five pictures on your account")
+                      $.notify("You can have only five pictures on your account", "warn")
                     }
                 }
             }
@@ -209,8 +211,9 @@
                 if (xhr.status === 200 && xhr.readyState === 4) {
                     if (xhr.responseText === "ok") {
                         document.getElementById("biographie").innerHTML = document.getElementById("bio").value
+                        $.notify("Bio updated", "success")
                     } else if (xhr.responseText === "error") {
-                        alert("Don't use special character like '<' or '>'")
+                        $.notify("Don't use special character like '<' or '>'", "warn")
                     }                }
             }
         }, false)
@@ -226,7 +229,7 @@
                         if (xhr.responseText === "ok") {
                             document.getElementById("pp").src = "/pp/" + pictures_user[i].id
                         } else if (xhr.responseText === "error") {
-                            alert("Something went wrong :( ")
+                            $.notify("Something went wrong :( ", "error")
                         }
                     }
                 }
@@ -238,7 +241,7 @@
             if (interest.value != "") {
               interest.value = interest.value + "," + inter.value
             } else {
-              interest.value = inter.value  
+              interest.value = inter.value
             }
           }
         }, false)

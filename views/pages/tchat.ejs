@@ -13,13 +13,13 @@
             <% for (var i = 0; i < messages.length; i++) { %>
               <% if (messages[i].sender !== user) { %>
                 <div class="row">
-                  <div class="col-5" style="font-size: 15px; background-color: #FF5F6D; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; margin-bottom: 5px">
+                  <div class="col-5" style="font-size: 15px; background-color: #FF5F6D; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; margin-bottom: 5px; word-break: break-all;">
                     <%= messages[i].value %>
                   </div>
                 </div>
               <% } else { %>
                 <div class="row">
-                  <div class="col-5 offset-7" style="font-size: 15px; background-color: #FFC371; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; text-align: right; margin-bottom: 5px">
+                  <div class="col-5 offset-7" style="font-size: 15px; background-color: #FFC371; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; text-align: right; margin-bottom: 5px; word-break: break-all;">
                     <%= messages[i].value %>
                   </div>
                 </div>
@@ -48,6 +48,18 @@
     const ws_chat = new WebSocket('ws://localhost:3000/chat')
     const msg_div = document.getElementById("message")
     const text = document.getElementById("usr_message")
+
+    function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
     ws_chat.onopen = () => {
 
     }
@@ -58,6 +70,7 @@
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
       ws_chat.send(JSON.stringify({ sender: '<%= user %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
+      ws.send(JSON.stringify({ sender: '<%= user %>', receiver: '<%= usr2 %>', msg: "message" }))
       document.getElementById("usr_message").value = ""
     }, false)
 
@@ -70,8 +83,8 @@
           let p = document.createElement("p")
           new_div.className = "row"
           new_col.className = "col-4 offset-8"
-          new_col.style = "font-size: 15px; background-color: #FFC371; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; text-align: right"
-          p.innerHTML = msg.msg
+          new_col.style = "font-size: 15px; background-color: #FFC371; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; text-align: right; word-break: break-all;"
+          p.innerHTML = escapeHtml(msg.msg)
           new_col.appendChild(p)
           new_div.appendChild(new_col)
           msg_div.appendChild(new_div)
@@ -81,8 +94,8 @@
           let p = document.createElement("p")
           new_div.className = "row"
           new_col.className = "col-4"
-          new_col.style = "font-size: 15px; background-color: #FF5F6D; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px"
-          p.innerHTML = msg.msg
+          new_col.style = "font-size: 15px; background-color: #FF5F6D; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; word-break: break-all;"
+          p.innerHTML = escapeHtml(msg.msg)
           new_col.appendChild(p)
           new_div.appendChild(new_col)
           msg_div.appendChild(new_div)

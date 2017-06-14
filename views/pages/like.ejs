@@ -78,7 +78,8 @@
                 document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
                 ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
               } else if (xhr.responseText === "MATCH!"){
-                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
+                swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
+                //document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
                 ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
               } else {
                 document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
@@ -107,7 +108,6 @@
       }
       for (let i = 0; i < profile.length; i++) {
         profile[i].addEventListener('click', () => {
-          ws.send(JSON.stringify({ sender: '<%= name %>', receiver: profile[i].id, msg: "visite" }))
           document.location.href = "/profile?usr=" + profile[i].id
         }, false)
       }

@@ -24,33 +24,35 @@ module.exports = {
       ws.on('message', (message) => {
         try {
           let msg = JSON.parse(message)
-          let clients = expressWs.getWss().clients
-          clients.forEach((client) => {
-            for (var i = 0; i < ws_notif_user.length; i++) {
-              if (ws_notif_user[i].ws === client && ws_notif_user[i].username === msg.receiver
-                && (msg.msg === "like" || msg.msg === "dislike" || msg.msg === "match" || msg.msg === "message" || msg.msg === 'visite')) {
-                  client.send(JSON.stringify({ sender: msg.sender, msg: msg.msg }))
+          if (msg.msg != undefined && msg.sender != undefined && msg.receiver != undefined) {
+            let clients = expressWs.getWss().clients
+            clients.forEach((client) => {
+              for (var i = 0; i < ws_notif_user.length; i++) {
+                if (ws_notif_user[i].ws === client && ws_notif_user[i].username === msg.receiver
+                  && (msg.msg === "like" || msg.msg === "dislike" || msg.msg === "match" || msg.msg === "message" || msg.msg === 'visite')) {
+                    client.send(JSON.stringify({ sender: msg.sender, msg: msg.msg }))
+                }
               }
-            }
-          })
-          db.collection("users").findOne({ username: msg.receiver }, (err, notif) => {
-            let notification = { username: msg.sender, message: msg.msg}
-            if (notif) {
-              if (notif.notification != undefined) {
-                let arr = notif.notification
-                arr.push(notification)
-                db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                  db.close()
-                })
-              } else {
-                let arr = []
-                arr.push(notification)
-                db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                  db.close()
-                })
+            })
+            db.collection("users").findOne({ username: msg.receiver }, (err, notif) => {
+              let notification = { username: msg.sender, message: msg.msg}
+              if (notif) {
+                if (notif.notification != undefined) {
+                  let arr = notif.notification
+                  arr.push(notification)
+                  db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
+                    db.close()
+                  })
+                } else {
+                  let arr = []
+                  arr.push(notification)
+                  db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
+                    db.close()
+                  })
+                }
               }
-            }
-          })
+            })  
+          }
         } catch (e) {
           console.log(e)
         }
