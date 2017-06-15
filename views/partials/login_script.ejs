@@ -5,7 +5,6 @@
             const xhrrequest = new XMLHttpRequest();
             const login_form = document.getElementById("loginform");
 
-
             login.addEventListener('submit', (e) => {
                 e.preventDefault();
                 xhrrequest.open("POST", "/login", true);
@@ -19,6 +18,7 @@
                         else if (xhrrequest.responseText === "error password") {
                             usrn.className = "form-group has-success";
                             pwd.className = "form-group has-danger";
+                            document.getElementById('reset').style.display = "inline"
                         }
                         else if (xhrrequest.responseText === "error mail") {
                             usrn.className = "form-group has-danger";
@@ -27,4 +27,25 @@
                     }
                 };
             }, false);
+
+            document.getElementById("reset").onclick = () => {
+                console.log(document.getElementById('reset_mail').value)
+                if (document.getElementById('reset_mail').value == "") {
+                    document.getElementById("input-usr").style.display = "none"
+                    document.getElementById("input-password").style.display = "none"
+                    document.getElementById('reset_mail').style.display = 'inline'
+                } else {
+                    xhrrequest.open("GET", "/reset_password?mail=" + document.getElementById('reset_mail').value, true)
+                    xhrrequest.onload = function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            if (this.responseText === "ok") {
+                                document.location.href = "/"
+                            } else {
+                                $.notify("An error occured", "error")
+                            }
+                        }
+                    }
+                    xhrrequest.send()
+                }
+            }
         </script>

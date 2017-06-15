@@ -9,6 +9,7 @@ const upload = multer();
 const bcrypt = require('bcrypt');
 const up = multer({ dest: 'public/pp/' });
 const func = require("./utils.js")
+const sendmail = require("sendmail")( {silent: true} )
 
 module.exports = {
   login: async function (db, body, sess, res) {
@@ -26,7 +27,39 @@ module.exports = {
   	}
   	db.close()
   },
+  reset_password: async function (req, res) {
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+        let user = await db.collection("users").findOne({ email: req.query.mail })
+        if (user) {
+            var pwd = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+            for( var i=0; i < 11; i++ )
+                pwd += possible.charAt(Math.floor(Math.random() * possible.length));
+            let hash = await bcrypt.hash(pwd, 10)
+            if (hash) {
+                let status = await db.collection("users").update({ email: req.query.mail }, { $set: { password: hash }})
+                if (!status) {
+                    console.log("error update password")
+                } else {
+                    sendmail({
+                        from: 'no-reply@matcha.com',
+                        to: user.email,
+                        subject: 'MATCHA | Password reset',
+                        html: " Your password has been reset. Your new password is " + pwd
+                    }, (err, reply) => {
+                    })
+                    res.end("ok")
+                }
+            }
+        } else {
+            res.end("error")
+        }
+    } else {
+        console.log("can't connect to databases")
+    }
+  },
   user: async function (db, usrn, usr, res) {
   	let found = await db.collection("users").findOne({ username: usr })
   	if (found) {

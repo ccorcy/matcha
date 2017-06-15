@@ -13,6 +13,7 @@ const favicon = require('serve-favicon')
 const app = express()
 const expressWs = require('express-ws')(app)
 const wss = require('./ws.js')
+const sendmail = require("sendmail")()
 
 app.use(express.static(__dirname + '/public'));
 app.use(session( { secret: 'ccorcymatcha',
@@ -99,6 +100,10 @@ app.get('/dislike', (req, res) => {
     return
   }
   waitfordislike(res, sess, user_to_dislike)
+})
+
+app.get("/reset_password", (req, res) => {
+    func.reset_password(req, res)
 })
 
 app.post('/login', upload.fields([]), (req, res) => {
