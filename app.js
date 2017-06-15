@@ -85,7 +85,7 @@ app.get('/profile', (req, res) => {
 async function waitfordislike(res, sess, user_to_dislike) {
   let status = await routes.delete_match(sess, user_to_dislike)
   let status2 = await routes.dislike(sess,user_to_dislike)
-  if (status == 1 && status2 == 1) {
+  if (status == 1 ||  status2 == 1) {
     res.send("ok")
   } else {
     res.send("error")
@@ -104,6 +104,14 @@ app.get('/dislike', (req, res) => {
 
 app.get("/reset_password", (req, res) => {
     func.reset_password(req, res)
+})
+
+app.get("/last_log", (req, res) => {
+    if (req.query.user != undefined) {
+        func.last_login(req, res)
+    } else {
+        res.end("")
+    }
 })
 
 app.post('/login', upload.fields([]), (req, res) => {

@@ -31,14 +31,20 @@
                     Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
                             <% if (usr[i].gender === "female") { %>&#9792;<% } %>
                             <% if (usr[i].gender === "other") { %>&#9906;<% } %>
+                    <br>
+                    availability: <span class="available" id="<%= usr[i].username %>">log</span>
                     <div class="col">
                       <div class="row">
-                        <div class="col-6" style="text-align:center">
+                        <% if (like.indexOf(usr[i].username) == -1) { %>
+                        <div class="col" style="text-align:center">
                           <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
                         </div>
-                        <div class="col-6" style="text-align:center">
+                        <% } %>
+                        <% if (like.indexOf(usr[i].username) != -1) { %>
+                        <div class="col" style="text-align:center">
                           <button type="button" class="btn btn-success dislike_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
                         </div>
+                        <% } %>
                       </div>
                       <div class="row">
                         <div class="col">
@@ -64,7 +70,7 @@
       let dislike_button = document.getElementsByClassName("dislike_button")
       let profile = document.getElementsByClassName("profile_button")
 
-      if (like_button.length == 0) {
+      if (like_button.length == 0 && dislike_button.length == 0) {
         document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
       }
       for (let i = 0; i < like_button.length; i++) {
@@ -79,7 +85,6 @@
                 ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
               } else if (xhr.responseText === "MATCH!"){
                 swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
-                //document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-success alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Match!</strong> You just match with " + like_button[i].id + "      </span></div>"
                 ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
               } else {
                 document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
@@ -95,12 +100,11 @@
           xhr.send()
           xhr.onload = () => {
             if (xhr.status === 200 && xhr.readyState === 4) {
-              console.log(xhr.responseText)
               if (xhr.responseText === "ok") {
                 ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
-                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Dislike</strong> You just dislike " + like_button[i].id + "</span></div>"
+                $.notify("You dislike " + dislike_button[i].id, "info")
               } else if ("error") {
-                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Stop!</strong> You already dislike " + like_button[i].id + "</span></div>"
+                $.notify("You already dislike " + dislike_button[i].id, "error")
               }
             }
           }

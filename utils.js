@@ -263,5 +263,18 @@ module.exports = {
     } else {
       console.log("error: cannot get access to database. function get_interest");
     }
+  },
+  last_login: async function (req, res) {
+    let db = await MongoClient.connect(urlDB)
+    if (db) {
+        let last_log = await db.collection("users").findOne({ username: req.query.user })
+        if (last_log) {
+            res.end(last_log.last_visite.toString())
+        } else {
+            res.end("")
+        }
+    } else {
+        res.end("")
+    }
   }
 }

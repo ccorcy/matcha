@@ -21,6 +21,14 @@ module.exports = {
     sess = req.session
     if (sess.username != undefined) {
       ws_notif_user.push({ username: sess.username, ws: ws})
+      let clients = expressWs.getWss().clients
+      let arr = []
+      for (let i = 0; i < ws_notif_user.length; i++) {
+        arr.push(ws_notif_user[i].username)
+      }
+      clients.forEach((client) => {
+        client.send(JSON.stringify({ sender: "server", msg: "status", status: arr }))
+      })
       ws.on('message', (message) => {
         try {
           let msg = JSON.parse(message)
@@ -51,7 +59,7 @@ module.exports = {
                   })
                 }
               }
-            })  
+            })
           }
         } catch (e) {
           console.log(e)
@@ -60,9 +68,18 @@ module.exports = {
       ws.on('close', () => {
         for (let i = ws_notif_user.length - 1; i >= 0; i--) {
           if (ws_notif_user[i].ws === ws) {
+            db.collection("users").update({ username: ws_notif_user[i].username }, { $set: { last_visite: Date.now() }})
             ws_notif_user.splice(i, 1)
           }
         }
+        let clients = expressWs.getWss().clients
+        let arr = []
+        for (let i = 0; i < ws_notif_user.length; i++) {
+          arr.push(ws_notif_user[i].username)
+        }
+        clients.forEach((client) => {
+          client.send(JSON.stringify({ sender: "server", msg: "status", status: arr }))
+        })
       })
     }
   },

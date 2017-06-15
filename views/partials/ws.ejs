@@ -1,6 +1,7 @@
 <script type="text/javascript">
 const ws = new WebSocket("ws://localhost:3000/notif")
 let alert_content = document.getElementById('alert_container')
+let available = document.getElementsByClassName('available')
 
 function createNotif(sender, message) {
   if (message == "like") {
@@ -26,6 +27,33 @@ ws.onmessage = (message) => {
   try {
     let msg = JSON.parse(message.data)
     createNotif(msg.sender, msg.msg)
+    if (msg.msg === "status") {
+        console.log(msg.status)
+        let stat = 0
+        for (let n = 0; n < available.length; n++) {
+            stat = 0;
+            for (let i = 0; i < msg.status.length; i++) {
+                if (available[n].id === msg.status[i]) {
+                    available[n].innerHTML = "Available"
+                    available[n].style = "color: rgb(86, 254, 18)"
+                    stat = 1
+                }
+            }
+            if (stat == 0) {
+                console.log("HERE + " + available[n].id)
+                xhr.open("GET", "/last_log?user=" + available[n].id, true)
+                xhr.onload = function () {
+                    if (this.status === 200 && this.readyState === 4) {
+                        console.log(this.responseText)
+                        if (this.responseText != undefined) {
+                            available[n].innerHTML = "last login: " + this.responseText
+                        }
+                    }
+                }
+                xhr.send()
+            }
+        }
+    }
   } catch (e) {
       console.log(e)
   }
