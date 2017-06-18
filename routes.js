@@ -51,7 +51,7 @@ module.exports = {
             db.collection("pp").find( { username: sess.username }).toArray((err, pic_res) => {
               if (err) {
                 res.render('pages/profile', {
-                  obj: result,
+                  user: result,
                   name: sess.username,
                   profile_pic: "pp/default.png",
                   pics: [],
@@ -61,7 +61,7 @@ module.exports = {
               } else {
                 if (pic_res[0] != undefined) {
                   res.render('pages/profile', {
-                    obj: result,
+                    user: result,
                     name: sess.username,
                     profile_pic: result.pics,
                     pics: pic_res,
@@ -69,7 +69,7 @@ module.exports = {
                   });
                 } else {
                   res.render('pages/profile', {
-                    obj: result,
+                    user: result,
                     name: sess.username,
                     profile_pic: "pp/default.png",
                     pics: [],
@@ -203,6 +203,7 @@ module.exports = {
         res.render('pages/match', {
           name: sess.username,
           usr_matched: result.match,
+          user: result,
           usrs: usrs
         })
         db.close()
@@ -218,10 +219,12 @@ module.exports = {
     if (sess.username != undefined && req.query.usr != undefined) {
       let db = await MongoClient.connect(urlDB)
       if (db) {
-        let user = await db.collection("users").findOne({ username: req.query.usr })
+        let usr = await db.collection("users").findOne({ username: req.query.usr })
+        let user = await db.collection("users").findOne({ username: sess.username })
         if (user) {
           res.render('pages/user_profile', {
-            user: user,
+            usr: usr,
+            user : user,
             sess: sess
           })
         } else {
@@ -241,6 +244,7 @@ module.exports = {
       if (db) {
         let room = await db.collection("chat_room").findOne({ token: token1})
         if (room) {
+          let user = await db.collection("users").findOne({ username : sess.username })
           let usrs = room.users.split("/")
           if ((usrs[0] === sess.username || usrs[1] === sess.username)
             && (usrs[0] === req.query.id || usrs[1] === req.query.id)) {
@@ -250,11 +254,14 @@ module.exports = {
               } else {
                 user2 = usrs[0]
               }
-              res.render('pages/tchat', {
-                user: sess.username,
-                usr2: user2,
-                messages: room.messages
-              })
+              if (user) {
+                res.render('pages/tchat', {
+                  usr: sess.username,
+                  usr2: user2,
+                  messages: room.messages,
+                  user: user
+                })
+              }
               db.close()
           } else {
             db.close()

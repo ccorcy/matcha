@@ -11,7 +11,7 @@
         <div class="row" style='padding: 8px; background-color: rgb(198, 198, 198); border-radius: 5px 5px 5px 5px; margin: 10px'>
           <div class="col" id="message">
             <% for (var i = 0; i < messages.length; i++) { %>
-              <% if (messages[i].sender !== user) { %>
+              <% if (messages[i].sender !== usr) { %>
                 <div class="row">
                   <div class="col-5" style="font-size: 15px; background-color: #FF5F6D; border: 1px solid black; border-radius: 5px 5px 5px 5px; width: 80%; padding: 5px; margin-bottom: 5px; word-break: break-all;">
                     <%= messages[i].value %>
@@ -69,8 +69,8 @@
     }
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
-      ws_chat.send(JSON.stringify({ sender: '<%= user %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
-      ws.send(JSON.stringify({ sender: '<%= user %>', receiver: '<%= usr2 %>', msg: "message" }))
+      ws_chat.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
+      ws.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: "message" }))
       document.getElementById("usr_message").value = ""
     }, false)
 

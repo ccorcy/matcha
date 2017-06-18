@@ -15,31 +15,35 @@
                   </div>
                 </div><br>
                 <div class="card text-center">
-                  <h3 class="card-header"><%= obj.username %></h3>
+                  <h3 class="card-header"><%= user.username %></h3>
                   <div class="card-block">
                     <div class="row">
                       <div class="col-3" style="min-width: 250px; margin-bottom: 15px;">
                         <div style="background-color: rgba(0,0,0,0)">
-                          <img id="pp" src="<%= obj.pics %>" alt="pp" class="rounded mx-auto d-block like" style="width:200px; height: 200px">
+                          <% if (user.pics == undefined) { %>
+                            <img id="pp" src='/pp/default.png' class="rounded mx-auto like" style="width:200px; height: 200px">
+                          <% } else { %>
+                            <img id="pp" src="<%= user.pics %>" class="rounded mx-auto like" style="width:200px; height: 200px">
+                          <% } %>
                         </div>
                       </div>
                       <div class="col" style="border: 2px dashed #FF5F6D; margin-left: 15px; margin-right: 15px; padding:10px;">
-                        <h3 style="color: #FF5F6D"><%= obj.name %> <%= obj.surname %></h3>
-                        <small class="text-muted"><%= obj.age %> years old</small><br>
-                        Gender: <% if (obj.gender === "male") { %>&#9794;<% } %>
-                                <% if (obj.gender === "female") { %>&#9792;<% } %>
-                                <% if (obj.gender === "other") { %>&#9906;<% } %>
+                        <h3 style="color: #FF5F6D"><%= user.name %> <%= user.surname %></h3>
+                        <small class="text-muted"><%= user.age %> years old</small><br>
+                        Gender: <% if (user.gender === "male") { %>&#9794;<% } %>
+                                <% if (user.gender === "female") { %>&#9792;<% } %>
+                                <% if (user.gender === "other") { %>&#9906;<% } %>
                         <div class="row">
                           <div class="col">
                             <center>
-                              <p class="lead" style="text-align:center;word-wrap: break-word; max-width: 400px; max-height: 100px; overflow:auto; font-size: 14px" id="biographie"><%= obj.bio %></p>
+                              <p class="lead" style="text-align:center;word-wrap: break-word; max-width: 400px; max-height: 100px; overflow:auto; font-size: 14px" id="biographie"><%= user.bio %></p>
                             </center>
                           </div>
                         </div>
                         <h5>My spheres of interet</h5>
                         <span style="color: rgb(240, 90, 90); font-decoration: underline">
-                          <% for (var i = 0; i < obj.interest.length; i++) { %>
-                            #<%= obj.interest[i] %> <% if (obj.interest[i + 1] != undefined) { %>, <% } %>
+                          <% for (var i = 0; i < user.interest.length; i++) { %>
+                            #<%= user.interest[i] %> <% if (user.interest[i + 1] != undefined) { %>, <% } %>
                           <% } %>
                         </span>
                       </div>
@@ -56,45 +60,45 @@
                             <form class="form-controller" action="index.html" method="post" id="fin_subs">
                               <div class="form-group">
                                 <label for="name" class="form-control-label">Name: </label>
-                                <input class="form-control" type="text" name="name" value="<%= obj.name %>" required>
+                                <input class="form-control" type="text" name="name" value="<%= user.name %>" required>
                               </div>
                               <div class="form-group">
                                 <label for="name" class="form-control-label">Surname: </label>
-                                <input class="form-control" type="text" name="surname" value="<%= obj.surname %>" required>
+                                <input class="form-control" type="text" name="surname" value="<%= user.surname %>" required>
                               </div>
                               <div class="form-group">
                                 <label for="email" class="form-control-label">E-Mail:</label>
-                                <input class="form-control" type="text" name="email" value="<%= obj.email %>" required>
+                                <input class="form-control" type="text" name="email" value="<%= user.email %>" required>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="age">Age: </label>
-                                <input type="number" name="age" class="form-control" min="18" max="125" value="<%= obj.age %>" required>
+                                <input type="number" name="age" class="form-control" min="18" max="125" value="<%= user.age %>" required>
                                 <small class="form-text text-muted">You must be oldier than 18 years old</small>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="gender">Gender: </label>
                                 <select name="gender" class="form-control" required>
-                                  <option value="male" <% if (obj.gender === 'male') {%> selected <% } %>>Male</option>
-                                  <option value="female" <% if (obj.gender === 'female') {%> selected <% } %>>Female</option>
-                                  <option value="other" <% if (obj.gender === 'other') {%> selected <% } %>>Other</option>
+                                  <option value="male" <% if (user.gender === 'male') {%> selected <% } %>>Male</option>
+                                  <option value="female" <% if (user.gender === 'female') {%> selected <% } %>>Female</option>
+                                  <option value="other" <% if (user.gender === 'other') {%> selected <% } %>>Other</option>
                                 </select>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="age">You are searching for: </label>
                                 <select name="pref" class="form-control" required>
-                                  <option value="male" <% if (obj.pref === 'male') {%> selected <% } %>>Men</option>
-                                  <option value="female" <% if (obj.pref === 'female') {%> selected <% } %>>Women</option>
-                                  <option value="other" <% if (obj.pref === 'other') {%> selected <% } %>>Both</option>
+                                  <option value="male" <% if (user.pref === 'male') {%> selected <% } %>>Men</option>
+                                  <option value="female" <% if (user.pref === 'female') {%> selected <% } %>>Women</option>
+                                  <option value="other" <% if (user.pref === 'other') {%> selected <% } %>>Both</option>
                                 </select>
                               </div>
                               <div class="form-group">
                                 <label class="form-control-label" for="age">Interest: </label>
                                 <span style="color: #FF5F6D;">
-                                  <% for (var i = 0; i < obj.interest.length; i++) { %>
-                                    #<%= obj.interest[i] %> <% if (obj.interest[i + 1] != undefined) { %>, <% } %>
+                                  <% for (var i = 0; i < user.interest.length; i++) { %>
+                                    #<%= user.interest[i] %> <% if (user.interest[i + 1] != undefined) { %>, <% } %>
                                   <% } %>
                                 </span>
-                                <input class="form-control" type="text" name="interest" value="<% for (var i = 0; i < obj.interest.length; i++) { %><%= obj.interest[i] %><% if (obj.interest[i + 1] != undefined) { %>,<% } %><% } %>" id="interest" required>
+                                <input class="form-control" type="text" name="interest" value="<% for (var i = 0; i < user.interest.length; i++) { %><%= user.interest[i] %><% if (user.interest[i + 1] != undefined) { %>,<% } %><% } %>" id="interest" required>
                                 <select class="form-control" id="inter">
                                   <% for (var i = 0; i < inter.length; i++) { %>
                                     <option value="<%= inter[i] %>"><%= inter[i] %></option>
@@ -111,7 +115,7 @@
                     <div class="row">
                       <div class="col">
                         <h1>Upload pictures / Update your bio </h1>
-                        <% if (obj.account_completed === false) { %>
+                        <% if (user.account_completed === false) { %>
                           <small class="text-muted text-center">You must at least a profile picture to be able to like someone</small>
                         <% } %>
                       </div>
@@ -132,7 +136,7 @@
                             <form class="form-controller" method="post" id="update_bio">
                                 <div class="form-group">
                                     <label for="bio">Update bio:</label>
-                                    <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"><%= obj.bio %></textarea>
+                                    <textarea name="bio" class="form-control " rows="5" cols="80" id="bio" maxlength="250"><%= user.bio %></textarea>
                                     <small class="form-text text-muted">(250 characters maximum)</small>
                                     <button type="submit" name="button" class="btn btn-info matcha_button">Update My Bio</button>
                                 </div>

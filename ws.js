@@ -68,7 +68,9 @@ module.exports = {
       ws.on('close', () => {
         for (let i = ws_notif_user.length - 1; i >= 0; i--) {
           if (ws_notif_user[i].ws === ws) {
-            db.collection("users").update({ username: ws_notif_user[i].username }, { $set: { last_visite: Date.now() }})
+            let d = new Date()
+            db.collection("users").update({ username: ws_notif_user[i].username }, { $set: { last_visite: ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+    d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) }})
             ws_notif_user.splice(i, 1)
           }
         }

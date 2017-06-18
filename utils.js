@@ -149,7 +149,7 @@ module.exports = {
         "like": [],
         "match": [],
         "score": 0,
-        "last_visite": null,
+        "last_visite": 'never',
         "account_completed": false
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )

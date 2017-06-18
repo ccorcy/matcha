@@ -2,19 +2,49 @@
 const ws = new WebSocket("ws://localhost:3000/notif")
 let alert_content = document.getElementById('alert_container')
 let available = document.getElementsByClassName('available')
+let notif_container = document.getElementById('notification_container')
 
 function createNotif(sender, message) {
-  if (message == "like") {
-      alert_content.innerHTML = "<div style='display:inline' class='alert alert-info alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>" + sender + "</strong> likes you !"
-  } else if (message == "match") {
+  if (message == "match") {
+    let newNotif = document.createElement("a")
+    newNotif.className = "dropdown-item notification notif_" + message
     swal("YOU MATCH !", "You just match with " + sender, "success")
+    newNotif.innerHTML = "You match with " + sender
+    notif_container.insertBefore(newNotif, notif_container.firstChild)
   } else if (message == "visite") {
-    $.notify(sender + " visites you", "info")
+    let newNotif = document.createElement("a")
+    newNotif.className = "dropdown-item notification notif_" + message
+    $.notify(sender + " visited you", "info")
+    newNotif.innerHTML = sender + " visites you"
+    notif_container.insertBefore(newNotif, notif_container.firstChild)
   } else if (message == "message") {
-    $.notify(sender + " sends you a message", "info")
+    let newNotif = document.createElement("a")
+    newNotif.className = "dropdown-item notification notif_" + message
+    $.notify(sender + " sent you a message", "info")
+    newNotif.innerHTML = sender + " sends you a message"
+    notif_container.insertBefore(newNotif, notif_container.firstChild)
   } else if (message == "dislike") {
+    let newNotif = document.createElement("a")
+    newNotif.className = "dropdown-item notification notif_" + message
     $.notify(sender + " does not like you anymore :(", "error")
+    newNotif.innerHTML = sender + " does not like you anymore :("
+    notif_container.insertBefore(newNotif, notif_container.firstChild)
+  } else if (message == "like") {
+    let newNotif = document.createElement("a")
+    newNotif.className = "dropdown-item notification notif_" + message
+    $.notify(sender + " liked you ;) ")
+    newNotif.innerHTML = sender + " likes you ;) "
+    notif_container.insertBefore(newNotif, notif_container.firstChild)
   }
+  document.getElementById('notif_title').innerHTML = "Notifications (" + document.getElementsByClassName('notification').length + ")"
+}
+
+document.getElementById("delete_notification").onclick = function () {
+  notif_container.innerHTML = ""
+  document.getElementById('notif_title').innerHTML = "Notifications (" + document.getElementsByClassName('notification').length + ")"
+  xhr.open("GET", "/delete_notif", true)
+  xhr.onload = () => {}
+  xhr.send()
 }
 
 ws.onopen = () => {

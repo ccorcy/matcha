@@ -114,6 +114,14 @@ app.get("/last_log", (req, res) => {
     }
 })
 
+app.get("/delete_notif", (req, res) => {
+  sess = req.session
+  MongoClient.connect(urlDB, (err, db) => {
+    if (err) throw err;
+    db.collection("users").update({ username: sess.username }, { $set: { notification: [] } })
+  })
+})
+
 app.post('/login', upload.fields([]), (req, res) => {
 	sess = req.session;
 	MongoClient.connect(urlDB, (err, db) => {

@@ -20,7 +20,11 @@
               <div class="card-block">
                 <div class="row">
                   <div class="col">
+                    <% if (usrs[i].pics == undefined) { %>
+                      <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                    <% } else { %>
                       <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                    <% } %>
                       <h1></h1>
                       <small style="text-muted"><%= usrs[i].age %> years old</small><br>
                       Gender: <% if (usrs[i].gender === "male") { %>&#9794;<% } %>

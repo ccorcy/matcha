@@ -25,28 +25,30 @@
               <div class="card-block">
                 <div class="row">
                   <div class="col">
-                    <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                    <% if (usr[i].pics == undefined) { %>
+                      <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                    <% } else { %>
+                      <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                    <% } %>
                     <h1></h1>
                     <small style="text-muted"><%= usr[i].age %> years old</small><br>
                     Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
                             <% if (usr[i].gender === "female") { %>&#9792;<% } %>
                             <% if (usr[i].gender === "other") { %>&#9906;<% } %>
                     <br>
-                    availability: <span class="available" id="<%= usr[i].username %>">log</span>
+                    <span class="available" id="<%= usr[i].username %>"></span>
                     <div class="col">
                       <div class="row">
                         <% if (like.indexOf(usr[i].username) == -1) { %>
-                        <div class="col" style="text-align:center">
-                          <button type="button" class="btn btn-success like_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                        <div class="col">
+                          <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
                         </div>
                         <% } %>
                         <% if (like.indexOf(usr[i].username) != -1) { %>
-                        <div class="col" style="text-align:center">
-                          <button type="button" class="btn btn-success dislike_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
+                        <div class="col">
+                          <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
                         </div>
                         <% } %>
-                      </div>
-                      <div class="row">
                         <div class="col">
                           <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
                         </div>

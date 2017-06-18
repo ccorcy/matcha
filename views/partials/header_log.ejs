@@ -3,6 +3,29 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="/like_page"><img src="favicon.ico" style="width: 25px; height: 25px"> Find your partner</a>
+  <div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" href="https://example.com" id="notif_title" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Notification (0)
+    </a>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" id="notification_container" style="max-height: 200px; overflow:auto">
+      <% for (let i = user.notification.length - 1; i > 0; i--) { %>
+        <a class="dropdown-item notification notif_<%= user.notification[i].message %>">
+        <% if (user.notification[i].message === "match") { %>
+          You match with <%= user.notification[i].username %> !
+        <% } else if (user.notification[i].message === "visite") { %>
+          <%= user.notification[i].username %> visited you.
+        <% } else if (user.notification[i].message === "dislike") { %>
+          <%= user.notification[i].username %> does not like you anymore :(
+        <%} else if (user.notification[i].message === "message") { %>
+          <%= user.notification[i].username %> sent you a message
+        <%} else if (user.notification[i].message === "like") {%>
+          <%= user.notification[i].username %> liked you :)
+        <% } %>
+        </a>
+      <% } %>
+      <button id="delete_notification" type="button" class="dropdown-item btn btn-danger" name="delete notifications" style="text-align: center">&#x1f5d1;</button>
+    </div>
+  </div>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
