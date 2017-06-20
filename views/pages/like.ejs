@@ -1,123 +1,123 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <% include ../partials/head %>
-  </head>
-  <body>
+</head>
+<body>
     <header>
         <% if (name !== "") {%>
             <%- include("../partials/header_log"); %>
-        <% } else { %>
-            <%- include("../partials/header"); %>
-        <% }%>
-    </header>
-    <span id="alert_container"></span>
-    <div class="container">
-      <div class="jumbotron" style="margin-top: 15px">
-        <span id="nouser"></span>
-        <div class="row">
-        <% for (var i = 0; i < usr.length ; i++) { %>
-          <div class="col-sm-6 col-md-4">
-            <div class="card text-center" style="max-width: 300px">
-              <div class="card-header">
-                <h4 class="card-title"><%= usr[i].username %></h4>
-              </div>
-              <div class="card-block">
-                <div class="row">
-                  <div class="col">
-                    <% if (usr[i].pics == undefined) { %>
-                      <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
-                    <% } else { %>
-                      <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
-                    <% } %>
-                    <h1></h1>
-                    <small style="text-muted"><%= usr[i].age %> years old</small><br>
-                    Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
-                            <% if (usr[i].gender === "female") { %>&#9792;<% } %>
-                            <% if (usr[i].gender === "other") { %>&#9906;<% } %>
-                    <br>
-                    <span class="available" id="<%= usr[i].username %>"></span>
-                    <div class="col">
-                      <div class="row">
-                        <% if (like.indexOf(usr[i].username) == -1) { %>
-                        <div class="col">
-                          <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
-                        </div>
-                        <% } %>
-                        <% if (like.indexOf(usr[i].username) != -1) { %>
-                        <div class="col">
-                          <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
-                        </div>
-                        <% } %>
-                        <div class="col">
-                          <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        <% } %>
-      </div>
-    </div>
-    <% include ../partials/footer %>
-    <% include ../partials/ws %>
-    <script type="text/javascript">
-    const xhr = new XMLHttpRequest()
+            <% } else { %>
+                <%- include("../partials/header"); %>
+                <% }%>
+            </header>
+            <span id="alert_container"></span>
+            <div class="container">
+                <div class="jumbotron" style="margin-top: 15px">
+                    <span id="nouser"></span>
+                    <div class="row">
+                        <% for (var i = 0; i < usr.length ; i++) { %>
+                            <div class="col-sm-6 col-md-4">
+                                <div class="card text-center" style="max-width: 300px">
+                                    <div class="card-header">
+                                        <h4 class="card-title"><%= usr[i].username %></h4>
+                                    </div>
+                                    <div class="card-block">
+                                        <div class="row">
+                                            <div class="col">
+                                                <% if (usr[i].pics == undefined) { %>
+                                                    <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                                                    <% } else { %>
+                                                        <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                                                        <% } %>
+                                                        <h1></h1>
+                                                        <small style="text-muted"><%= usr[i].age %> years old</small><br>
+                                                        Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
+                                                        <% if (usr[i].gender === "female") { %>&#9792;<% } %>
+                                                        <% if (usr[i].gender === "other") { %>&#9906;<% } %>
+                                                        <br>
+                                                        <span class="available" id="<%= usr[i].username %>"></span>
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <% if (like.indexOf(usr[i].username) == -1) { %>
+                                                                    <div class="col">
+                                                                        <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                                                                    </div>
+                                                                    <% } %>
+                                                                    <% if (like.indexOf(usr[i].username) != -1) { %>
+                                                                        <div class="col">
+                                                                            <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
+                                                                        </div>
+                                                                        <% } %>
+                                                                        <div class="col">
+                                                                            <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <% include ../partials/footer %>
+                                    <% include ../partials/ws %>
+                                    <script type="text/javascript">
+                                    const xhr = new XMLHttpRequest()
 
-    <% if (name !== "") {%>
-      let like_button = document.getElementsByClassName("like_button")
-      let dislike_button = document.getElementsByClassName("dislike_button")
-      let profile = document.getElementsByClassName("profile_button")
+                                    <% if (name !== "") {%>
+                                        let like_button = document.getElementsByClassName("like_button")
+                                        let dislike_button = document.getElementsByClassName("dislike_button")
+                                        let profile = document.getElementsByClassName("profile_button")
 
-      if (like_button.length == 0 && dislike_button.length == 0) {
-        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
-      }
-      for (let i = 0; i < like_button.length; i++) {
-        like_button[i].addEventListener('click', (e) => {
-          e.preventDefault()
-          xhr.open('GET', '/like?usr=<%= name %>&like=' + like_button[i].id, true)
-          xhr.send()
-          xhr.onload = () => {
-            if (xhr.status === 200 && xhr.readyState === 4) {
-              if (xhr.responseText === "Liked") {
-                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-info alert-dismissable notif' ><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Like</strong> You just like " + like_button[i].id + "      </span></div>"
-                ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
-              } else if (xhr.responseText === "MATCH!"){
-                swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
-                ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
-              } else {
-                document.getElementById('alert_container').innerHTML = "<div id='alert_container' class='alert alert-danger alert-dismissable notif'><a class='close' data-dismiss='alert' aria-label='close'>&times;</a><span><strong>Error:</strong>" + xhr.responseText + "</span></div>"
-              }
-            }
-          }
-        }, false)
-      }
-      for (let i = 0; i < dislike_button.length; i++) {
-        dislike_button[i].addEventListener('click', (e) => {
-          e.preventDefault()
-          xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
-          xhr.send()
-          xhr.onload = () => {
-            if (xhr.status === 200 && xhr.readyState === 4) {
-              if (xhr.responseText === "ok") {
-                ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
-                $.notify("You dislike " + dislike_button[i].id, "info")
-              } else if ("error") {
-                $.notify("You already dislike " + dislike_button[i].id, "error")
-              }
-            }
-          }
-        })
-      }
-      for (let i = 0; i < profile.length; i++) {
-        profile[i].addEventListener('click', () => {
-          document.location.href = "/profile?usr=" + profile[i].id
-        }, false)
-      }
-    <%}%>
-    </script>
-  </body>
-</html>
+                                        if (like_button.length == 0 && dislike_button.length == 0) {
+                                            document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
+                                        }
+                                        for (let i = 0; i < like_button.length; i++) {
+                                            like_button[i].addEventListener('click', (e) => {
+                                                e.preventDefault()
+                                                xhr.open('GET', '/like?usr=<%= name %>&like=' + like_button[i].id, true)
+                                                xhr.send()
+                                                xhr.onload = () => {
+                                                    if (xhr.status === 200 && xhr.readyState === 4) {
+                                                        if (xhr.responseText === "Liked") {
+                                                            $.notify("You like " + like_button[i].id, "success")
+                                                            ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
+                                                        } else if (xhr.responseText === "MATCH!"){
+                                                            swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
+                                                            ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
+                                                        } else {
+                                                            $.notify(xhr.responseText, "error")
+                                                        }
+                                                    }
+                                                }
+                                            }, false)
+                                        }
+                                        for (let i = 0; i < dislike_button.length; i++) {
+                                            dislike_button[i].addEventListener('click', (e) => {
+                                                e.preventDefault()
+                                                xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
+                                                xhr.send()
+                                                xhr.onload = () => {
+                                                    if (xhr.status === 200 && xhr.readyState === 4) {
+                                                        if (xhr.responseText === "ok") {
+                                                            ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
+                                                            $.notify("You dislike " + dislike_button[i].id, "info")
+                                                        } else if ("error") {
+                                                            $.notify("You already dislike " + dislike_button[i].id, "error")
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                        }
+                                        for (let i = 0; i < profile.length; i++) {
+                                            profile[i].addEventListener('click', () => {
+                                                document.location.href = "/profile?usr=" + profile[i].id
+                                            }, false)
+                                        }
+                                        <%}%>
+                                        </script>
+                                    </body>
+                                    </html>

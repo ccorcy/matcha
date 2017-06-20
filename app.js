@@ -82,6 +82,10 @@ app.get('/profile', (req, res) => {
   routes.user_profile(req, res, sess)
 })
 
+app.get('/history', (req, res) => {
+    routes.history(req, res, sess);
+})
+
 async function waitfordislike(res, sess, user_to_dislike) {
   let status = await routes.delete_match(sess, user_to_dislike)
   let status2 = await routes.dislike(sess,user_to_dislike)

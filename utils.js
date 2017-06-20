@@ -73,7 +73,7 @@ module.exports = {
           like.push(usr)
           let status = await db.collection("users").update({username: usrn}, { $set: { like: like} })
           if (status) {
-            if (found.like != undefined) {
+            if (found.like.length != 0) {
               if (found.like.indexOf(usrn) != -1) {
                 let match = []
                 if (user.match != undefined) {
@@ -150,7 +150,9 @@ module.exports = {
         "match": [],
         "score": 0,
         "last_visite": 'never',
-        "account_completed": false
+        "account_completed": false,
+        "visited": [],
+        "history": []
   		}
   		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
   		if (users != undefined) {
