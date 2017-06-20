@@ -3,10 +3,18 @@ const session = require('express-session');
 const bodyparser = require('body-parser');
 const MongoClient = require("mongodb").MongoClient;
 const urlDB = "mongodb://localhost:27020/matchaDB";
+const path = require('path')
 const multer = require('multer');
 const upload = multer();
 const bcrypt = require('bcrypt');
-const up = multer({ dest: 'public/pp/' });
+const up = multer({ dest: 'public/pp/',
+                    fileFilter: function (req, file, callback) {
+                    var ext = path.extname(file.originalname);
+                    if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+                        return callback()
+                    }
+                    callback(null, true)
+                }});
 const func = require("./utils.js")
 const routes = require("./routes.js")
 const favicon = require('serve-favicon')

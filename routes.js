@@ -7,7 +7,7 @@ const urlDB = "mongodb://localhost:27020/matchaDB";
 const multer = require('multer');
 const upload = multer();
 const bcrypt = require('bcrypt');
-const up = multer({ dest: 'public/pp/' });
+const up = multer({ dest: 'public/pp/'});
 const func = require("./utils.js")
 
 
