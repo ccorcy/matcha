@@ -271,6 +271,7 @@ module.exports = {
           room = await db.collection("chat_room").findOne({token: token2})
           if (room) {
             let usrs = room.users.split("/")
+            let user = await db.collection("users").findOne({ username: sess.username })
             if ((usrs[0] === sess.username || usrs[1] === sess.username)
               && (usrs[0] === req.query.id || usrs[1] === req.query.id)) {
                 let user2 = ""
@@ -279,19 +280,22 @@ module.exports = {
                 } else {
                   user2 = usrs[0]
                 }
-                res.render('pages/tchat', {
-                  user: sess.username,
-                  usr2: user2,
-                  messages: room.messages
-                })
+                if (user) {
+                    res.render('pages/tchat', {
+                      usr: sess.username,
+                      usr2: user2,
+                      messages: room.messages,
+                      user: user
+                    })
+                }
                 db.close()
             } else {
-              // TODO: 403
+              res.send("Access forbidden")
               db.close()
             }
           } else {
             db.close()
-            // TODO: 404 not found
+            res.send("error: 404 not found")
           }
         }
       }

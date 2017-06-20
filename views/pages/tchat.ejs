@@ -77,7 +77,7 @@
     ws_chat.onmessage = (message) => {
       try {
         let msg = JSON.parse(message.data)
-        if ('<%= user %>' === msg.sender && msg.msg !== "") {
+        if ('<%= usr %>' === msg.sender && msg.msg !== "") {
           let new_col = document.createElement("div")
           let new_div = document.createElement("div")
           let p = document.createElement("p")

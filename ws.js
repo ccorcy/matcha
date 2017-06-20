@@ -49,13 +49,13 @@ module.exports = {
                   let arr = notif.notification
                   arr.push(notification)
                   db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                    db.close()
+                    if (err) throw err;
                   })
                 } else {
                   let arr = []
                   arr.push(notification)
                   db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-                    db.close()
+                    if (err) throw err;
                   })
                 }
               }
@@ -104,6 +104,9 @@ module.exports = {
       } catch (e) {
         console.log(e)
       }
+    })
+    ws.on('error', (e) => {
+
     })
     ws.on('close', () => {
       for(var i = ws_user.length - 1; i >= 0; i--) {
