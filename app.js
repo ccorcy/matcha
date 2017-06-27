@@ -23,8 +23,6 @@ const expressWs = require('express-ws')(app)
 const wss = require('./ws.js')
 const sendmail = require("sendmail")()
 const iplocation = require('iplocation')
-const getIP = require('external-ip')()
-const publicIp = require('public-ip')
 const geocoder = require('geocoder')
 
 app.use(express.static(__dirname + '/public'));
@@ -34,7 +32,6 @@ app.use(session( { secret: 'ccorcymatcha',
 app.use( bodyparser.json() );
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(favicon(__dirname + '/public/favicon.ico'))
-//app.enable('trust proxy')
 app.set('view engine', 'ejs');
 
 let sess;
