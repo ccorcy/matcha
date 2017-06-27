@@ -28,8 +28,8 @@
                       <h1></h1>
                       <small style="text-muted"><%= usrs[i].age %> years old</small><br>
                       Gender: <% if (usrs[i].gender === "male") { %>&#9794;<% } %>
-                              <% if (usrs[i].gender === "female") { %>&#9792;<% } %>
-                              <% if (usrs[i].gender === "other") { %>&#9906;<% } %>
+                              <% if (usrs[i].gender === "female") { %>&#9792;<% } %><br>
+                      <span class="available" id="<%= usrs[i].username %>">last log: <%= usrs[i].last_visite %></span>
                       <div class="col">
                         <div class="row">
                           <div class="col">
@@ -54,6 +54,7 @@
     <script type="text/javascript">
       let chat = document.getElementsByClassName("chat_button")
       let profile = document.getElementsByClassName("profile_button")
+      const xhr = new XMLHttpRequest()
 
       if (chat.length == 0) {
         document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>You have no match</p></div></div>"

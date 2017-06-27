@@ -32,7 +32,6 @@
                         <small class="text-muted"><%= user.age %> years old</small><br>
                         Gender: <% if (user.gender === "male") { %>&#9794;<% } %>
                                 <% if (user.gender === "female") { %>&#9792;<% } %>
-                                <% if (user.gender === "other") { %>&#9906;<% } %>
                         <div class="row">
                           <div class="col">
                             <center>
@@ -40,12 +39,14 @@
                             </center>
                           </div>
                         </div>
+                        City: <span style="color: #FF5F6D;"><%= user.city %></span>
                         <h5>My spheres of interet</h5>
                         <span style="color: rgb(240, 90, 90); font-decoration: underline">
                           <% for (var i = 0; i < user.interest.length; i++) { %>
                             #<%= user.interest[i] %> <% if (user.interest[i + 1] != undefined) { %>, <% } %>
                           <% } %>
-                        </span>
+                        </span><br>
+                        You are liked by <span style="color: #FF5F6D;"><%= user.score %> </span>people(s)
                       </div>
                     </div>
                   </div>
@@ -71,6 +72,14 @@
                                 <input class="form-control" type="text" name="email" value="<%= user.email %>" required>
                               </div>
                               <div class="form-group">
+                                <label for="password" class="form-control-label">Modify Password:</label>
+                                <input class="form-control" type="password" name="password">
+                              </div>
+                              <div class="form-group">
+                                <label for="vpassword" class="form-control-label">Verify your new password:</label>
+                                <input class="form-control" type="password" name="vpassword">
+                              </div>
+                              <div class="form-group">
                                 <label class="form-control-label" for="age">Age: </label>
                                 <input type="number" name="age" class="form-control" min="18" max="125" value="<%= user.age %>" required>
                                 <small class="form-text text-muted">You must be oldier than 18 years old</small>
@@ -80,7 +89,6 @@
                                 <select name="gender" class="form-control" required>
                                   <option value="male" <% if (user.gender === 'male') {%> selected <% } %>>Male</option>
                                   <option value="female" <% if (user.gender === 'female') {%> selected <% } %>>Female</option>
-                                  <option value="other" <% if (user.gender === 'other') {%> selected <% } %>>Other</option>
                                 </select>
                               </div>
                               <div class="form-group">
@@ -104,10 +112,30 @@
                                     <option value="<%= inter[i] %>"><%= inter[i] %></option>
                                   <% } %>
                                 </select>
-                                <button type="button" class="btn btn-default matcha_button" id="add_inter" name="button">Add</button>
+                                <button type="button" class="btn btn-default matcha_button" id="add_inter" name="button">Add interest</button>
                                 <small class="form-text text-muted">Every interest must be separated by a coma without any spaces. Example: music,dev,video_games</small>
                               </div>
                               <button type="submit" class="btn btn-default matcha_button" name="button">Update your informations</button>
+                            </form>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            <h1>Change your geolocation</h1>
+                        </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-controller" id="changelocation">
+                                <label for="geoloc">Enter a city name or your address:</label>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" name="geoloc" value="" id="address">
+                                        <span class="input-group-btn">
+                                          <button class="btn btn-secondary" type="submit">Submit</button>
+                                        </span>
+                                    </div>
+                                <input type="button" class="btn btn-secondary" name="autoloc" value="Locate me" id="autoloc">
                             </form>
                         </div>
                     </div>
@@ -239,6 +267,46 @@
                 }
             }, false)
         }
+
+        document.getElementById('autoloc').onclick = function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    xhr.open('GET', '/getgeoloc?usr=<%= user.username %>&status=ok&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude, true)
+                    xhr.onload = function () {
+                        if (this.status === 200 && this.readyState === 4) {
+                            document.getElementById('address').value = this.responseText
+                        }
+                    }
+                    xhr.send()
+                })
+            } else {
+                xhr.open('GET', '/getgeoloc?usr=<%= user.username %>&status=ko', true)
+                xhr.onload = function () {
+                    if (this.status === 200 && this.readyState === 4) {
+                        if (this.responseText != 'error')
+                            document.getElementById('address').value = this.responseText
+                        else
+                            console.log("erro");
+                    }
+                }
+                xhr.send()
+            }
+        }
+
+        document.getElementById('changelocation').addEventListener('submit', function (e) {
+            e.preventDefault()
+            xhr.open('GET', '/geoloc?status=modify&info=' + document.getElementById('address').value, true)
+            xhr.onload = function () {
+                if (this.status === 200 && this.readyState === 4) {
+                    if (this.responseText === 'ok') {
+                        $.notify('Your geolocation have been changed', 'success')
+                    } else {
+                        $.notify('Can\'t get your position')
+                    }
+                }
+            }
+            xhr.send()
+        }, false)
 
         add.addEventListener('click', () => {
           if (inter.value != "") {

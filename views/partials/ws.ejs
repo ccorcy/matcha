@@ -48,7 +48,7 @@ document.getElementById("delete_notification").onclick = function () {
 }
 
 ws.onopen = () => {
-  console.log("connection established with websocket server")
+
 }
 ws.onerror = (error) => {
   console.log("error")
@@ -58,7 +58,6 @@ ws.onmessage = (message) => {
     let msg = JSON.parse(message.data)
     createNotif(msg.sender, msg.msg)
     if (msg.msg === "status") {
-        console.log(msg.status)
         let stat = 0
         for (let n = 0; n < available.length; n++) {
             stat = 0;
@@ -70,13 +69,12 @@ ws.onmessage = (message) => {
                 }
             }
             if (stat == 0) {
-                console.log("HERE + " + available[n].id)
                 xhr.open("GET", "/last_log?user=" + available[n].id, true)
                 xhr.onload = function () {
                     if (this.status === 200 && this.readyState === 4) {
-                        console.log(this.responseText)
                         if (this.responseText != undefined) {
                             available[n].innerHTML = "last login: " + this.responseText
+                            available[n].style = "color: black"
                         }
                     }
                 }

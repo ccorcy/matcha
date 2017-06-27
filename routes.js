@@ -13,25 +13,7 @@ const func = require("./utils.js")
 
 module.exports = {
     index: function (req, res, sess) {
-        sess = req.session;
-        if (sess.username == undefined) {
-            res.render('pages/index', {
-                name: "",
-                usr: {}
-            });
-        } else {
-            MongoClient.connect(urlDB, (err, db) => {
-                if (err) throw err
-                db.collection("users").find({}).toArray((err, usrs) => {
-                    if (err) throw err
-                    res.render('pages/index', {
-                        name: sess.username,
-                        usr: usrs
-                    });
-                })
-                db.close()
-            })
-        }
+        res.render('pages/index')
     },
     profile: function (req, res, sess) {
         sess = req.session;
@@ -328,6 +310,15 @@ module.exports = {
                 if (like.indexOf(usr_to_dislike) != -1) {
                     for (var i = 0; i < like.length; i++) {
                         if (like[i] === usr_to_dislike) {
+                            let user_to_dislike = await db.collection("users").findOne({ username: usr_to_dislike})
+                            if (user_to_dislike) {
+                                if (user_to_dislike.score -= 1 < 0)
+                                    user_to_dislike = 0
+                                let st = await db.collection("users").update({ username: usr_to_dislike }, { $set: { score: user_to_dislike.score } })
+                                if (!st) {
+                                    console.log('error: cann\'t update score for ${usr_to_dislike}. SCORE = ${user_to_dislike.score}');
+                                }
+                            }
                             like.splice(i, 1)
                         }
                     }
@@ -400,7 +391,8 @@ module.exports = {
                     user: user,
                     users: users,
                     history: user.history,
-                    visited: user.visited
+                    visited: user.visited,
+                    historyLike: user.historyLike
                 })
             } else {
                 res.end("<center><h1>error 403</h1></center><br />access forbidden")

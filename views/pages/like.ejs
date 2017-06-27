@@ -32,11 +32,10 @@
                                                         <% } %>
                                                         <h1></h1>
                                                         <small style="text-muted"><%= usr[i].age %> years old</small><br>
-                                                        Gender: <% if (usr[i].gender === "male") { %>&#9794;<% } %>
-                                                        <% if (usr[i].gender === "female") { %>&#9792;<% } %>
-                                                        <% if (usr[i].gender === "other") { %>&#9906;<% } %>
+                                                        Gender: <% if (usr[i].gender === "male") { %>&#9794;<% }
+                                                        else if (usr[i].gender === "female") { %>&#9792;<% } %>
                                                         <br>
-                                                        <span class="available" id="<%= usr[i].username %>"></span>
+                                                        <span class="available" id="<%= usr[i].username %>">last log: <%= usr[i].last_visite %></span>
                                                         <div class="col">
                                                             <div class="row">
                                                                 <% if (like.indexOf(usr[i].username) == -1) { %>
@@ -73,7 +72,7 @@
                                         let profile = document.getElementsByClassName("profile_button")
 
                                         if (like_button.length == 0 && dislike_button.length == 0) {
-                                            document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you</p></div></div>"
+                                            document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you<br>Check your informations in your profile section</p></div></div>"
                                         }
                                         for (let i = 0; i < like_button.length; i++) {
                                             like_button[i].addEventListener('click', (e) => {

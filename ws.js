@@ -50,12 +50,14 @@ module.exports = {
                   arr.push(notification)
                   db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
                     if (err) throw err;
+                    db.close()
                   })
                 } else {
                   let arr = []
                   arr.push(notification)
                   db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
                     if (err) throw err;
+                    db.close()
                   })
                 }
               }

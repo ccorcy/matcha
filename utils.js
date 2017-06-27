@@ -1,26 +1,18 @@
-const express = require('express');
-const app = express();
-const session = require('express-session');
-const bodyparser = require('body-parser');
-const MongoClient = require("mongodb").MongoClient;
-const urlDB = "mongodb://localhost:27020/matchaDB";
-const multer = require('multer');
-const upload = multer();
-const bcrypt = require('bcrypt');
-const up = multer({ dest: 'public/pp/' });
-const func = require("./utils.js")
-const sendmail = require("sendmail")( {silent: true} )
+const MongoClient = require('mongodb').MongoClient
+const urlDB = 'mongodb://localhost:27020/matchaDB'
+const bcrypt = require('bcrypt')
+const sendmail = require('sendmail')({silent: true})
 
 module.exports = {
   login: async function (db, body, sess, res) {
-  	let result = await db.collection("users").findOne({ username: body.usrn })
+  	let result = await db.collection('users').findOne({ username: body.usrn })
   	if (result) {
   		let comp = await bcrypt.compare(body.password, result.password)
   		if (comp) {
   			sess.username = body.usrn
-  			res.end("OK")
+  			res.end('OK')
   		} else {
-  			res.end("error password")
+  			res.end('error password')
   		}
   	} else {
   		res.end("error mail")
@@ -47,7 +39,7 @@ module.exports = {
                         from: 'no-reply@matcha.com',
                         to: user.email,
                         subject: 'MATCHA | Password reset',
-                        html: " Your password has been reset. Your new password is " + pwd
+                        html: " Your password has been reset. Your new password is ${pwd}"
                     }, (err, reply) => {
                     })
                     res.end("ok")
@@ -63,14 +55,29 @@ module.exports = {
   user: async function (db, usrn, usr, res) {
   	let found = await db.collection("users").findOne({ username: usr })
   	if (found) {
+      if (found.pics == null) {
+        res.end(usr + " doesn't have any picture :(")
+        return ;
+      }
   		let user = await db.collection("users").findOne({ username: usrn })
   		if (user) {
+        if (user.pics == null) {
+          res.end("You don't have a profile picture. Go in your profile section to upload one !")
+          db.close()
+          return ;
+        }
         let like = []
         if (user.like != undefined) {
           like = user.like
         }
         if (like.indexOf(usr) == -1) {
+          let score = found.score + 1
           like.push(usr)
+          if (found.historyLike.indexOf(usr) == -1)
+            found.historyLike.push(usrn)
+          let added = await db.collection("users").update({ username: usr }, { $set: { historyLike: found.historyLike, score: score } })
+          if (!added)
+            console.log('error: canno\'t updated historyLike for ${usr}')
           let status = await db.collection("users").update({username: usrn}, { $set: { like: like} })
           if (status) {
             if (found.like.length != 0) {
@@ -89,6 +96,7 @@ module.exports = {
                   let status = await db.collection("users").update({ username: usrn }, { $set: { match: match } })
                   let status2 = await db.collection("users").update({ username: usr}, { $set: { match: match_2 } })
                   if (!status || !status2) {
+                    db.close()
                     console.log("error update match in database");
                   } else {
                     res.end("MATCH!")
@@ -102,59 +110,70 @@ module.exports = {
                       let status = await db.collection('chat_room').insertOne(room)
                       if (!status) {
                         console.log("error creating the chat room")
+                        db.close()
+                      } else {
+                        db.close()
                       }
                     }
                   }
                 } else {
                   res.end(usr + " and you already match")
+                  db.close()
                 }
               }
             } else {
               res.end("Liked")
+              db.close()
             }
           } else {
             res.end("error")
+            db.close()
           }
         } else {
           res.end(usr + " already liked")
+          db.close()
         }
-
   			db.close()
   		}
   	} else {
   		res.end("Error: " + usr + " doesn't exist (anymore ?)")
+      db.close()
   	}
   },
 
   register: async function (db, body, res, error) {
-    let regName = /^[a-zA-Z\-]{2,20}$/
+    let regName = /^[a-zA-Z]{2,20}$/
     let regUsername = /^[a-zA-Z0-9]{6,20}$/
     let regMail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     let regPwd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
-    let pwd_hash = await bcrypt.hash(body.password, 10)
-  	if (pwd_hash) {
+    let pwdHash = await bcrypt.hash(body.password, 10)
+  	if (pwdHash) {
   		let user = {
   			"name": body.name,
   			"surname": body.surname,
   			"username": body.username,
   			"email": body.email,
-  			"password": pwd_hash,
+  			"password": pwdHash,
         "interest": [],
         "notification": [],
         "age" : null,
         "pics": null,
         "bio": null,
-        "gender": "other",
-        "pref": "other",
+        "gender": undefined,
+        "pref": 'other',
         "like": [],
         "match": [],
         "score": 0,
         "last_visite": 'never',
         "account_completed": false,
         "visited": [],
-        "history": []
+        "history": [],
+        "historyLike": [],
+        "city": null,
+        "lat": null,
+        "lon": null
   		}
-  		let users = await db.collection('users').findOne( {$or: [ { username: body.username }, { email: body.email }] } )
+  		let users = await db.collection('users').findOne({$or: [ { username: body.username }, { email: body.email }]})
   		if (users != undefined) {
   			if (users.username === body.username || regUsername.test(body.username) === false) {
   				error.username = true
