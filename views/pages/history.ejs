@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
+        <header>
+            <%- include("../partials/header_log"); %>
+        </header>
+        <div class="container">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col">
+                        <h1>You visite them</h1>
+                    </div>
+                </div><br>
+                <div class="row">
+                    <div class="col">
+                        <% for (var i = 0; i < history.length; i++) { %>
+                            <% for (var y = 0; y < users.length; y++) { %>
+                                <% if (users[y].username === history[i]) { %>
+                                    <div class="col-sm-6 col-md-4">
+                                        <div class="card text-center" style="max-width: 300px">
+                                          <div class="card-header">
+                                            <h4 class="card-title"><%= users[y].username %></h4>
+                                          </div>
+                                          <div class="card-block">
+                                            <div class="row">
+                                              <div class="col">
+                                                <% if (users[y].pics == undefined) { %>
+                                                  <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                                                <% } else { %>
+                                                  <img src="<%= users[y].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                                                <% } %>
+                                                <h1></h1>
+                                                <small style="text-muted"><%= users[y].age %> years old</small><br>
+                                                Gender: <% if (users[y].gender === "male") { %>&#9794;<% } %>
+                                                        <% if (users[y].gender === "female") { %>&#9792;<% } %>
+                                                        <% if (users[y].gender === "other") { %>&#9906;<% } %>
+                                                <br>
+                                                <span class="available" id="<%= users[y].username %>"></span>
+                                                <div class="col">
+                                                  <div class="row">
+                                                    <div class="col">
+                                                      <button type="button" class="btn matcha_button profile_button" name="button" id='<%= users[y].username %>'>View profile</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <h1>They visite you</h1>
+                    </div>
+                </div><br>
+                <div class="row">
+                    <div class="col">
+                        <% for (var i = 0; i < visited.length; i++) { %>
+                            <% for (var y = 0; y < users.length; y++) { %>
+                                <% if (users[y].username === visited[i]) { %>
+                                    <div class="col-sm-6 col-md-4">
+                                        <div class="card text-center" style="max-width: 300px">
+                                          <div class="card-header">
+                                            <h4 class="card-title"><%= users[y].username %></h4>
+                                          </div>
+                                          <div class="card-block">
+                                            <div class="row">
+                                              <div class="col">
+                                                <% if (users[y].pics == undefined) { %>
+                                                  <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                                                <% } else { %>
+                                                  <img src="<%= users[y].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                                                <% } %>
+                                                <h1></h1>
+                                                <small style="text-muted"><%= users[y].age %> years old</small><br>
+                                                Gender: <% if (users[y].gender === "male") { %>&#9794;<% } %>
+                                                        <% if (users[y].gender === "female") { %>&#9792;<% } %>
+                                                        <% if (users[y].gender === "other") { %>&#9906;<% } %>
+                                                <br>
+                                                <span class="available" id="<%= users[y].username %>"></span>
+                                                <div class="col">
+                                                  <div class="row">
+                                                    <div class="col">
+                                                      <button type="button" class="btn matcha_button profile_button" name="button" id='<%= users[y].username %>'>View profile</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/footer %>
+        <% include ../partials/ws %>
+    </body>
+</html>
