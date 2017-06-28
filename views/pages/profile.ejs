@@ -295,17 +295,19 @@
 
         document.getElementById('changelocation').addEventListener('submit', function (e) {
             e.preventDefault()
-            xhr.open('GET', '/geoloc?status=modify&info=' + document.getElementById('address').value, true)
-            xhr.onload = function () {
-                if (this.status === 200 && this.readyState === 4) {
-                    if (this.responseText === 'ok') {
-                        $.notify('Your geolocation have been changed', 'success')
-                    } else {
-                        $.notify('Can\'t get your position')
+            if (document.getElementById('address').value != '') {
+                xhr.open('GET', '/geoloc?status=modify&info=' + document.getElementById('address').value, true)
+                xhr.onload = function () {
+                    if (this.status === 200 && this.readyState === 4) {
+                        if (this.responseText === 'ok') {
+                            $.notify('Your geolocation have been changed', 'success')
+                        } else {
+                            $.notify('Can\'t get your position')
+                        }
                     }
                 }
+                xhr.send()
             }
-            xhr.send()
         }, false)
 
         add.addEventListener('click', () => {

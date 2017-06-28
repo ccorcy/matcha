@@ -35,6 +35,8 @@
                                                         Gender: <% if (usr[i].gender === "male") { %>&#9794;<% }
                                                         else if (usr[i].gender === "female") { %>&#9792;<% } %>
                                                         <br>
+                                                        <span style="color: #FF5F6D"><%= usr[i].distance %></span> km (<%= usr[i].city %>)
+                                                        <br>
                                                         <span class="available" id="<%= usr[i].username %>">last log: <%= usr[i].last_visite %></span>
                                                         <div class="col">
                                                             <div class="row">

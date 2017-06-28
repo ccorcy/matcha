@@ -66,7 +66,18 @@ app.get('/geoloc', (req, res) => {
       })
       geocoder.reverseGeocode(lat, lon, function (err, data) {
         if (err) throw err;
-        db.collection('users').update({ username: req.query.usr }, { $set: { city: data.results[2].formatted_address } }, (err, r) => {
+        let city = ''
+        for (let i = 0; i < data.results[0].address_components.length; i++) {
+          if (data.results[0].address_components[i].types.indexOf('locality')) {
+            city = data.results[0].address_components[i].long_name + ", "
+          }
+        }
+        for (let i = 0; i <data.results[0].address_components.length; i++) {
+          if (data.results[0].address_components[i].types.indexOf('country')) {
+            city = city + data.results[0].address_components[i].long_name
+          }
+        }
+        db.collection('users').update({ username: req.query.usr }, { $set: { city: city } }, (err, r) => {
           if (err) throw err;
           res.send("ok")
           db.close()
@@ -84,7 +95,19 @@ app.get('/geoloc', (req, res) => {
     } else if (req.query.status === 'modify') {
       geocoder.geocode(req.query.info, function (err, data) {
         if (err) throw err
-        db.collection('users').update({ username: sess.username} , { $set :{ city: data.results[0].formatted_address, lat: data.results[0].geometry.location.lat, lon: data.results[0].geometry.location.lng } }, (err, r) => {
+        console.log(data.results[0].address_components);
+        let city = ''
+        for (let i = 0; i < data.results[0].address_components.length; i++) {
+          if (data.results[0].address_components[i].types.indexOf('locality') != -1) {
+            city = data.results[0].address_components[i].long_name + ", "
+          }
+        }
+        for (let i = 0; i < data.results[0].address_components.length; i++) {
+          if (data.results[0].address_components[i].types.indexOf('country') != -1) {
+            city = city + data.results[0].address_components[i].long_name
+          }
+        }
+        db.collection('users').update({ username: sess.username} , { $set : { city: city, lat: data.results[0].geometry.location.lat, lon: data.results[0].geometry.location.lng } }, (err, r) => {
           if (err) throw err
           res.send('ok')
         })

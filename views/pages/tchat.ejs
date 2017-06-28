@@ -69,9 +69,11 @@
     }
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
-      ws_chat.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
-      ws.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: "message" }))
-      document.getElementById("usr_message").value = ""
+      if (document.getElementById("usr_message").value !== '') {
+        ws_chat.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: document.getElementById("usr_message").value }))
+        ws.send(JSON.stringify({ sender: '<%= usr %>', receiver: '<%= usr2 %>', msg: "message" }))
+        document.getElementById("usr_message").value = ""
+      }
     }, false)
 
     ws_chat.onmessage = (message) => {
@@ -88,7 +90,7 @@
           new_col.appendChild(p)
           new_div.appendChild(new_col)
           msg_div.appendChild(new_div)
-        } else {
+        } else if (msg.sender !== 'server'){
           let new_col = document.createElement("div")
           let new_div = document.createElement("div")
           let p = document.createElement("p")

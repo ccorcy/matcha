@@ -78,42 +78,68 @@ module.exports = {
                     let like = user.like
                     if (user.pref === "other") {
                         db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
-                            if (users == undefined) {
+                            let list_usr = []
+                            for (let i = 0; i < users.length; i++) {
+                                if (users[i].pref === user.gender || users[i].pref === "other") {
+                                    users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
+                                    users[i].intercom = func.sharedInterest(user, users[i])
+                                    list_usr.push(users[i])
+
+                                }
+                            }
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a.distance, b.distance) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            if (list_usr == undefined) {
                                 res.render('pages/like', {
                                     name: sess.username,
                                     user: user,
                                     like: like,
                                     usr: ""
                                 });
+                                db.close()
                             } else {
                                 res.render('pages/like', {
                                     name: sess.username,
                                     user: user,
                                     like: like,
-                                    usr: users
+                                    usr: list_usr
                                 });
+                                db.close()
                             }
                         })
                     } else {
                         db.collection("users").find({ $and: [ { username: { $ne: sess.username }}, { gender: user.pref } ] }).toArray((err, users) => {
-                            if (users == undefined) {
+                            let list_usr = []
+                            for (let i = 0; i < users.length; i++) {
+                                if (users[i].pref === user.gender || users[i].pref === "other") {
+                                    users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
+                                    users[i].intercom = func.sharedInterest(user, users[i])
+                                    list_usr.push(users[i])
+                                }
+                            }
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            if (list_usr.length === 0) {
                                 res.render('pages/like', {
                                     name: sess.username,
                                     user: user,
                                     like: like,
                                     usr: ""
                                 });
+                                db.close()
                             } else {
                                 res.render('pages/like', {
                                     name: sess.username,
                                     user: user,
                                     like: like,
-                                    usr: users
+                                    usr: list_usr
                                 });
+                                db.close()
                             }
                         })
                     }
-                    db.close()
                 })
             })
         }
@@ -203,22 +229,40 @@ module.exports = {
             if (db) {
                 let usr = await db.collection("users").findOne({ username: req.query.usr })
                 let user = await db.collection("users").findOne({ username: sess.username })
-                if (user) {
-                    res.render('pages/user_profile', {
-                        usr: usr,
-                        user : user,
-                        sess: sess
-                    })
+                let usr_pics = await db.collection("pp").find({ username: req.query.usr }).toArray()
+                if (user && usr) {
+                    usr.distance = Math.trunc(func.distance(user, usr)) / 1000
+                    usr.intercom = func.sharedInterest(user, usr)
+                    if (usr_pics.length != 0) {
+                        res.render('pages/user_profile', {
+                            usr: usr,
+                            user : user,
+                            usr_pics: usr_pics,
+                            sess: sess
+                        })
+                    } else {
+                        res.render('pages/user_profile', {
+                            usr: usr,
+                            user : user,
+                            usr_pics: null,
+                            sess: sess
+                        })
+                    }
                     let arr = usr.visited
                     if (arr.indexOf(sess.username) == -1)
-                    arr.push(sess.username)
+                        arr.push(sess.username)
                     let status = await db.collection("users").update({ username: req.query.usr}, { $set: { visited: arr } })
                     arr = user.history
                     if (arr.indexOf(req.query.usr) == -1)
-                    arr.push(req.query.usr)
+                        arr.push(req.query.usr)
                     let status1 = await db.collection("users").update({ username: sess.username }, { $set: { history: arr } })
                     if (!status || !status1)
-                    console.log("error update history/visited");
+                    {
+                        db.close()
+                        console.log("error update history/visited");
+                    } else {
+                        db.close()
+                    }
                 } else {
                     res.end("<center><h1>error 403</h1></center><br />access forbidden")
                 }

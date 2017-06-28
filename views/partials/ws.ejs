@@ -32,7 +32,7 @@ function createNotif(sender, message) {
   } else if (message == "like") {
     let newNotif = document.createElement("a")
     newNotif.className = "dropdown-item notification notif_" + message
-    $.notify(sender + " liked you ;) ")
+    $.notify(sender + " liked you ;) ", 'success')
     newNotif.innerHTML = sender + " likes you ;) "
     notif_container.insertBefore(newNotif, notif_container.firstChild)
   }
