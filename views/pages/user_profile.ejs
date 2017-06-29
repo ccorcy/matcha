@@ -69,6 +69,16 @@
                             <hr>
                             <span style="color: rgb(240, 90, 90);"><%= usr.distance %></span> km are between <span style="color: rgb(240, 90, 90);"><%= usr.name %></span> and you<br />
                             Liked by <span style="color: #FF5F6D; font-decoration: italic"><%= usr.score %></span> people.
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr.username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr.username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -84,6 +94,47 @@
     <% include ../partials/ws %>
     <script type="text/javascript">
     const xhr = new XMLHttpRequest()
+
+    let like_button = document.getElementsByClassName("like_button")
+    let dislike_button = document.getElementsByClassName("dislike_button")
+    for (let i = 0; i < like_button.length; i++) {
+        like_button[i].addEventListener('click', (e) => {
+            e.preventDefault()
+            xhr.open('GET', '/like?usr=<%= sess.username %>&like=' + like_button[i].id, true)
+            xhr.send()
+            xhr.onload = () => {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    if (xhr.responseText === "Liked") {
+                        $.notify("You like " + like_button[i].id, "success")
+                        ws.send(JSON.stringify( { sender: '<%= sess.username %>', receiver: like_button[i].id, msg: "like"} ))
+                    } else if (xhr.responseText === "MATCH!"){
+                        swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
+                        ws.send(JSON.stringify( { sender: '<%= sess.username %>', receiver: like_button[i].id, msg: "match"} ))
+                    } else {
+                        $.notify(xhr.responseText, "error")
+                    }
+                }
+            }
+        }, false)
+    }
+    for (let i = 0; i < dislike_button.length; i++) {
+        dislike_button[i].addEventListener('click', (e) => {
+            e.preventDefault()
+            xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
+            xhr.send()
+            xhr.onload = () => {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    if (xhr.responseText === "ok") {
+                        ws.send(JSON.stringify({ sender: '<%= sess.username %>', receiver: dislike_button[i].id, msg: 'dislike'}))
+                        $.notify("You dislike " + dislike_button[i].id, "info")
+                    } else if ("error") {
+                        $.notify("You already dislike " + dislike_button[i].id, "error")
+                    }
+                }
+            }
+        })
+    }
+
     document.getElementById("back-button").addEventListener('click', () => {
         document.location.href = "/like_page"
     }, false)

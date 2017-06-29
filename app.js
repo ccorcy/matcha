@@ -173,6 +173,15 @@ app.get('/profile', (req, res) => {
   routes.user_profile(req, res, sess)
 })
 
+app.get('/search', (req, res) => {
+  sess = req.session
+  if (sess.username != undefined)
+    routes.search(req, res, sess)
+  else {
+    res.render('pages/index')
+  }
+})
+
 app.get('/history', (req, res) => {
     sess = req.session
     if (sess.username != undefined)

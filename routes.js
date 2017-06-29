@@ -320,7 +320,7 @@ module.exports = {
                         db.close()
                     } else {
                         db.close()
-                        // TODO: 403
+                        res.send('<center><h1>error 403</h1></center><br />access forbidden')
                     }
                 } else {
                     room = await db.collection("chat_room").findOne({token: token2})
@@ -345,12 +345,12 @@ module.exports = {
                             }
                             db.close()
                         } else {
-                            res.send("Access forbidden")
+                            res.send("<center><h1>error 403</h1></center><br />access forbidden")
                             db.close()
                         }
                     } else {
                         db.close()
-                        res.send("error: 404 not found")
+                        res.send("<center><h1>error 404</h1></center><br />Not found")
                     }
                 }
             }
@@ -457,6 +457,112 @@ module.exports = {
             }
         } else {
 
+        }
+    },
+    search: async function (req, res, sess) {
+        let r = req.query
+        let db = await MongoClient.connect(urlDB)
+        if (db) {
+            let user = await db.collection('users').findOne({ username: sess.username })
+            let interests = []
+            let inter = await db.collection('interest').findOne({})
+            if (inter != undefined) {
+                interests = inter.interests
+            }
+            if (user) {
+                if (user.pref === "other") {
+                    db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
+                        let list_usr = []
+                        for (let i = 0; i < users.length; i++) {
+                            users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
+                            users[i].intercom = func.sharedInterest(user, users[i])
+                            if ((users[i].pref === user.gender || users[i].pref === "other") && users[i].age >= parseInt(r.minage) && users[i].age <= parseInt(r.maxage)
+                                && users[i].distance >= parseInt(r.mindist) && users[i].distance <= parseInt(r.maxdist)
+                                    && users[i].score >= parseInt(r.minpop) && users[i].score <= parseInt(r.maxpop)) {
+                                if (users[i].interest.indexOf(r.tag) != -1 || r.tag == '---')
+                                    list_usr.push(users[i])
+                            }
+                        }
+                        if (req.query.sort === 'age') {
+                            list_usr = list_usr.sort((a, b) => { return a.age - b.age })
+                        } else if (req.query.sort === 'location') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                        } else if (req.query.sort === 'pop') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                        } else if (req.query.sort === 'intercom') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                        } else {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                        }
+                        if (list_usr.length === 0) {
+                            res.render('pages/search', {
+                                name: sess.username,
+                                user: user,
+                                usr: "",
+                                inter: interests
+                            });
+                            db.close()
+                        } else {
+                            res.render('pages/search', {
+                                name: sess.username,
+                                user: user,
+                                usr: list_usr,
+                                inter: interests
+                            });
+                            db.close()
+                        }
+                    })
+                } else {
+                    db.collection("users").find({ $and: [ { username: { $ne: sess.username }}, { gender: user.pref } ] }).toArray((err, users) => {
+                        let list_usr = []
+                        for (let i = 0; i < users.length; i++) {
+                            users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
+                            users[i].intercom = func.sharedInterest(user, users[i])
+                            if ((users[i].pref === user.gender || users[i].pref === "other") && users[i].age >= parseInt(r.minage) && users[i].age <= parseInt(r.maxage)
+                                && users[i].distance >= parseInt(r.mindist) && users[i].distance <= parseInt(r.maxdist)
+                                    && users[i].score >= parseInt(r.minpop) && users[i].score <= parseInt(r.maxpop)) {
+                                if (users[i].interest.indexOf(r.tag) != -1 || r.tag == "---")
+                                    list_usr.push(users[i])
+                            }
+                        }
+                        if (req.query.sort === 'age') {
+                            list_usr = list_usr.sort((a, b) => { return a.age - b.age })
+                        } else if (req.query.sort === 'location') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                        } else if (req.query.sort === 'pop') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                        } else if (req.query.sort === 'intercom') {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                        } else {
+                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                        }
+                        if (list_usr.length === 0) {
+                            res.render('pages/search', {
+                                name: sess.username,
+                                user: user,
+                                usr: "",
+                                inter: interests
+                            });
+                            db.close()
+                        } else {
+                            res.render('pages/search', {
+                                name: sess.username,
+                                user: user,
+                                usr: list_usr,
+                                inter: interests
+                            });
+                            db.close()
+                        }
+                    })
+                }
+            } else {
+                db.close()
+                res.render('pages/index')
+            }
         }
     }
 }
