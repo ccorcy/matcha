@@ -66,7 +66,6 @@ module.exports = {
 						}
 					} catch (e) {
 						db.close()
-						console.log(e)
 					}
 				})
 				ws.on('close', () => {
@@ -110,7 +109,6 @@ module.exports = {
 						func.update_chat_room(sess, message)
 					}
 				} catch (e) {
-					console.log(e)
 				}
 			})
 			ws.on('error', (e) => {

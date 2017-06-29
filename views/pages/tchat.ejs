@@ -50,13 +50,13 @@
     const text = document.getElementById("usr_message")
 
     function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
+      var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
 
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
@@ -65,7 +65,7 @@
     }
 
     ws_chat.onerror = (error) => {
-      console.log(error)
+
     }
     document.getElementById('send_message').addEventListener('click', (e) => {
       e.preventDefault()
@@ -103,7 +103,7 @@
           msg_div.appendChild(new_div)
         }
       } catch (e) {
-        console.log("Not a json")
+
       }
     }
   </script>

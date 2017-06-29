@@ -11,7 +11,6 @@
                 xhrrequest.send(new FormData(login));
                 xhrrequest.onload = () => {
                     if (xhrrequest.readyState === 4 && xhrrequest.status === 200) {
-                        console.log(xhrrequest.responseText);
                         if (xhrrequest.responseText === "OK") {
                             document.location.replace("/like_page");
                         }
@@ -29,7 +28,6 @@
             }, false);
 
             document.getElementById("reset").onclick = () => {
-                console.log(document.getElementById('reset_mail').value)
                 if (document.getElementById('reset_mail').value == "") {
                     document.getElementById("input-usr").style.display = "none"
                     document.getElementById("input-password").style.display = "none"

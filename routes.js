@@ -87,9 +87,19 @@ module.exports = {
 
                                 }
                             }
-                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a.distance, b.distance) })
-                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
-                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            if (req.query.sort === 'age') {
+                                list_usr = list_usr.sort((a, b) => { return a.age - b.age })
+                            } else if (req.query.sort === 'location') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                            } else if (req.query.sort === 'pop') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            } else if (req.query.sort === 'intercom') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            } else {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                                list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                                list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            }
                             if (list_usr == undefined) {
                                 res.render('pages/like', {
                                     name: sess.username,
@@ -118,9 +128,19 @@ module.exports = {
                                     list_usr.push(users[i])
                                 }
                             }
-                            list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
-                            list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
-                            list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            if (req.query.sort === 'age') {
+                                list_usr = list_usr.sort((a, b) => { return a.age - b.age })
+                            } else if (req.query.sort === 'location') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                            } else if (req.query.sort === 'pop') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            } else if (req.query.sort === 'intercom') {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                            } else {
+                                list_usr = list_usr.sort((a,b) => { return func.sort_distance(a, b) })
+                                list_usr = list_usr.sort((a,b) => { return func.sort_interest(a, b) })
+                                list_usr = list_usr.sort((a,b) => { return func.sort_pop(a, b) })
+                            }
                             if (list_usr.length === 0) {
                                 res.render('pages/like', {
                                     name: sess.username,
@@ -259,7 +279,6 @@ module.exports = {
                     if (!status || !status1)
                     {
                         db.close()
-                        console.log("error update history/visited");
                     } else {
                         db.close()
                     }
@@ -360,7 +379,6 @@ module.exports = {
                                     user_to_dislike = 0
                                 let st = await db.collection("users").update({ username: usr_to_dislike }, { $set: { score: user_to_dislike.score } })
                                 if (!st) {
-                                    console.log('error: cann\'t update score for ${usr_to_dislike}. SCORE = ${user_to_dislike.score}');
                                 }
                             }
                             like.splice(i, 1)
@@ -368,7 +386,6 @@ module.exports = {
                     }
                     let status = await db.collection("users").update({ username: sess.username}, { $set: { like: like} })
                     if (!status) {
-                        console.log("error update")
                         return (0)
                     } else {
                         return (1)
@@ -381,7 +398,6 @@ module.exports = {
             }
             db.close()
         } else {
-            console.log("error: cannot get access to db")
             return (0)
         }
     },
@@ -408,7 +424,6 @@ module.exports = {
                     let status2 = await db.collection("users").update({ username: usr_to_dislike}, { $set: { match: match2} })
                     let status3 = await db.collection("chat_room").remove({ $or: [{ token: sess.username + usr_to_dislike }, { token: usr_to_dislike + sess.username }]})
                     if (!status || !status2 || !status3) {
-                        console.log("error update")
                         return (0)
                     } else {
                         return (1)
@@ -421,7 +436,6 @@ module.exports = {
             }
             db.close()
         } else {
-            console.log("error: cannot get access to db")
             return (0)
         }
     },
@@ -442,7 +456,7 @@ module.exports = {
                 res.end("<center><h1>error 403</h1></center><br />access forbidden")
             }
         } else {
-            console.log("error: cannot get access to db")
+
         }
     }
 }

@@ -26,9 +26,11 @@
                       <img src="<%= usrs[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
                     <% } %>
                       <h1></h1>
-                      <small style="text-muted"><%= usrs[i].age %> years old</small><br>
-                      Gender: <% if (usrs[i].gender === "male") { %>&#9794;<% } %>
-                              <% if (usrs[i].gender === "female") { %>&#9792;<% } %><br>
+                      <small style="text-muted"><span class="age" style="color: #FF5F6D"><%= usrs[i].age %></span> years old</small><br>
+                      Gender: <span style="color: #FF5F6D"><% if (usrs[i].gender === "male") { %>&#9794;<% }
+                      else if (usrs[i].gender === "female") { %>&#9792;<% } %></span>
+                      <br>
+                      <span style="color: #FF5F6D"><%= usrs[i].username %></span> is liked by <span style="color: #FF5F6D;" class="score"><%= usrs[i].score %></span> users<br>
                       <span class="available" id="<%= usrs[i].username %>">last log: <%= usrs[i].last_visite %></span>
                       <div class="col">
                         <div class="row">

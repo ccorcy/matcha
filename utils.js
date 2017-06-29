@@ -33,7 +33,7 @@ module.exports = {
 				if (hash) {
 					let status = await db.collection("users").update({ email: req.query.mail }, { $set: { password: hash }})
 					if (!status) {
-						console.log("error update password")
+
 					} else {
 						sendmail({
 							from: 'no-reply@matcha.com',
@@ -49,7 +49,7 @@ module.exports = {
 				res.end("error")
 			}
 		} else {
-			console.log("can't connect to databases")
+
 		}
 	},
 	user: async function (db, usrn, usr, res) {
@@ -76,8 +76,7 @@ module.exports = {
 					if (found.historyLike.indexOf(usrn) == -1)
 						found.historyLike.push(usrn)
 					let added = await db.collection("users").update({ username: usr }, { $set: { historyLike: found.historyLike, score: score } })
-					if (!added)
-					console.log('error: canno\'t updated historyLike for ${usr}')
+					if (!added) {}
 					let status = await db.collection("users").update({username: usrn}, { $set: { like: like} })
 					if (status) {
 						if (found.like.length != 0) {
@@ -97,7 +96,7 @@ module.exports = {
 									let status2 = await db.collection("users").update({ username: usr}, { $set: { match: match_2 } })
 									if (!status || !status2) {
 										db.close()
-										console.log("error update match in database");
+
 									} else {
 										res.end("MATCH!")
 										let token = usrn + usr
@@ -109,7 +108,6 @@ module.exports = {
 											}
 											let status = await db.collection('chat_room').insertOne(room)
 											if (!status) {
-												console.log("error creating the chat room")
 												db.close()
 											} else {
 												db.close()
@@ -244,7 +242,7 @@ module.exports = {
 				messages.push(message)
 				let status = await db.collection("chat_room").update({ token: sess.username + msg.receiver}, { $set: { messages: messages }})
 				if (!status) {
-					console.log("error: cannot update " + sess.username + msg.receiver)
+
 				}
 			} else {
 				room = await db.collection("chat_room").findOne({ token: msg.receiver + sess.username })
@@ -253,7 +251,7 @@ module.exports = {
 					messages.push(message)
 					let status = await db.collection("chat_room").update({ token: msg.receiver + sess.username }, { $set: { messages: messages }})
 					if (!status) {
-						console.log("error: cannot update " + sess.username + msg.receiver)
+
 					}
 				}
 			}
@@ -275,16 +273,16 @@ module.exports = {
 				}
 				let status = await db.collection("interest").update({}, { $set: { interests: arr } })
 				if (!status) {
-					console.log("error");
+
 				}
 			} else {
 				let status = await db.collection("interest").insertOne({ interests: interests })
 				if (!status) {
-					console.log("error");
+
 				}
 			}
 		} else {
-			console.log("error: cannot get access to database. function get_interest");
+
 		}
 	},
 	last_login: async function (req, res) {

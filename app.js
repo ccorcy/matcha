@@ -95,7 +95,6 @@ app.get('/geoloc', (req, res) => {
     } else if (req.query.status === 'modify') {
       geocoder.geocode(req.query.info, function (err, data) {
         if (err) throw err
-        console.log(data.results[0].address_components);
         let city = ''
         for (let i = 0; i < data.results[0].address_components.length; i++) {
           if (data.results[0].address_components[i].types.indexOf('locality') != -1) {
