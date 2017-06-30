@@ -12,6 +12,7 @@
             <div class="card text-center">
                 <div class="card-header">
                     <h3 style="color: #FF5F6D" class="card-header"><%= usr.username %></h3>
+                    <small class="text-muted"><% if (usr.false_account) { %>(Reported as fake account)<% } %><small>
                     <small class="text-muted"><% if (usr.match.indexOf(sess.username) != -1) { %>You match<% } else if (usr.like.indexOf(sess.username) != -1) { %>Likes you<% } %></small>
                 </div>
                 <div class="card-block">
@@ -78,6 +79,14 @@
                                         <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr.username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-success block matcha_button" id="<%= usr.username %>">Block user</button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-success signal matcha_button" id="<%= usr.username %>">Signal fake account</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,6 +106,9 @@
 
     let like_button = document.getElementsByClassName("like_button")
     let dislike_button = document.getElementsByClassName("dislike_button")
+    let block = document.getElementsByClassName('block')
+    let signal = document.getElementsByClassName('signal')
+
     for (let i = 0; i < like_button.length; i++) {
         like_button[i].addEventListener('click', (e) => {
             e.preventDefault()
@@ -133,6 +145,34 @@
                 }
             }
         })
+    }
+
+    block[0].onclick = function () {
+        xhr.open('GET', '/block_user?usr=' + this.id, true)
+        xhr.onload = function () {
+            if (this.status === 200 && this.readyState === 4) {
+                if (this.responseText === 'blocked' || this.responseText === 'unblocked')
+                    $.notify('User ' + this.responseText, 'success')
+                else {
+                    $.notify('Canno\'t block this user')
+                }
+            }
+        }
+        xhr.send()
+    }
+
+    signal[0].onclick = function () {
+        xhr.open('GET', '/signal_user?usr=' + this.id, true)
+        xhr.onload = function () {
+            if (this.status === 200 && this.readyState === 4) {
+                if (this.responseText === 'ok')
+                    $.notify('User reported as fake', 'success')
+                else {
+                    $.notify('Canno\'t report this user')
+                }
+            }
+        }
+        xhr.send()
     }
 
     document.getElementById("back-button").addEventListener('click', () => {

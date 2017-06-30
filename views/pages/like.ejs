@@ -5,207 +5,222 @@
 </head>
 <body>
     <header>
-        <% if (name !== "") {%>
-            <%- include("../partials/header_log"); %>
-            <% } else { %>
-                <%- include("../partials/header"); %>
-                <% }%>
-            </header>
-            <span id="alert_container"></span>
-            <div class="container">
-                <div class="jumbotron" style="margin-top: 15px">
-                    <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#filter_div" aria-expanded="false" aria-controls="filter_div">
-                        Filter
-                    </button>
-                    <div class="collapse"id="filter_div">
-                        <div class="row">
-                            <div class="col-12 col-md-3">
-                                <h6 style="text-align:center">Age (min - max)</h6>
-                                <center>
-                                    <div class="form-check" style="">
-                                        <input class="form-control filter" type="number" id="age_min" value=0>
-                                    </div>
-                                    -
-                                    <div class="form-check">
-                                        <input class="form-control filter" type="number" id="age_max" value=125>
-                                    </div>
-                                </center>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <h6 style="text-align:center">Location (in km)</h6>
-                                <center>
-                                    <div class="form-check" style="">
-                                        <input class="form-control filter" type="number" id="dist_min" value=0>
-                                    </div>
-                                    -
-                                    <div class="form-check">
-                                        <input class="form-control filter" type="number" id="dist_max" value=999999>
-                                    </div>
-                                </center>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <h6 style="text-align:center">Popularity (min - max)</h6>
-                                <center>
-                                    <div class="form-check" style="">
-                                        <input class="form-control filter" type="number" id="score_min" value=0>
-                                    </div>
-                                    -
-                                    <div class="form-check">
-                                        <input class="form-control filter" type="number" id="score_max" value=999999>
-                                    </div>
-                                </center>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <h6 style="text-align:center">Shared Interest (min - max)</h6>
-                                <center>
-                                    <div class="form-check" style="">
-                                        <input class="form-control filter" type="number" id="intercom_min" value=0>
-                                    </div>
-                                    -
-                                    <div class="form-check">
-                                        <input class="form-control filter" type="number" id="intercom_max" value=999999>
-                                    </div>
-                                </center>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="btn btn-secondary" href="/like_page?sort=age" role="button">Sort by age</a>
-                    <a class="btn btn-secondary" href="/like_page?sort=location" role="button">Sort by location</a>
-                    <a class="btn btn-secondary" href="/like_page?sort=intercom" role="button">Sort by number of shared interests</a>
-                    <a class="btn btn-secondary" href="/like_page?sort=pop" role="button">Sort by popularity</a>
-                    <hr>
-                    <span id="nouser"></span>
+        <%- include("../partials/header_log"); %>
+    </header>
+    <span id="alert_container"></span>
+    <div class="container">
+        <div class="jumbotron" style="margin-top: 15px">
+            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#filter_div" aria-expanded="false" aria-controls="filter_div">Filter</button><br>
+                <div class="collapse"id="filter_div">
                     <div class="row">
-                        <% for (var i = 0; i < usr.length ; i++) { %>
-                            <div class="col-sm-6 col-md-4 user">
-                                <div class="card text-center" style="max-width: 300px">
-                                    <div class="card-header">
-                                        <h4 class="card-title"><%= usr[i].username %></h4>
-                                    </div>
-                                    <div class="card-block">
+                        <div class="col-12 col-md-3">
+                            <h6 style="text-align:center">Age</h6>
+                            <center>
+                                <div class="input-group" style="">
+                                    <input class="form-control filter" type="number" id="age_min" value=0>
+                                    <span class="input-group-addon">min</span>
+                                </div>
+                                -
+                                <div class="input-group">
+                                    <input class="form-control filter" type="number" id="age_max" value=125>
+                                    <span class="input-group-addon">max</span>
+                                </div>
+                            </center>
+                        </div>
+                    <div class="col-12 col-md-3">
+                        <h6 style="text-align:center">Location</h6>
+                        <center>
+                            <div class="input-group" style="">
+                                <input class="form-control filter" type="number" id="dist_min" value=0>
+                                <span class="input-group-addon">km</span>
+                            </div>
+                            -
+                            <div class="input-group">
+                                <input class="form-control filter" type="number" id="dist_max" value=999999>
+                                <span class="input-group-addon">km</span>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <h6 style="text-align:center">Popularity</h6>
+                        <center>
+                            <div class="input-group" style="">
+                                <input class="form-control filter" type="number" id="score_min" value=0>
+                                <span class="input-group-addon">min</span>
+                            </div>
+                            -
+                            <div class="input-group">
+                                <input class="form-control filter" type="number" id="score_max" value=999999>
+                                <span class="input-group-addon">max</span>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <h6 style="text-align:center">Shared Interest</h6>
+                        <center>
+                            <div class="input-group" style="">
+                                <input class="form-control filter" type="number" id="intercom_min" value=0>
+                                <span class="input-group-addon">min</span>
+                            </div>
+                            -
+                            <div class="input-group">
+                                <input class="form-control filter" type="number" id="intercom_max" value=999999>
+                                <span class="input-group-addon">max</span>
+                            </div>
+                        </center>
+                    </div>
+                </div>
+            </div>
+            Sort by:
+            <div class="row">
+                <div class="col-sm-3 col-12">
+                    <a class="btn btn-secondary" href="/like_page?sort=age" role="button" style="width:100%">Age</a>
+                </div>
+                <div class="col-sm-3 col-12">
+                    <a class="btn btn-secondary" href="/like_page?sort=location" role="button" style="width:100%">Location</a>
+                </div>
+                <div class="col-sm-3 col-12">
+                    <a class="btn btn-secondary" href="/like_page?sort=intercom" role="button" style="width:100%">Interests</a>
+                </div>
+                <div class="col-sm-3 col-12">
+                    <a class="btn btn-secondary" href="/like_page?sort=pop" role="button" style="width:100%">Popularity</a>
+                </div>
+            </div>
+            <hr>
+            <span id="nouser"></span>
+            <div class="row">
+                <% for (var i = 0; i < usr.length ; i++) { %>
+                <% if (user.blocked.indexOf(usr[i].username) == -1) { %>
+                <div class="col-sm-6 col-md-4 user">
+                    <div class="card text-center" style="max-width: 300px">
+                        <div class="card-header">
+                            <h4 class="card-title"><%= usr[i].username %></h4>
+                        </div>
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col">
+                                    <% if (usr[i].pics == undefined) { %>
+                                    <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
+                                    <% } else { %>
+                                    <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
+                                    <% } %>
+                                    <h1></h1>
+                                    <small style="text-muted"><span class="age" style="color: #FF5F6D"><%= usr[i].age %></span> years old</small><br>
+                                    Gender: <span style="color: #FF5F6D"><% if (usr[i].gender === "male") { %>&#9794;<% }
+                                    else if (usr[i].gender === "female") { %>&#9792;<% } %></span>
+                                    <br>
+                                    <span class="dist" style="color: #FF5F6D"><%= usr[i].distance %></span> km (<%= usr[i].city %>)
+                                    <br>
+                                    You shared <span class="intercom" style="color:#FF5F6D"><%= usr[i].intercom %></span> interests
+                                    <br>
+                                    <span style="color: #FF5F6D"><%= usr[i].username %></span> is liked by <span style="color: #FF5F6D;" class="score"><%= usr[i].score %></span> users
+                                    <br>
+                                    <span class="available" id="<%= usr[i].username %>">last log: <%= usr[i].last_visite %></span>
+                                    <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <% if (usr[i].pics == undefined) { %>
-                                                <img src='/pp/default.png' class="rounded mx-auto like" style="max-width: 150px">
-                                                <% } else { %>
-                                                <img src="<%= usr[i].pics %>" class="rounded mx-auto like" style="max-width: 150px">
-                                                <% } %>
-                                                <h1></h1>
-                                                <small style="text-muted"><span class="age" style="color: #FF5F6D"><%= usr[i].age %></span> years old</small><br>
-                                                Gender: <span style="color: #FF5F6D"><% if (usr[i].gender === "male") { %>&#9794;<% }
-                                                else if (usr[i].gender === "female") { %>&#9792;<% } %></span>
-                                                <br>
-                                                <span class="dist" style="color: #FF5F6D"><%= usr[i].distance %></span> km (<%= usr[i].city %>)
-                                                <br>
-                                                You shared <span class="intercom" style="color:#FF5F6D"><%= usr[i].intercom %></span> interests
-                                                <br>
-                                                <span style="color: #FF5F6D"><%= usr[i].username %></span> is liked by <span style="color: #FF5F6D;" class="score"><%= usr[i].score %></span> users
-                                                <br>
-                                                <span class="available" id="<%= usr[i].username %>">last log: <%= usr[i].last_visite %></span>
-                                                <div class="col">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
-                                                        </div>
-                                                        <div class="col">
-                                                            <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
-                                                        </div>
-                                                        <div class="col">
-                                                            <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <button type="button" class="btn btn-success like_button matcha_button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon glyphicon-heart">&#10084;</span></button>
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" class="btn btn-success dislike_button matcha_button" name="button" id="<%= usr[i].username %>"><span aria-hidden="true" class="glyphicon">&#128148;</span></button>
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" class="btn matcha_button profile_button" name="button" id='<%= usr[i].username %>'>View profile</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <% } %>
+                        </div>
                     </div>
                 </div>
-                <% include ../partials/footer %>
-                <% include ../partials/ws %>
-                <script type="text/javascript">
-                const xhr = new XMLHttpRequest()
+                <% } %>
+                <% } %>
+            </div>
+        </div>
+        <% include ../partials/footer %>
+        <% include ../partials/ws %>
+        <script type="text/javascript">
+        const xhr = new XMLHttpRequest()
 
-                <% if (name !== "") {%>
-                    let like_button = document.getElementsByClassName("like_button")
-                    let dislike_button = document.getElementsByClassName("dislike_button")
-                    let profile = document.getElementsByClassName("profile_button")
-                    const dist = document.getElementsByClassName('dist')
-                    const score = document.getElementsByClassName('score')
-                    const intercom = document.getElementsByClassName('intercom')
-                    const age = document.getElementsByClassName('age')
-                    const users = document.getElementsByClassName('user')
-                    const filter = document.getElementsByClassName('filter')
-                    if (like_button.length == 0 && dislike_button.length == 0) {
-                        document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you<br>Check your informations in your profile section</p></div></div>"
-                    }
-                    for (let i = 0; i < like_button.length; i++) {
-                        like_button[i].addEventListener('click', (e) => {
-                            e.preventDefault()
-                            xhr.open('GET', '/like?usr=<%= name %>&like=' + like_button[i].id, true)
-                            xhr.send()
-                            xhr.onload = () => {
-                                if (xhr.status === 200 && xhr.readyState === 4) {
-                                    if (xhr.responseText === "Liked") {
-                                        $.notify("You like " + like_button[i].id, "success")
-                                        ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
-                                    } else if (xhr.responseText === "MATCH!"){
-                                        swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
-                                        ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
-                                    } else {
-                                        $.notify(xhr.responseText, "error")
-                                    }
-                                }
-                            }
-                        }, false)
-                    }
-                    for (let i = 0; i < dislike_button.length; i++) {
-                        dislike_button[i].addEventListener('click', (e) => {
-                            e.preventDefault()
-                            xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
-                            xhr.send()
-                            xhr.onload = () => {
-                                if (xhr.status === 200 && xhr.readyState === 4) {
-                                    if (xhr.responseText === "ok") {
-                                        ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
-                                        $.notify("You dislike " + dislike_button[i].id, "info")
-                                    } else if ("error") {
-                                        $.notify("You already dislike " + dislike_button[i].id, "error")
-                                    }
-                                }
-                            }
-                        })
-                    }
-                    for (let i = 0; i < profile.length; i++) {
-                        profile[i].addEventListener('click', () => {
-                            document.location.href = "/profile?usr=" + profile[i].id
-                        }, false)
-                    }
-                    for (let i = 0; i < filter.length; i++) {
-                        filter[i].addEventListener('input', () => {
-                            let min_age = document.getElementById('age_min').value
-                            let max_age = document.getElementById('age_max').value
-                            let min_dist = document.getElementById('dist_min').value
-                            let max_dist = document.getElementById('dist_max').value
-                            let min_pop = document.getElementById('score_min').value
-                            let max_pop = document.getElementById('score_max').value
-                            let min_intercom = document.getElementById('intercom_min').value
-                            let max_intercom = document.getElementById('intercom_max').value
-                            for (let y = 0; y < users.length; y++) {
-                                if ((parseInt(age[y].innerHTML) >= min_age && parseInt(age[y].innerHTML) <= max_age)
-                                    && (parseInt(dist[y].innerHTML) >= min_dist && parseInt(dist[y].innerHTML) <= max_dist)
-                                        && (parseInt(score[y].innerHTML) >= min_pop && parseInt(score[y].innerHTML) <= max_pop)
-                                            && (parseInt(intercom[y].innerHTML) >= min_intercom && parseInt(intercom[y].innerHTML) <= max_intercom)) {
-                                        users[y].style.display = "inline"
+            <% if (name !== "") {%>
+                let like_button = document.getElementsByClassName("like_button")
+                let dislike_button = document.getElementsByClassName("dislike_button")
+                let profile = document.getElementsByClassName("profile_button")
+                const dist = document.getElementsByClassName('dist')
+                const score = document.getElementsByClassName('score')
+                const intercom = document.getElementsByClassName('intercom')
+                const age = document.getElementsByClassName('age')
+                const users = document.getElementsByClassName('user')
+                const filter = document.getElementsByClassName('filter')
+                if (like_button.length == 0 && dislike_button.length == 0) {
+                    document.getElementById("nouser").innerHTML = "<div class='row'><div class='col'><p class='text-center'>No user find to match with you<br>Check your informations in your profile section</p></div></div>"
+                }
+                for (let i = 0; i < like_button.length; i++) {
+                    like_button[i].addEventListener('click', (e) => {
+                        e.preventDefault()
+                        xhr.open('GET', '/like?usr=<%= name %>&like=' + like_button[i].id, true)
+                        xhr.send()
+                        xhr.onload = () => {
+                            if (xhr.status === 200 && xhr.readyState === 4) {
+                                if (xhr.responseText === "Liked") {
+                                    $.notify("You like " + like_button[i].id, "success")
+                                    ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "like"} ))
+                                } else if (xhr.responseText === "MATCH!"){
+                                    swal("YOU MATCH !", "You just match with " + like_button[i].id, "success")
+                                    ws.send(JSON.stringify( { sender: '<%= name %>', receiver: like_button[i].id, msg: "match"} ))
                                 } else {
-                                    users[y].style.display = "none"
+                                    $.notify(xhr.responseText, "error")
                                 }
                             }
-                        }, true)
-                    }
-                    <%}%>
-            </script>
+                        }
+                    }, false)
+                }
+                for (let i = 0; i < dislike_button.length; i++) {
+                    dislike_button[i].addEventListener('click', (e) => {
+                        e.preventDefault()
+                        xhr.open('GET', '/dislike?id=' + dislike_button[i].id, true)
+                        xhr.send()
+                        xhr.onload = () => {
+                            if (xhr.status === 200 && xhr.readyState === 4) {
+                                if (xhr.responseText === "ok") {
+                                    ws.send(JSON.stringify({ sender: '<%= name %>', receiver: dislike_button[i].id, msg: 'dislike'}))
+                                    $.notify("You dislike " + dislike_button[i].id, "info")
+                                } else if ("error") {
+                                    $.notify("You already dislike " + dislike_button[i].id, "error")
+                                }
+                            }
+                        }
+                    })
+                }
+                for (let i = 0; i < profile.length; i++) {
+                    profile[i].addEventListener('click', () => {
+                        document.location.href = "/profile?usr=" + profile[i].id
+                    }, false)
+                }
+                for (let i = 0; i < filter.length; i++) {
+                    filter[i].addEventListener('input', () => {
+                        let min_age = document.getElementById('age_min').value
+                        let max_age = document.getElementById('age_max').value
+                        let min_dist = document.getElementById('dist_min').value
+                        let max_dist = document.getElementById('dist_max').value
+                        let min_pop = document.getElementById('score_min').value
+                        let max_pop = document.getElementById('score_max').value
+                        let min_intercom = document.getElementById('intercom_min').value
+                        let max_intercom = document.getElementById('intercom_max').value
+                        for (let y = 0; y < users.length; y++) {
+                            if ((parseInt(age[y].innerHTML) >= min_age && parseInt(age[y].innerHTML) <= max_age)
+                                && (parseInt(dist[y].innerHTML) >= min_dist && parseInt(dist[y].innerHTML) <= max_dist)
+                                    && (parseInt(score[y].innerHTML) >= min_pop && parseInt(score[y].innerHTML) <= max_pop)
+                                        && (parseInt(intercom[y].innerHTML) >= min_intercom && parseInt(intercom[y].innerHTML) <= max_intercom)) {
+                                    users[y].style.display = "inline"
+                            } else {
+                                users[y].style.display = "none"
+                            }
+                        }
+                    }, true)
+                }
+                <%}%>
+        </script>
     </body>
 </html>

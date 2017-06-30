@@ -10,14 +10,16 @@ module.exports = {
 			let comp = await bcrypt.compare(body.password, result.password)
 			if (comp) {
 				sess.username = body.usrn
+				db.close()
 				res.end('OK')
 			} else {
+				db.close()
 				res.end('error password')
 			}
 		} else {
+			db.close()
 			res.end("error mail")
 		}
-		db.close()
 	},
 	reset_password: async function (req, res) {
 		let db = await MongoClient.connect(urlDB)
@@ -26,14 +28,13 @@ module.exports = {
 			if (user) {
 				var pwd = "";
 				var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
 				for( var i=0; i < 11; i++ )
 				pwd += possible.charAt(Math.floor(Math.random() * possible.length));
 				let hash = await bcrypt.hash(pwd, 10)
 				if (hash) {
 					let status = await db.collection("users").update({ email: req.query.mail }, { $set: { password: hash }})
 					if (!status) {
-
+						db.close()
 					} else {
 						sendmail({
 							from: 'no-reply@matcha.com',
@@ -42,10 +43,12 @@ module.exports = {
 							html: " Your password has been reset. Your new password is ${pwd}"
 						}, (err, reply) => {
 						})
+						db.close()
 						res.end("ok")
 					}
 				}
 			} else {
+				db.close()
 				res.end("error")
 			}
 		} else {
@@ -154,6 +157,7 @@ module.exports = {
 				"password": pwdHash,
 				"interest": [],
 				"notification": [],
+				"unread_notif": 0,
 				"age" : null,
 				"pics": null,
 				"bio": null,
@@ -169,7 +173,9 @@ module.exports = {
 				"historyLike": [],
 				"city": null,
 				"lat": null,
-				"lon": null
+				"lon": null,
+				"blocked": [],
+				"false_account": false
 			}
 			let users = await db.collection('users').findOne({$or: [ { username: body.username }, { email: body.email }]})
 			if (users != undefined) {
@@ -202,13 +208,14 @@ module.exports = {
 				res.json(error);
 			} else {
 				db.collection("users").insertOne(user, (err,result) => {
-					if (err) throw err;
+					if (err) {};
 				});
 				res.json(error);
 				db.close();
 			}
 		}
 		else {
+			db.close()
 			res.send("error")
 		}
 	},
@@ -216,7 +223,7 @@ module.exports = {
 	up_pics: async function (db, sess, req, res) {
 		let pictures = await db.collection("pp").find({ username: sess.username }).toArray()
 		if (pictures) {
-			if (pictures.length > 5) {
+			if (pictures.length >= 5) {
 				res.end("toomany")
 				db.close()
 			} else {
@@ -291,7 +298,9 @@ module.exports = {
 			let last_log = await db.collection("users").findOne({ username: req.query.user })
 			if (last_log) {
 				res.end(last_log.last_visite.toString())
+				db.close()
 			} else {
+				db.close()
 				res.end("")
 			}
 		} else {

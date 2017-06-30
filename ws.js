@@ -38,27 +38,31 @@ module.exports = {
 							for (var i = 0; i < ws_notif_user.length; i++) {
 								if (ws_notif_user[i].ws === client && ws_notif_user[i].username === msg.receiver
 									&& (msg.msg === "like" || msg.msg === "dislike" || msg.msg === "match" || msg.msg === "message" || msg.msg === 'visite')) {
-										client.send(JSON.stringify({ sender: msg.sender, msg: msg.msg }))
+										db.collection('users').findOne({ username: msg.receiver }, (err, r) => {
+											if (err) {}
+											if (r.blocked.indexOf(msg.sender) == -1)
+												client.send(JSON.stringify({ sender: msg.sender, msg: msg.msg }))
+										})
 									}
 								}
 							})
 							db.collection("users").findOne({ username: msg.receiver }, (err, notif) => {
-								if (err) {};
+								if (err) {  }
 								let notification = { username: msg.sender, message: msg.msg }
-								if (notif) {
+								if (notif && notif.blocked.indexOf(msg.sender) == -1) {
 									if (notif.notification != undefined) {
 										let arr = notif.notification
+										let unread_notif = notif.unread_notif + 1
 										arr.push(notification)
-										db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
+										db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr, unread_notif: unread_notif } }, (err, status) => {
 											if (err) {}
-											db.close()
 										})
 									} else {
 										let arr = []
+										let unread_notif = notif.unread_notif + 1
 										arr.push(notification)
-										db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr }}, (err, status) => {
-											if (err) {};
-											db.close()
+										db.collection("users").update({ username: msg.receiver}, { $set: { notification: arr, unread_notif: unread_notif } }, (err, status) => {
+											if (err) {}
 										})
 									}
 								}

@@ -36,12 +36,21 @@ function createNotif(sender, message) {
     newNotif.innerHTML = sender + " likes you ;) "
     notif_container.insertBefore(newNotif, notif_container.firstChild)
   }
-  document.getElementById('notif_title').innerHTML = "Notifications (" + document.getElementsByClassName('notification').length + ")"
+}
+
+document.getElementById('notif_title').onclick = function () {
+  xhr.open('GET', '/delete_unread', true)
+  xhr.onload = function () {
+    if (this.status === 200 && this.readyState === 4) {
+      if (this.responseText === 'ok')
+        document.getElementById('unread').innerHTML = '0'
+    }
+  }
+  xhr.send()
 }
 
 document.getElementById("delete_notification").onclick = function () {
   notif_container.innerHTML = ""
-  document.getElementById('notif_title').innerHTML = "Notifications (" + document.getElementsByClassName('notification').length + ")"
   xhr.open("GET", "/delete_notif", true)
   xhr.onload = () => {}
   xhr.send()
@@ -81,6 +90,9 @@ ws.onmessage = (message) => {
                 xhr.send()
             }
         }
+    } else {
+      let unr = parseInt(document.getElementById('unread').innerHTML) + 1
+      document.getElementById('unread').innerHTML = unr
     }
   } catch (e) {
 

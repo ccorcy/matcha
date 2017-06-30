@@ -5,120 +5,142 @@
 </head>
     <body>
         <header>
-            <% if (name !== "") {%>
             <%- include("../partials/header_log"); %>
-            <% } else { %>
-            <%- include("../partials/header"); %>
-            <% }%>
         </header>
         <span id="alert_container"></span>
         <div class="container">
         <div class="jumbotron" style="margin-top: 15px">
-        <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#filter_div" aria-expanded="false" aria-controls="filter_div">
-        Filter
-    </button><br>
+        <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#filter_div" aria-expanded="false" aria-controls="filter_div">Filter</button>
+        <br>
         <div class="collapse"id="filter_div">
-        <div class="row">
+            <div class="row">
+                <div class="col-12 col-md-3">
+                    <h6 style="text-align:center">Age</h6>
+                    <center>
+                        <div class="input-group" style="">
+                            <input class="form-control filter" type="number" id="age_min" value=0>
+                            <span class="input-group-addon">min</span>
+                        </div>
+                        -
+                        <div class="input-group">
+                            <input class="form-control filter" type="number" id="age_max" value=125>
+                            <span class="input-group-addon">max</span>
+                        </div>
+                    </center>
+                </div>
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Age (min - max)</h6>
+                <h6 style="text-align:center">Location</h6>
                 <center>
-                    <div class="form-check" style="">
-                        <input class="form-control filter" type="number" id="age_min" value=0>
-                    </div>
-                    -
-                    <div class="form-check">
-                        <input class="form-control filter" type="number" id="age_max" value=125>
-                    </div>
-                </center>
-            </div>
-            <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Localisation (in km)</h6>
-                <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control filter" type="number" id="dist_min" value=0>
+                        <span class="input-group-addon">km</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control filter" type="number" id="dist_max" value=999999>
+                        <span class="input-group-addon">km</span>
                     </div>
                 </center>
             </div>
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Popularity (min - max)</h6>
+                <h6 style="text-align:center">Popularity</h6>
                 <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control filter" type="number" id="score_min" value=0>
+                        <span class="input-group-addon">min</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control filter" type="number" id="score_max" value=999999>
+                        <span class="input-group-addon">max</span>
                     </div>
                 </center>
             </div>
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Shared Interest (min - max)</h6>
+                <h6 style="text-align:center">Shared Interest</h6>
                 <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control filter" type="number" id="intercom_min" value=0>
+                        <span class="input-group-addon">min</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control filter" type="number" id="intercom_max" value=999999>
+                        <span class="input-group-addon">max</span>
                     </div>
                 </center>
             </div>
         </div>
         </div><br>
-        <a class="btn btn-secondary" onclick="changeSort('age')" role="button">Sort by age</a>
-        <a class="btn btn-secondary" onclick="changeSort('location')" role="button">Sort by location</a>
-        <a class="btn btn-secondary" onclick="changeSort('intercom')" role="button">Sort by number of shared interests</a>
-        <a class="btn btn-secondary" onclick="changeSort('pop')" role="button">Sort by popularity</a><br><br>
+        Sort by:
+        <div class="row">
+            <div class="col-sm-3 col-12">
+                <a class="btn btn-secondary" onclick="changeSort('age')" role="button" style="width:100%">Age</a>
+            </div>
+            <div class="col-sm-3 col-12">
+                <a class="btn btn-secondary" onclick="changeSort('location')" role="button" style="width:100%">Location</a>
+            </div>
+            <div class="col-sm-3 col-12">
+                <a class="btn btn-secondary" onclick="changeSort('intercom')" role="button" style="width:100%">Interests</a>
+            </div>
+            <div class="col-sm-3 col-12">
+                <a class="btn btn-secondary" onclick="changeSort('pop')" role="button" style="width:100%">Popularity</a>
+            </div>
+        </div>
+        <hr>
         <div class="row">
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Age (min - max)</h6>
+                <h6 style="text-align:center">Age</h6>
                 <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control search" type="number" id="search_age_min" value=0>
+                        <span class="input-group-addon">min</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control search" type="number" id="search_age_max" value=125>
+                        <span class="input-group-addon">min</span>
                     </div>
                 </center>
             </div>
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Localisation (in km)</h6>
+                <h6 style="text-align:center">Localisation</h6>
                 <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control search" type="number" id="search_dist_min" value=0>
+                        <span class="input-group-addon">min</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control search" type="number" id="search_dist_max" value=999999>
+                        <span class="input-group-addon">min</span>
                     </div>
                 </center>
             </div>
             <div class="col-12 col-md-3">
-                <h6 style="text-align:center">Popularity (min - max)</h6>
+                <h6 style="text-align:center">Popularity</h6>
                 <center>
-                    <div class="form-check" style="">
+                    <div class="input-group" style="">
                         <input class="form-control search" type="number" id="search_score_min" value=0>
+                        <span class="input-group-addon">min</span>
                     </div>
                     -
-                    <div class="form-check">
+                    <div class="input-group">
                         <input class="form-control search" type="number" id="search_score_max" value=999999>
+                        <span class="input-group-addon">min</span>
                     </div>
                 </center>
             </div>
             <div class="col-12 col-md-3">
                 <h6 style="text-align:center">Tag</h6>
                 <center>
-                    <select class="form-control search" id="search_tag">
-                      <option value="---"></option>
+                    <input class="form-control" type="text" name="interest" value="" id="interest">
+                    <select class="form-control" id="search_tag">
                       <% for (var i = 0; i < inter.length; i++) { %>
                         <option value="<%= inter[i] %>"><%= inter[i] %></option>
                       <% } %>
                     </select>
+                    <button type="button" class="btn btn-secondary" id="add_inter" name="button">Add interest</button>
                 </center>
             </div>
         </div>
@@ -127,6 +149,7 @@
         <span id="nouser"></span>
         <div class="row">
         <% for (var i = 0; i < usr.length ; i++) { %>
+        <% if (user.blocked.indexOf(usr[i].username) == -1) { %>
         <div class="col-sm-6 col-md-4 user">
             <div class="card text-center" style="max-width: 300px">
                 <div class="card-header">
@@ -167,6 +190,7 @@
                                 </div>
                             </div>
                         </div>
+                        <% } %>
                         <% } %>
                     </div>
                 </div>
@@ -258,6 +282,19 @@
                     sort = type;
                 }
 
+                const inter = document.getElementById('search_tag')
+                const add = document.getElementById('add_inter')
+
+                add.addEventListener('click', () => {
+                  if (inter.value != "") {
+                    if (interest.value != "") {
+                      interest.value = interest.value + "," + inter.value
+                    } else {
+                      interest.value = inter.value
+                    }
+                  }
+                }, false)
+
                 function sendSearch() {
                     let min_age = document.getElementById('search_age_min').value
                     let max_age = document.getElementById('search_age_max').value
@@ -265,7 +302,7 @@
                     let max_dist = document.getElementById('search_dist_max').value
                     let min_pop = document.getElementById('search_score_min').value
                     let max_pop = document.getElementById('search_score_max').value
-                    let tag = document.getElementById('search_tag').value
+                    let tag = document.getElementById('interest').value
                     document.location.href = `/search?sort=${sort}&minage=${min_age}&maxage=${max_age}&minpop=${min_pop}&maxpop=${max_pop}&mindist=${min_dist}&maxdist=${max_dist}&tag=${tag}`
                 }
             </script>

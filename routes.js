@@ -25,7 +25,7 @@ module.exports = {
                     });
                 } else {
                     db.collection("interest").findOne({}, (err, inter) => {
-                        if (err) throw err;
+                        if (err) {};
                         let interests = []
                         if (inter != undefined) {
                             interests = inter.interests
@@ -72,9 +72,9 @@ module.exports = {
             res.render('pages/index');
         } else {
             MongoClient.connect(urlDB, (err, db) => {
-                if (err) throw err
+                if (err) {}
                 db.collection("users").findOne({ username: sess.username}, (err, user) => {
-                    if (err) throw err
+                    if (err){}
                     let like = user.like
                     if (user.pref === "other") {
                         db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
@@ -120,6 +120,7 @@ module.exports = {
                         })
                     } else {
                         db.collection("users").find({ $and: [ { username: { $ne: sess.username }}, { gender: user.pref } ] }).toArray((err, users) => {
+                            if (err) {}
                             let list_usr = []
                             for (let i = 0; i < users.length; i++) {
                                 if (users[i].pref === user.gender || users[i].pref === "other") {
@@ -170,13 +171,13 @@ module.exports = {
         let ok = false
         if (sess.username != undefined && id != null) {
             MongoClient.connect(urlDB, (err, db) => {
-                if (err) throw err
+                if (err) {}
                 db.collection("pp").find({ username: sess.username }).toArray((err, result) => {
-                    if (err) throw err
+                    if (err) {}
                     result.forEach((elem) => {
                         if (elem.img.filename === id) {
                             db.collection("users").update({ username: sess.username}, { $set: { pics: "/pp/" + id } }, (err, r) => {
-                                if (err) throw err
+                                if (err) {}
                                 db.close()
                             })
                             ok = true
@@ -201,7 +202,7 @@ module.exports = {
             res.end("You are not " + usr)
         } else {
             MongoClient.connect(urlDB, (err, db) => {
-                if (err) throw err
+                if (err) {}
                 func.user(db, usr, liked, res)
             })
         }
@@ -213,7 +214,7 @@ module.exports = {
                 res.end("error")
             } else {
                 MongoClient.connect(urlDB, (err, db) => {
-                    if (err) throw err
+                    if (err) {}
                     func.up_pics(db, sess, req, res)
                 })
             }
@@ -283,6 +284,7 @@ module.exports = {
                         db.close()
                     }
                 } else {
+                    db.close()
                     res.end("<center><h1>error 403</h1></center><br />access forbidden")
                 }
             }
@@ -358,7 +360,7 @@ module.exports = {
             res.render('pages/index')
         } else {
             MongoClient.connect(urlDB, (err, db) => {
-                if (err) throw err
+                if (err) {}
                 res.send("<script> document.location.replace('/like_page')</script>")
                 db.close()
             })
@@ -386,14 +388,18 @@ module.exports = {
                     }
                     let status = await db.collection("users").update({ username: sess.username}, { $set: { like: like} })
                     if (!status) {
+                        db.close()
                         return (0)
                     } else {
+                        db.close()
                         return (1)
                     }
                 } else {
+                    db.close()
                     return (0)
                 }
             } else {
+                db.close()
                 return (0)
             }
             db.close()
@@ -424,14 +430,18 @@ module.exports = {
                     let status2 = await db.collection("users").update({ username: usr_to_dislike}, { $set: { match: match2} })
                     let status3 = await db.collection("chat_room").remove({ $or: [{ token: sess.username + usr_to_dislike }, { token: usr_to_dislike + sess.username }]})
                     if (!status || !status2 || !status3) {
+                        db.close()
                         return (0)
                     } else {
+                        db.close()
                         return (1)
                     }
                 } else {
+                    db.close()
                     return (0)
                 }
             } else {
+                db.close()
                 return (0)
             }
             db.close()
@@ -452,7 +462,9 @@ module.exports = {
                     visited: user.visited,
                     historyLike: user.historyLike
                 })
+                db.close()
             } else {
+                db.close()
                 res.end("<center><h1>error 403</h1></center><br />access forbidden")
             }
         } else {
@@ -473,13 +485,24 @@ module.exports = {
                 if (user.pref === "other") {
                     db.collection("users").find({ username: { $ne: sess.username }}).toArray((err, users) => {
                         let list_usr = []
+                        let interest = []
+                        if (r.tag) {
+                            interest = r.tag.replace(/ /g, '')
+                            interest = r.tag.replace(/\,$/, '');
+                            interest = r.tag.split(',')
+                        }
                         for (let i = 0; i < users.length; i++) {
                             users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
                             users[i].intercom = func.sharedInterest(user, users[i])
                             if ((users[i].pref === user.gender || users[i].pref === "other") && users[i].age >= parseInt(r.minage) && users[i].age <= parseInt(r.maxage)
                                 && users[i].distance >= parseInt(r.mindist) && users[i].distance <= parseInt(r.maxdist)
                                     && users[i].score >= parseInt(r.minpop) && users[i].score <= parseInt(r.maxpop)) {
-                                if (users[i].interest.indexOf(r.tag) != -1 || r.tag == '---')
+                                let tag = 0
+                                for (let j = 0; j < interest.length; j++) {
+                                    if (users[i].interest.indexOf(interest[j]) != -1)
+                                        tag = 1
+                                }
+                                if (tag === 1 || r.tag == '')
                                     list_usr.push(users[i])
                             }
                         }
@@ -517,14 +540,25 @@ module.exports = {
                 } else {
                     db.collection("users").find({ $and: [ { username: { $ne: sess.username }}, { gender: user.pref } ] }).toArray((err, users) => {
                         let list_usr = []
+                        let interest = []
+                        if (r.tag) {
+                            interest = r.tag.replace(/ /g, '')
+                            interest = r.tag.replace(/\,$/, '');
+                            interest = r.tag.split(',')
+                        }
                         for (let i = 0; i < users.length; i++) {
                             users[i].distance = Math.trunc(func.distance(user, users[i])) / 1000
                             users[i].intercom = func.sharedInterest(user, users[i])
                             if ((users[i].pref === user.gender || users[i].pref === "other") && users[i].age >= parseInt(r.minage) && users[i].age <= parseInt(r.maxage)
                                 && users[i].distance >= parseInt(r.mindist) && users[i].distance <= parseInt(r.maxdist)
                                     && users[i].score >= parseInt(r.minpop) && users[i].score <= parseInt(r.maxpop)) {
-                                if (users[i].interest.indexOf(r.tag) != -1 || r.tag == "---")
-                                    list_usr.push(users[i])
+                                        let tag = 0
+                                        for (let j = 0; j < interest.length; j++) {
+                                            if (users[i].interest.indexOf(interest[j]) != -1)
+                                                tag = 1
+                                        }
+                                        if (tag === 1 || r.tag == '')
+                                            list_usr.push(users[i])
                             }
                         }
                         if (req.query.sort === 'age') {
@@ -564,5 +598,27 @@ module.exports = {
                 res.render('pages/index')
             }
         }
+    },
+    block_user: function (req, res, sess, db) {
+        db.collection('users').findOne({ username: sess.username }, (err, user) => {
+            if (err) {}
+            let blocked = user.blocked
+            let msg
+            if (blocked.indexOf(req.query.usr) == -1)
+            {
+                blocked.push(req.query.usr)
+                msg = "blocked";
+            } else {
+                blocked.pop(req.query.usr)
+                msg = "unblocked"
+            }
+            db.collection('users').update({ username: sess.username }, { $set: { blocked: blocked } }, (err, s) => {
+                if (err) {
+                    res.send('error')
+                }
+                res.send(msg)
+                db.close()
+            })
+        })
     }
 }

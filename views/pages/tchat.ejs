@@ -48,6 +48,7 @@
     const ws_chat = new WebSocket('ws://localhost:3000/chat')
     const msg_div = document.getElementById("message")
     const text = document.getElementById("usr_message")
+    const xhr = new XMLHttpRequest()
 
     function escapeHtml(text) {
       var map = {

@@ -5,7 +5,7 @@
   <a class="navbar-brand" href="/like_page"><img src="favicon.ico" style="width: 25px; height: 25px"> Find your partner</a>
   <div class="dropdown">
     <a class="btn btn-secondary dropdown-toggle" href="https://example.com" id="notif_title" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Notification (0)
+      Notification (<span id="unread"><%= user.unread_notif %></span>)
     </a>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" id="notification_container" style="max-height: 200px; overflow:auto">
       <% for (let i = user.notification.length - 1; i > 0; i--) { %>

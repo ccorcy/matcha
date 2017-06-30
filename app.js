@@ -62,21 +62,12 @@ app.get('/geoloc', (req, res) => {
       let lat = req.query.lat
       let lon = req.query.lon
       db.collection('users').update({ username: req.query.usr }, { $set: { lat: lat, lon: lon } }, (err, res) => {
-        if (err) throw err;
+        if (err) {};
       })
       geocoder.reverseGeocode(lat, lon, function (err, data) {
-        if (err) throw err;
+        if (err) {};
         let city = ''
-        for (let i = 0; i < data.results[0].address_components.length; i++) {
-          if (data.results[0].address_components[i].types.indexOf('locality')) {
-            city = data.results[0].address_components[i].long_name + ", "
-          }
-        }
-        for (let i = 0; i <data.results[0].address_components.length; i++) {
-          if (data.results[0].address_components[i].types.indexOf('country')) {
-            city = city + data.results[0].address_components[i].long_name
-          }
-        }
+        city = data.results[2].formatted_address
         db.collection('users').update({ username: req.query.usr }, { $set: { city: city } }, (err, r) => {
           if (err) throw err;
           res.send("ok")
@@ -149,9 +140,44 @@ app.get('/match', (req, res) => {
       res.render("pages/index")
   } else {
     MongoClient.connect(urlDB, (err, db) => {
-      if (err) throw err
+      if (err) { }
       routes.match(req, res, sess, db)
     })
+  }
+})
+
+app.get('/block_user', (req, res) => {
+  sess = req.session
+  if (sess.username == undefined) {
+    res.render('pages/index')
+  } else {
+    MongoClient.connect(urlDB, (err, db) => {
+      if (err) { }
+      routes.block_user(req,res,sess,db)
+    })
+  }
+})
+
+app.get('/signal_user', (req, res) => {
+  sess = req.session
+  if (sess.username == undefined) {
+      res.send('error')
+  } else {
+      MongoClient.connect(urlDB, (err, db) => {
+        if (err) {}
+        db.collection('users').findOne({ username: req.query.usr }, (err, r) => {
+          if (err) {}
+          if (r) {
+            db.collection('users').update({ username: req.query.usr }, { $set: { false_account: true } },  (err, s) => {
+              if (err) {
+                res.send('error')
+              }
+              res.send('ok')
+              db.close()
+            })
+          }
+        })
+      })
   }
 })
 
@@ -227,6 +253,17 @@ app.get("/delete_notif", (req, res) => {
   MongoClient.connect(urlDB, (err, db) => {
     if (err) throw err;
     db.collection("users").update({ username: sess.username }, { $set: { notification: [] } })
+  })
+})
+
+app.get('/delete_unread', (req, res) => {
+  sess = req.session
+  MongoClient.connect(urlDB, (err, db) => {
+    if (err) {}
+    db.collection('users').update({ username: sess.username}, { $set: { unread_notif: 0 }}, (err, r) => {
+      if (err) res.send('error')
+      res.send('ok')
+    })
   })
 })
 
