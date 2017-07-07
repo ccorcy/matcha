@@ -75,9 +75,9 @@ app.get('/geoloc', (req, res) => {
         })
       })
     } else if (req.query.status === "ko") {
-        iplocation(req.ip, function (error, res) {
+        iplocation(req.ip, function (error, loc) {
           if (error) throw err;
-          db.collection('users').update({ username: req.query.usr }, { $set: { city: res.city, lat: res.lat, lon: res.lon } }, (err, st) => {
+          db.collection('users').update({ username: req.query.usr }, { $set: { city: loc.city, lat: loc.lat, lon: loc.lon } }, (err, st) => {
             if (err) throw err;
             db.close()
             res.send("ok")
