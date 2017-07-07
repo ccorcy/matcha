@@ -150,21 +150,19 @@
                                                 }
                                             }
                                             xhr.send()
-                                        })
-                                    } else {
-                                        xhr.open('GET', '/geoloc?usr=' + document.getElementById('username-input').value + '&status=ko', true)
-                                        xhr.onload = function () {
-                                            if (this.status === 200 && this.readyState === 4) {
-                                                if (this.responseText === "ok") {
-                                                    document.location.replace("/")
-                                                } else {
-                                                    $.notify("Can't get your position")
+                                        }, (posError) => {
+                                            xhr.open('GET', '/geoloc?usr=' + document.getElementById('username-input').value + '&status=ko', true)
+                                            xhr.onload = function () {
+                                                if (this.status === 200 && this.readyState === 4) {
+                                                    if (this.responseText === "ok") {
+                                                        document.location.replace("/")
+                                                    } else {
+                                                        $.notify("Can't get your position")
+                                                    }
                                                 }
                                             }
-                                        }
-                                        xhr.send()
-                                    }
-                                }
+                                            xhr.send()
+                                        })}}
                             } catch(e) {
 
                             }

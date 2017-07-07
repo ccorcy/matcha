@@ -40,7 +40,7 @@ module.exports = {
 							from: 'no-reply@matcha.com',
 							to: user.email,
 							subject: 'MATCHA | Password reset',
-							html: " Your password has been reset. Your new password is ${pwd}"
+							html: `Your password has been reset. Your new password is ${pwd}<br> You should change your password imediatly after connecting`
 						}, (err, reply) => {
 						})
 						db.close()
